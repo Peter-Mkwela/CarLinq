@@ -1,459 +1,459 @@
-// app/page.tsx
 'use client';
 
-import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import ContactForm from '@/components/ContactForm';
-import PortfolioSection from '@/components/Portfolio';
-import Link from 'next/link';
-import { ArrowRight, Sparkles, Code, Database, Palette, Globe, Check, Phone, Mail, MapPin, HardDrive, Cpu, Zap, Award, DollarSign, Clock, ChevronDown, ChevronUp } from 'lucide-react';
-import TypingHeadline from '@/components/TypingHeadline';
+import { Car, Shield, TrendingUp, Users, CheckCircle, Star } from 'lucide-react';
+import { useTheme } from '@/app/providers/theme-provider';
 
-export default function HomePage() {
-  const [showBackToTop, setShowBackToTop] = useState(false);
-
-  const scrollToSection = (id: string) => {
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
+export default function Home() {
+  const { theme } = useTheme();
+  const features = [
+    {
+      icon: Shield,
+      title: 'Verified Listings',
+      description: 'Every vehicle is thoroughly verified for authenticity, condition, and ownership history.',
+      color: 'from-green-500 to-emerald-500'
+    },
+    {
+      icon: TrendingUp,
+      title: 'Sales Analytics',
+      description: 'Comprehensive dashboard with real-time sales performance insights and market trends.',
+      color: 'from-blue-500 to-cyan-500'
+    },
+    {
+      icon: Users,
+      title: 'Trusted Community',
+      description: 'Connect with verified dealers and serious buyers in a secure trading environment.',
+      color: 'from-purple-500 to-indigo-500'
     }
-  };
+  ];
 
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+  const stats = [
+    { number: '500+', label: 'Verified Dealers' },
+    { number: '10,000+', label: 'Cars Listed' },
+    { number: '95%', label: 'Customer Satisfaction' },
+    { number: '24/7', label: 'Support' }
+  ];
 
-  // Show/hide back to top button based on scroll position
-  useEffect(() => {
-    const handleScroll = () => {
-      setShowBackToTop(window.scrollY > 400);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  const testimonials = [
+    {
+      name: 'Sarah Johnson',
+      role: 'Car Dealer',
+      content: 'CarLinq has transformed how I do business. The verified buyer system saves me so much time!',
+      rating: 5
+    },
+    {
+      name: 'Mike Chen',
+      role: 'Car Buyer',
+      content: 'Finally found a platform where I can trust the listings. No more scams or misrepresentations.',
+      rating: 5
+    },
+    {
+      name: 'David Park',
+      role: 'Dealership Owner',
+      content: 'The analytics dashboard helped us optimize our inventory and increase sales by 40%.',
+      rating: 5
+    }
+  ];
 
   return (
-    <div className="relative overflow-hidden">
-      {/* Back to Top Button */}
-      <motion.button
-        initial={{ opacity: 0, scale: 0 }}
-        animate={{ 
-          opacity: showBackToTop ? 1 : 0, 
-          scale: showBackToTop ? 1 : 0 
+    <div className="min-h-screen">
+      {/* Hero Section with Background Image */}
+      <section className="relative min-h-screen flex items-center justify-center py-20 lg:py-28 overflow-hidden">
+        {/* Background Image with Overlay */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{
+            backgroundImage: 'url(/background/carbackground.jpg)',
+          }}
+        >
+          <div className="absolute inset-0 bg-black/50"></div>
+          <div className="absolute inset-0 bg-gradient-to-br from-primary-900/30 via-transparent to-secondary-900/30"></div>
+        </div>
+        
+        {/* Animated Background Elements */}
+        <div className="absolute inset-0 opacity-20">
+          <div className="absolute top-10 left-10 w-20 h-20 bg-primary-500 rounded-full blur-xl animate-pulse"></div>
+          <div className="absolute top-1/2 right-10 w-32 h-32 bg-secondary-500 rounded-full blur-xl animate-pulse delay-1000"></div>
+          <div className="absolute bottom-10 left-1/3 w-24 h-24 bg-primary-400 rounded-full blur-xl animate-pulse delay-500"></div>
+        </div>
+        
+        <div className="container mx-auto px-4 sm:px-6 relative z-10">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="text-center text-white"
+          >
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+              className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-2xl flex items-center justify-center mx-auto mb-6 sm:mb-8 shadow-lg border border-white/20"
+            >
+              <Car className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
+            </motion.div>
+            
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold mb-4 sm:mb-6 leading-tight px-2">
+      <span className="text-white">Welcome to </span>
+
+      {/* Car - skewed forward, alpha a */}
+      <span
+        className="inline-block italic transform skew-x-[10deg]"
+        style={{
+          color: theme === 'light' ? '#FF8C00' : '#CC6600', // bold dark orange
+          textShadow: `
+            0 2px 0 #000,   /* black vertical shadow */
+            1px 1px 0 rgba(0,0,0,0.3),
+            2px 2px 0 rgba(0,0,0,0.2)
+          `,
+          fontWeight: 800,
         }}
-        onClick={scrollToTop}
-        className="fixed bottom-6 right-6 z-50 w-12 h-12 bg-[#FFA500] text-[#000066] rounded-full shadow-lg hover:bg-orange-400 transition-colors flex items-center justify-center"
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.9 }}
       >
-        <ChevronUp size={24} />
-      </motion.button>
+        Cɑr
+      </span>
 
-      {/* Home Section */}
-      <section id="home" className="min-h-screen relative flex flex-col items-center justify-center px-6 py-20 overflow-hidden">
-        {/* Enhanced Background elements */}
-        <div className="absolute inset-0 -z-10 overflow-hidden">
-          <motion.div
-            animate={{ 
-              x: [0, -40, 0],
-              y: [0, -40, 0],
-              scale: [1, 1.1, 1],
-            }}
-            transition={{ 
-              duration: 20,
-              repeat: Infinity,
-              ease: "easeInOut"
-            }}
-            className="absolute -top-32 -left-32 w-80 h-80 bg-[#FFA500] rounded-full mix-blend-soft-light filter blur-[120px] opacity-40"
-          />
-          <motion.div
-            animate={{ 
-              x: [0, 40, 0],
-              y: [0, 30, 0],
-              scale: [1, 1.08, 1],
-            }}
-            transition={{ 
-              duration: 25,
-              repeat: Infinity,
-              ease: "easeInOut"
-            }}
-            className="absolute bottom-0 right-0 w-96 h-96 bg-[#000066] rounded-full mix-blend-soft-light filter blur-[120px] opacity-40"
-          />
-        </div>
+      {/* Linq - skewed forward, dark blue */}
+      <span
+        className="inline-block italic transform skew-x-[10deg]"
+        style={{
+          color: theme === 'light' ? '#0277BD' : '#01579B', // dark blue
+          textShadow: `
+            0 2px 0 #000,
+            1px 1px 0 rgba(0,0,0,0.3),
+            2px 2px 0 rgba(0,0,0,0.2)
+          `,
+          fontWeight: 800,
+          marginLeft: '0.1rem', // tighter spacing
+        }}
+      >
+        Linq
+      </span>
+    </h1>
+            
+            <p className="text-lg sm:text-xl lg:text-2xl text-gray-200 mb-6 sm:mb-8 max-w-3xl mx-auto leading-relaxed px-4">
+              Linking You to the Perfect Ride
+            </p>
 
-        <div className="max-w-6xl mx-auto text-center relative z-10">
-          {/* Unified Bouncing Main Headline */}
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1 }}
-            className="mb-6"
-          >
-            <TypingHeadline />
-          </motion.div>
-
-          {/* Enhanced Subtitle with Typewriter Effect */}
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.8 }}
-            className="text-xl sm:text-2xl text-[#FFE5B4] max-w-3xl mx-auto mb-8 font-light"
-          >
-            Digital Solutions,{" "}
-            <motion.span
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.6, duration: 0.5 }}
-              className="font-semibold text-white"
-            >
-              Zero Complexity
-            </motion.span>
-          </motion.p>
-
-          {/* Additional Tagline */}
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.6, duration: 0.8 }}
-            className="text-lg text-[#FFE5B4]/80 mb-12 max-w-2xl mx-auto"
-          >
-            Professional IT Services • Web Development • Data Recovery • Graphics Design
-          </motion.p>
-
-          {/* Enhanced CTA Buttons */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.8, duration: 0.8 }}
-            className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-16"
-          >
-            <motion.button
-              whileHover={{ scale: 1.05, y: -2 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => scrollToSection('services')}
-              className="btn-primary group text-lg px-8 py-4 relative overflow-hidden"
-            >
-              <span className="relative z-10">Get Started</span>
-              <ArrowRight size={22} className="relative z-10 group-hover:translate-x-1 transition-transform" />
-              <motion.div
-                className="absolute inset-0 bg-gradient-to-r from-orange-500 to-amber-500"
-                initial={{ x: "-100%" }}
-                whileHover={{ x: "0%" }}
-                transition={{ duration: 0.3 }}
-              />
-            </motion.button>
-
-            <Link href="/auth/login">
+            <p className="text-base sm:text-lg text-white/80 mb-8 max-w-2xl mx-auto leading-relaxed px-4">
+              The professional platform connecting verified car dealers with trusted buyers across Africa. 
+              Experience transparency, security, and convenience in every vehicle transaction.
+            </p>
+            
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center mb-8 sm:mb-12">
               <motion.button
-                whileHover={{ scale: 1.05, y: -2 }}
+                whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="flex items-center gap-2 text-[#FFA500] hover:text-white transition-colors font-semibold group px-6 py-3 rounded-lg glass hover:bg-white/20"
+                className="w-full sm:w-auto bg-white text-primary-600 hover:bg-gray-100 font-semibold text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-white"
               >
-                Client Login
-                <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                Browse Cars
               </motion.button>
-            </Link>
-          </motion.div>
-
-          {/* Stats Preview */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1.2, duration: 0.8 }}
-            className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-2xl mx-auto mb-12"
-          >
-            {[
-              { number: "200+", label: "Projects" },
-              { number: "99%", label: "Satisfaction" },
-              { number: "24/7", label: "Support" },
-              { number: "5+", label: "Years" }
-            ].map((stat, index) => (
-              <motion.div
-                key={stat.label}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1.4 + index * 0.1, duration: 0.6 }}
-                className="text-center"
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="w-full sm:w-auto bg-transparent text-white hover:bg-white/10 font-semibold text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-white"
               >
-                <div className="text-2xl md:text-3xl font-bold text-[#FFA500]">{stat.number}</div>
-                <div className="text-[#FFE5B4]/70 text-sm">{stat.label}</div>
-              </motion.div>
-            ))}
+                Become a Dealer
+              </motion.button>
+            </div>
+
+            {/* Stats Preview */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 max-w-2xl mx-auto">
+              {stats.map((stat, index) => (
+                <motion.div
+                  key={stat.label}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.5 + index * 0.1 }}
+                  className="text-center bg-white/10 backdrop-blur-sm rounded-lg p-3 sm:p-4 border border-white/20"
+                >
+                  <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-white">
+                    {stat.number}
+                  </div>
+                  <div className="text-xs sm:text-sm text-gray-200">
+                    {stat.label}
+                  </div>
+                </motion.div>
+              ))}
+            </div>
           </motion.div>
         </div>
 
-        {/* Fixed Scroll Indicator - PERFECTLY CENTERED */}
-        <div className="absolute bottom-8 left-0 right-0 flex justify-center">
+        {/* Scroll Indicator */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.5 }}
+          className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
+        >
           <motion.div
             animate={{ y: [0, 10, 0] }}
-            transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
-            className="cursor-pointer flex flex-col items-center"
-            onClick={() => scrollToSection('services')}
+            transition={{ duration: 2, repeat: Infinity }}
+            className="w-6 h-10 border-2 border-white rounded-full flex justify-center"
           >
-            {/* Mouse outline */}
-            <div className="w-8 h-12 border-2 border-[#FFA500] rounded-full flex justify-center items-start p-1 group hover:border-white transition-colors">
-              <motion.div
-                animate={{ y: [0, 12, 4] }}
-                transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
-                className="w-1 h-3 bg-[#FFA500] rounded-full group-hover:bg-white transition-colors"
-              />
-            </div>
-            
-            {/* Text label */}
             <motion.div
-              animate={{ opacity: [0.6, 1, 0.6], y: [0, 5, 0] }}
-              transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
-              className="flex flex-col items-center mt-2"
+              animate={{ y: [0, 12, 0] }}
+              transition={{ duration: 2, repeat: Infinity }}
+              className="w-1 h-3 bg-white rounded-full mt-2"
+            />
+          </motion.div>
+        </motion.div>
+      </section>
+
+      {/* Problem Solution Section */}
+      <section className="py-12 sm:py-16 lg:py-24 bg-gray-50 dark:bg-gray-900">
+        <div className="container mx-auto px-4 sm:px-6">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
             >
-              <p className="text-[#FFA500] text-xs group-hover:text-white transition-colors text-center">
-                Scroll to explore
-              </p>
-              <ChevronDown className="w-4 h-4 text-[#FFA500] mt-1" />
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-4 sm:mb-6">
+                Tired of Informal Car Trading?
+              </h2>
+              <div className="space-y-4 text-gray-600 dark:text-gray-300">
+                <p className="text-base sm:text-lg">
+                  Facebook Marketplace and WhatsApp groups are full of risks:
+                </p>
+                <ul className="space-y-3">
+                  {[
+                    'Scams and misrepresentation',
+                    'No vehicle verification',
+                    'Unreliable buyers/sellers',
+                    'No sales tracking',
+                    'Poor customer experience'
+                  ].map((problem, index) => (
+                    <li key={index} className="flex items-center gap-3">
+                      <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                      <span>{problem}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </motion.div>
-          </motion.div>
-        </div>
-      </section>
 
-      {/* Services Section */}
-      <section id="services" className="py-20 px-6 bg-white/5">
-        <div className="max-w-6xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">Our Services</h2>
-            <p className="text-xl text-[#FFE5B4] max-w-2xl mx-auto">
-              Comprehensive digital solutions tailored to your business needs
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
-              { icon: Globe, title: 'Web Development', desc: 'Professional websites and web applications' },
-              { icon: Code, title: 'Software Development', desc: 'Custom software solutions' },
-              { icon: Palette, title: 'Website Design', desc: 'Beautiful and responsive designs' },
-              { icon: Sparkles, title: 'Graphics Design', desc: 'Logos, flyers, posters, calendars' },
-              { icon: Cpu, title: 'OS Installations', desc: 'Windows 10, 11 professional installation' },
-              { icon: HardDrive, title: 'Data Recovery', desc: 'HDD, SSD, USB data retrieval' },
-              { icon: Zap, title: 'Software Troubleshooting', desc: 'Expert problem solving' },
-              { icon: Cpu, title: 'Hardware Troubleshooting', desc: 'Hardware diagnostics and repair' },
-              { icon: Database, title: 'Windows & Office Activation', desc: 'Professional activation services' }
-            ].map((service, index) => (
-              <motion.div
-                key={service.title}
-                initial={{ opacity: 0, y: 50 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                viewport={{ once: true }}
-                className="glass p-8 rounded-2xl text-center group hover:transform hover:scale-105 transition-all duration-300"
-              >
-                <div className="w-16 h-16 mx-auto mb-6 bg-[#FFA500] rounded-xl flex items-center justify-center group-hover:bg-white transition-colors">
-                  <service.icon size={32} className="text-[#000066] group-hover:text-[#FFA500] transition-colors" />
-                </div>
-                <h3 className="text-xl font-semibold text-white mb-4">{service.title}</h3>
-                <p className="text-[#FFE5B4]/80">{service.desc}</p>
-              </motion.div>
-            ))}
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              viewport={{ once: true }}
+              className="bg-white dark:bg-gray-800 rounded-2xl p-6 sm:p-8 shadow-lg border border-gray-200 dark:border-gray-700"
+            >
+              <h3 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-4">
+                CarLinq Provides:
+              </h3>
+              <div className="space-y-4">
+                {[
+                  'Verified vehicle listings',
+                  'Professional dealer network',
+                  'Secure communication platform',
+                  'Sales analytics dashboard',
+                  'Transaction verification system'
+                ].map((solution, index) => (
+                  <div key={index} className="flex items-center gap-3">
+                    <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
+                    <span className="text-gray-700 dark:text-gray-300">{solution}</span>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
           </div>
         </div>
       </section>
 
-      {/* About Us Section */}
-      <section id="about" className="py-20 px-6 bg-white/10">
-        <div className="max-w-6xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">Why Choose Us?</h2>
-            <p className="text-xl text-[#FFE5B4] max-w-2xl mx-auto">
-              Experience the difference with our professional IT services
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              { 
-                icon: Award, 
-                title: 'Professional & Reliable', 
-                desc: 'Expert service you can trust for all your IT needs',
-                color: 'from-blue-500 to-cyan-500'
-              },
-              { 
-                icon: DollarSign, 
-                title: 'Affordable Prices', 
-                desc: 'Quality service at competitive prices that fit your budget',
-                color: 'from-green-500 to-emerald-500'
-              },
-              { 
-                icon: Clock, 
-                title: 'Flexible Support', 
-                desc: 'On-site and remote support options for your convenience',
-                color: 'from-purple-500 to-pink-500'
-              }
-            ].map((item, index) => (
-              <motion.div
-                key={item.title}
-                initial={{ opacity: 0, y: 50 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.2 }}
-                viewport={{ once: true }}
-                className="text-center group"
-              >
-                <div className={`w-20 h-20 mx-auto mb-6 bg-gradient-to-r ${item.color} rounded-2xl flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform`}>
-                  <item.icon size={32} />
-                </div>
-                <h3 className="text-2xl font-semibold text-white mb-4">{item.title}</h3>
-                <p className="text-[#FFE5B4]/80 leading-relaxed">{item.desc}</p>
-              </motion.div>
-            ))}
-          </div>
-
-          {/* Call to Action */}
+      {/* Features Section */}
+      <section className="py-12 sm:py-16 lg:py-24 bg-white dark:bg-gray-800">
+        <div className="container mx-auto px-4 sm:px-6">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
+            transition={{ duration: 0.6 }}
             viewport={{ once: true }}
-            className="text-center mt-16 glass p-8 rounded-2xl"
+            className="text-center mb-12 sm:mb-16"
           >
-            <h3 className="text-2xl md:text-3xl font-bold text-white mb-4">
-              Call Us Every Time You Need Help!
-            </h3>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-6">
-              <a
-                href="tel:+263782379164"
-                className="flex items-center gap-3 bg-[#FFA500] text-[#000066] px-6 py-3 rounded-lg font-semibold hover:bg-orange-400 transition-colors"
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-3 sm:mb-4">
+              Why Choose CarLinq?
+            </h2>
+            <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+              The professional SaaS platform built for African car trading
+            </p>
+          </motion.div>
+
+          <div className="grid md:grid-cols-3 gap-6 sm:gap-8 lg:gap-12">
+            {features.map((feature, index) => (
+              <motion.div
+                key={feature.title}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.2 }}
+                viewport={{ once: true }}
+                className="bg-gray-50 dark:bg-gray-900 rounded-2xl p-6 sm:p-8 text-center hover:shadow-xl transition-all duration-300 border border-gray-200 dark:border-gray-700 group"
               >
-                <Phone size={20} />
-                <span className="text-lg">+263 782 379 164</span>
-              </a>
+                <div className={`w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-br ${feature.color} rounded-2xl flex items-center justify-center mx-auto mb-4 sm:mb-6 group-hover:scale-110 transition-transform duration-300`}>
+                  <feature.icon className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
+                </div>
+                <h3 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white mb-3 sm:mb-4">
+                  {feature.title}
+                </h3>
+                <p className="text-gray-600 dark:text-gray-300 leading-relaxed text-sm sm:text-base">
+                  {feature.description}
+                </p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+{/* How It Works Section */}
+<section
+  className="py-12 sm:py-16 lg:py-24 relative overflow-hidden bg-gray-50 dark:bg-gray-900"
+  style={{
+    backgroundImage: "url('/background/background.jpg')",
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    backgroundRepeat: 'no-repeat',
+  }}
+>
+
+  {/* Dark Overlay for readability */}
+  <div className="absolute inset-0 bg-black/30 dark:bg-black/40 pointer-events-none"></div>
+
+  {/* Main Content */}
+  <div className="relative container mx-auto px-4 sm:px-6 z-10">
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6 }}
+      viewport={{ once: true }}
+      className="text-center mb-12 sm:mb-16"
+    >
+      <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-3 sm:mb-4">
+        How It Works
+      </h2>
+      <p className="text-lg sm:text-xl text-gray-200 max-w-2xl mx-auto">
+        Simple, secure, and efficient car trading in three easy steps
+      </p>
+    </motion.div>
+
+    <div className="grid md:grid-cols-3 gap-6 sm:gap-8 max-w-4xl mx-auto relative z-10">
+      {[
+        { step: '01', title: 'List or Browse', description: 'Dealers list verified vehicles. Buyers browse with confidence.' },
+        { step: '02', title: 'Connect Securely', description: 'Use our platform to communicate and verify details safely.' },
+        { step: '03', title: 'Complete Transaction', description: 'Finalize the deal and get incentives for verified purchases.' }
+      ].map((step, index) => (
+        <motion.div
+          key={step.step}
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: index * 0.2 }}
+          viewport={{ once: true }}
+          className="text-center relative bg-white dark:bg-gray-800 rounded-2xl p-6 sm:p-8"
+        >
+          <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6 text-white text-xl sm:text-2xl font-bold shadow-lg">
+            {step.step}
+          </div>
+          <h3 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white mb-3 sm:mb-4">
+            {step.title}
+          </h3>
+          <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base">
+            {step.description}
+          </p>
+
+          {/* Connector line */}
+          {index < 2 && (
+            <div className="hidden md:block absolute top-1/2 left-3/4 w-1/2 h-0.5 bg-gradient-to-r from-primary-500 to-secondary-500 transform -translate-y-1/2 -z-10"></div>
+          )}
+        </motion.div>
+      ))}
+    </div>
+  </div>
+</section>
+
+
+      {/* Testimonials Section */}
+      <section className="py-12 sm:py-16 lg:py-24 bg-white dark:bg-gray-800">
+        <div className="container mx-auto px-4 sm:px-6">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+            className="text-center mb-12 sm:mb-16"
+          >
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-3 sm:mb-4">
+              What Our Users Say
+            </h2>
+            <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+              Join thousands of satisfied dealers and buyers across Africa
+            </p>
+          </motion.div>
+
+          <div className="grid md:grid-cols-3 gap-6 sm:gap-8">
+            {testimonials.map((testimonial, index) => (
+              <motion.div
+                key={testimonial.name}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.2 }}
+                viewport={{ once: true }}
+                className="bg-gray-50 dark:bg-gray-900 rounded-2xl p-6 sm:p-8 hover:shadow-xl transition-all duration-300 border border-gray-200 dark:border-gray-700"
+              >
+                <div className="flex items-center gap-1 mb-4">
+                  {[...Array(testimonial.rating)].map((_, i) => (
+                    <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                  ))}
+                </div>
+                <p className="text-gray-600 dark:text-gray-300 mb-6 italic text-sm sm:text-base">
+                  {testimonial.content}
+                </p>
+                <div>
+                  <div className="font-semibold text-gray-900 dark:text-white">
+                    {testimonial.name}
+                  </div>
+                  <div className="text-sm text-primary-600 dark:text-primary-400">
+                    {testimonial.role}
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-12 sm:py-16 lg:py-24 bg-gradient-to-r from-primary-600 to-secondary-600">
+        <div className="container mx-auto px-4 sm:px-6 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-4 sm:mb-6">
+              Ready to Transform Your Car Trading?
+            </h2>
+            <p className="text-lg sm:text-xl text-primary-100 mb-6 sm:mb-8 max-w-2xl mx-auto">
+              Join CarLinq today and experience professional car trading with trust and transparency
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="w-full sm:w-auto bg-white text-primary-600 hover:bg-gray-100 font-semibold text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+              >
+                Get Started Free
+              </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="w-full sm:w-auto border-2 border-white text-white hover:bg-white hover:text-primary-600 font-semibold text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 rounded-xl transition-all duration-300"
+              >
+                Schedule a Demo
+              </motion.button>
             </div>
           </motion.div>
         </div>
       </section>
-
-      {/* Portfolio Section */}
-      <PortfolioSection />
-
-      {/* Contact Section */}
-      <section id="contact" className="py-20 px-6 bg-white/5">
-        <div className="max-w-6xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">Get In Touch</h2>
-            <p className="text-xl text-[#FFE5B4] max-w-2xl mx-auto">
-              Ready to simplify your IT? Contact us today!
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-            {/* Contact Information */}
-            <motion.div
-              initial={{ opacity: 0, x: -50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8 }}
-              viewport={{ once: true }}
-              className="space-y-6"
-            >
-              <h3 className="text-2xl font-semibold text-[#FFA500] mb-6">Contact Information</h3>
-              
-              <div className="space-y-4">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-[#FFA500] rounded-lg flex items-center justify-center">
-                    <Phone size={24} className="text-[#000066]" />
-                  </div>
-                  <div>
-                    <p className="text-white font-semibold">Phone</p>
-                    <a href="tel:+263782379164" className="text-[#FFE5B4] hover:text-white transition-colors">
-                      +263 782 379 164
-                    </a>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-[#FFA500] rounded-lg flex items-center justify-center">
-                    <Mail size={24} className="text-[#000066]" />
-                  </div>
-                  <div>
-                    <p className="text-white font-semibold">Email</p>
-                    <a href="mailto:mkwelait@gmail.com" className="text-[#FFE5B4] hover:text-white transition-colors">
-                      mkwelait@gmail.com
-                    </a>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-[#FFA500] rounded-lg flex items-center justify-center">
-                    <MapPin size={24} className="text-[#000066]" />
-                  </div>
-                  <div>
-                    <p className="text-white font-semibold">Location</p>
-                    <p className="text-[#FFE5B4]">Harare, Zimbabwe</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Service Areas */}
-              <div className="mt-8">
-                <h4 className="text-lg font-semibold text-[#FFA500] mb-4">Service Areas</h4>
-                <div className="grid grid-cols-2 gap-2">
-                  {['On-Site Support', 'Remote Support', 'Web Development', 'Data Recovery', 'Graphics Design', 'Software Solutions'].map((service) => (
-                    <div key={service} className="flex items-center gap-2">
-                      <Check size={16} className="text-[#FFA500]" />
-                      <span className="text-[#FFE5B4] text-sm">{service}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Contact Form */}
-<ContactForm />
-
-          </div>
-        </div>
-      </section>
-            {/* Floating WhatsApp Icon - Matches Back to Top Style */}
-      <motion.a
-        href="https://wa.me/263710312818?text=Hi%20MkwelaTech%2C" // Change to your actual WhatsApp link
-        target="_blank"
-        rel="noopener noreferrer"
-        className="fixed bottom-6 left-6 z-50 w-12 h-12 bg-green-500 text-white rounded-full shadow-lg hover:bg-green-400 transition-colors flex items-center justify-center"
-        animate={{
-          y: [0, -8, 0],
-        }}
-        transition={{
-          repeat: Infinity,
-          duration: 1.6,
-          ease: "easeInOut",
-        }}
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.9 }}
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="white"
-          viewBox="0 0 24 24"
-          stroke="none"
-          className="w-6 h-6"
-        >
-          <path d="M12.04 2c-5.5 0-9.97 4.47-9.97 9.97 0 1.76.46 3.47 1.35 4.99L2 22l5.26-1.38a9.93 9.93 0 0 0 4.78 1.22h.01c5.5 0 9.97-4.47 9.97-9.97S17.54 2 12.04 2zm0 18.24a8.24 8.24 0 0 1-4.2-1.16l-.3-.18-3.12.82.83-3.04-.2-.31a8.24 8.24 0 1 1 6.99 3.87zM17 14.5c-.28-.14-1.66-.82-1.92-.91-.26-.1-.45-.14-.64.14-.19.27-.74.91-.91 1.1-.17.18-.33.2-.61.07-.28-.14-1.18-.43-2.25-1.37-.83-.74-1.39-1.66-1.55-1.94-.16-.27-.02-.42.12-.55.12-.12.28-.33.41-.49.14-.16.18-.27.27-.46.09-.18.05-.34-.02-.48-.07-.14-.64-1.54-.88-2.1-.23-.55-.47-.47-.64-.48l-.55-.01c-.18 0-.48.07-.74.34s-.97.95-.97 2.31.99 2.67 1.13 2.85c.14.18 1.95 2.98 4.72 4.17.66.29 1.18.47 1.59.6.67.21 1.28.18 1.77.11.54-.08 1.66-.68 1.89-1.33.23-.65.23-1.21.16-1.33-.07-.12-.25-.19-.52-.33z" />
-        </svg>
-      </motion.a>
-
     </div>
   );
 }

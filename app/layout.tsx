@@ -1,21 +1,34 @@
+import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
 import './globals.css';
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
-import type { ReactNode } from 'react';
+import { ThemeProvider } from './providers/theme-provider';
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 
-export const metadata = {
-  title: 'MkwelaTech - Digital Solutions, Zero Complexity',
-  description:
-    'From Web & Software Development to Data Recovery & Graphics — we provide innovative, reliable, and affordable digital solutions.',
+const inter = Inter({ subsets: ['latin'] });
+
+export const metadata: Metadata = {
+  title: 'CarLinq - Professional Car Trading Platform',
+  description: 'Bridging the gap between car dealers and buyers with verified listings and secure transactions',
 };
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <html lang="en">
-      <body className="antialiased text-white bg-gradient-to-b from-[#000066] via-[#000033] to-black min-h-screen flex flex-col">
-        <Navbar />
-        <main className="flex-1 w-full">{children}</main>
-        <Footer />
+    <html lang="en" suppressHydrationWarning>
+      <body className={inter.className}>
+        <ThemeProvider>
+          <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors flex flex-col">
+            <Header />
+            <main className="flex-1">
+              {children}
+            </main>
+            <Footer />
+          </div>
+        </ThemeProvider>
       </body>
     </html>
   );

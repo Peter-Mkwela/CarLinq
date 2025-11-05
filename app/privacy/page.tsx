@@ -3,9 +3,9 @@
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { ArrowLeft, Cookie, Shield, FileText, UserCheck } from 'lucide-react';
+import { ArrowLeft, Shield, FileText, Cookie, UserCheck } from 'lucide-react';
 
-export default function CookiePolicy() {
+export default function PrivacyPolicy() {
   return (
     <div className="min-h-screen relative overflow-hidden">
       {/* Background Image with Overlay */}
@@ -41,7 +41,7 @@ export default function CookiePolicy() {
               <div className="w-12 h-12 bg-gradient-to-br from-[#FFA500] to-[#FF8C00] rounded-lg flex items-center justify-center shadow-lg">
                 <Cookie className="w-6 h-6 text-white" />
               </div>
-              <h1 className="text-4xl font-bold text-white">Cookie Policy</h1>
+              <h1 className="text-4xl font-bold text-white">Privacy Policy</h1>
             </div>
             <p className="text-white/80 text-lg max-w-2xl mx-auto">
               Last updated:{' '}
@@ -51,7 +51,7 @@ export default function CookiePolicy() {
             </p>
           </motion.div>
 
-          {/* Cookie Content */}
+          {/* Privacy Content */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -66,84 +66,98 @@ export default function CookiePolicy() {
                   1. Introduction
                 </h2>
                 <p className="text-white/90 leading-relaxed">
-                  This Cookie Policy explains how CarLinq uses cookies and similar technologies to recognize you when you visit our website and platform. It explains what these technologies are and why we use them.
+                  At CarLinq, your privacy is important. This Privacy Policy explains how we collect, use, and protect your personal information when you use our platform.
                 </p>
               </section>
 
-              {/* What are Cookies */}
+              {/* Information We Collect */}
               <section className="mb-8">
                 <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2">
                   <FileText className="text-[#FFA500]" />
-                  2. What Are Cookies
-                </h2>
-                <p className="text-white/90 leading-relaxed">
-                  Cookies are small data files placed on your device to help the website function properly, enhance your experience, and analyze usage.
-                </p>
-              </section>
-
-              {/* Types of Cookies */}
-              <section className="mb-8">
-                <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2">
-                  <Cookie className="text-[#FFA500]" />
-                  3. Types of Cookies We Use
+                  2. Information We Collect
                 </h2>
                 <ul className="text-white/90 space-y-2 list-disc list-inside">
-                  <li>
-                    <strong>Essential Cookies:</strong> Necessary for the website to function properly.
-                  </li>
-                  <li>
-                    <strong>Performance Cookies:</strong> Help us understand user interactions to improve performance.
-                  </li>
-                  <li>
-                    <strong>Functional Cookies:</strong> Remember your preferences and settings.
-                  </li>
-                  <li>
-                    <strong>Targeting Cookies:</strong> Used for marketing and tracking interests.
-                  </li>
+                  <li>Personal details such as name, email, and phone number</li>
+                  <li>Account information and login credentials</li>
+                  <li>Usage data and interactions on our platform</li>
+                  <li>Information provided during transactions with dealers</li>
                 </ul>
               </section>
 
-              {/* How We Use Cookies */}
+              {/* How We Use Information */}
               <section className="mb-8">
                 <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2">
                   <UserCheck className="text-[#FFA500]" />
-                  4. How We Use Cookies
+                  3. How We Use Information
                 </h2>
                 <p className="text-white/90 leading-relaxed">
-                  Cookies help us improve website functionality, personalize content, provide social media features, and analyze traffic.
+                  We use the collected information to provide, maintain, and improve our services, communicate with users, process transactions, and ensure platform security.
                 </p>
               </section>
 
-              {/* Managing Cookies */}
+              {/* Sharing of Information */}
               <section className="mb-8">
                 <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2">
                   <Shield className="text-[#FFA500]" />
-                  5. Managing Cookies
+                  4. Sharing of Information
                 </h2>
                 <p className="text-white/90 leading-relaxed">
-                  You can set your browser to refuse cookies or alert you when cookies are being sent. However, some features of the platform may not function properly if cookies are disabled.
+                  CarLinq does not sell your personal information. We may share information with trusted partners, legal authorities, or service providers necessary for platform operations.
                 </p>
               </section>
 
-              {/* Changes to Cookie Policy */}
+              {/* Security of Information */}
               <section className="mb-8">
                 <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2">
                   <FileText className="text-[#FFA500]" />
-                  6. Changes to This Cookie Policy
+                  5. Security of Information
                 </h2>
                 <p className="text-white/90 leading-relaxed">
-                  We may update this Cookie Policy from time to time. Continued use of CarLinq constitutes acceptance of any changes.
+                  We implement appropriate security measures to protect your data from unauthorized access, disclosure, or alteration.
+                </p>
+              </section>
+
+              {/* Your Rights */}
+              <section className="mb-8">
+                <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2">
+                  <UserCheck className="text-[#FFA500]" />
+                  6. Your Rights
+                </h2>
+                <p className="text-white/90 leading-relaxed">
+                  You have the right to access, correct, or delete your personal information, and to withdraw consent for processing where applicable.
+                </p>
+              </section>
+
+              {/* Cookies */}
+              <section className="mb-8">
+                <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2">
+                  <Cookie className="text-[#FFA500]" />
+                  7. Cookies
+                </h2>
+                <p className="text-white/90 leading-relaxed">
+                  We use cookies to improve user experience, analyze usage, and personalize content. You can manage cookie preferences via your browser settings.
+                </p>
+              </section>
+
+              {/* Changes to Privacy Policy */}
+              <section className="mb-8">
+                <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2">
+                  <Shield className="text-[#FFA500]" />
+                  8. Changes to Privacy Policy
+                </h2>
+                <p className="text-white/90 leading-relaxed">
+                  We may update this Privacy Policy periodically. Continued use of the platform constitutes acceptance of any changes.
                 </p>
               </section>
 
               {/* Contact Us */}
               <section className="mb-8">
                 <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2">
-                  <Cookie className="text-[#FFA500]" />
-                  7. Contact Us
+                  <FileText className="text-[#FFA500]" />
+                  9. Contact Us
                 </h2>
                 <div className="text-white/90 space-y-2">
-                  <p>If you have questions about our use of cookies, contact us:</p>
+                  <p>If you have any questions regarding this Privacy Policy, contact us:</p>
                   <p>Email: legal@carlinq.com</p>
                   <p>Phone: +263 782 379 164</p>
                   <p>Address: Harare, Zimbabwe</p>
@@ -153,7 +167,7 @@ export default function CookiePolicy() {
               {/* Acceptance Box */}
               <div className="mt-12 p-6 bg-white/5 rounded-lg border border-white/10">
                 <p className="text-white text-center font-semibold">
-                  By using CarLinq, you acknowledge that you have read, understood, and agree to this Cookie Policy.
+                  By using CarLinq, you acknowledge that you have read, understood, and agree to this Privacy Policy.
                 </p>
               </div>
             </div>
