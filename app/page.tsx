@@ -3,6 +3,8 @@
 import { motion } from 'framer-motion';
 import { Car, Shield, TrendingUp, Users, CheckCircle, Star } from 'lucide-react';
 import { useTheme } from '@/app/providers/theme-provider';
+import Link from 'next/link';
+
 
 export default function Home() {
   const { theme } = useTheme();
@@ -140,21 +142,26 @@ export default function Home() {
             </p>
             
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center mb-8 sm:mb-12">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="w-full sm:w-auto bg-white text-primary-600 hover:bg-gray-100 font-semibold text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-white"
-              >
-                Browse Cars
-              </motion.button>
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="w-full sm:w-auto bg-transparent text-white hover:bg-white/10 font-semibold text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-white"
-              >
-                Become a Dealer
-              </motion.button>
-            </div>
+  <Link href="/cars" className="w-full sm:w-auto">
+    <motion.button
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.95 }}
+      className="w-full sm:w-auto bg-white text-primary-600 hover:bg-gray-100 font-semibold text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-white"
+    >
+      Browse Cars
+    </motion.button>
+  </Link>
+
+  <Link href="/dealers" className="w-full sm:w-auto">
+    <motion.button
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.95 }}
+      className="w-full sm:w-auto bg-transparent text-white hover:bg-white/10 font-semibold text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-white"
+    >
+      Become a Dealer
+    </motion.button>
+  </Link>
+</div>
 
             {/* Stats Preview */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 max-w-2xl mx-auto">
