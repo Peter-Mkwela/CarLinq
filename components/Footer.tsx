@@ -1,10 +1,11 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 
 import { useTheme } from '@/app/providers/theme-provider';
 import {
   Mail,
   Phone,
-  MapPin,
+  Globe,
   Facebook,
   Twitter,
   Instagram,
@@ -12,7 +13,8 @@ import {
   Shield,
   FileText,
   Cookie,
-  Car
+  Car,
+  Sparkles
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
@@ -22,34 +24,76 @@ export default function Footer() {
   const { theme } = useTheme();
 
   const socialLinks = [
-    { name: 'Facebook', icon: <Facebook size={18} className="text-blue-400" />, url: 'https://facebook.com' },
-    { name: 'Twitter', icon: <Twitter size={18} className="text-sky-400" />, url: 'https://twitter.com' },
-    { name: 'Instagram', icon: <Instagram size={18} className="text-pink-400" />, url: 'https://instagram.com' },
-    { name: 'LinkedIn', icon: <Linkedin size={18} className="text-blue-300" />, url: 'https://linkedin.com' },
+    { 
+      name: 'Facebook', 
+      icon: <Facebook size={20} className="text-white" />, 
+      url: 'https://facebook.com',
+      gradient: "from-blue-600 to-blue-800",
+      hover: "hover:from-blue-500 hover:to-blue-700"
+    },
+    { 
+      name: 'Twitter', 
+      icon: <Twitter size={20} className="text-white" />, 
+      url: 'https://twitter.com',
+      gradient: "from-sky-500 to-blue-600",
+      hover: "hover:from-sky-400 hover:to-blue-500"
+    },
+    { 
+      name: 'Instagram', 
+      icon: <Instagram size={20} className="text-white" />, 
+      url: 'https://instagram.com',
+      gradient: "from-pink-600 to-purple-700",
+      hover: "hover:from-pink-500 hover:to-purple-600"
+    },
+    { 
+      name: 'LinkedIn', 
+      icon: <Linkedin size={20} className="text-white" />, 
+      url: 'https://linkedin.com',
+      gradient: "from-blue-700 to-blue-900",
+      hover: "hover:from-blue-600 hover:to-blue-800"
+    },
   ];
 
   const contactInfo = [
     {
-      icon: <Phone size={16} className="text-[#FFA500]" />,
-      content: <a href="tel:+263782379164" className="hover:text-white transition-colors text-sm">+263 782 379 164</a>,
-      label: 'Phone'
+      icon: <Phone size={18} className="text-white" />,
+      content: <a href="tel:+263782379164" className="hover:text-orange-300 transition-colors text-sm font-medium">+263 782 379 164</a>,
+      label: 'Phone',
+      gradient: "from-green-500 to-emerald-600"
     },
     {
-      icon: <MapPin size={16} className="text-[#FFA500]" />,
-      content: <span className="text-sm">Across Africa</span>,
-      label: 'Location'
+      icon: <Globe size={18} className="text-white" />,
+      content: <span className="text-sm font-medium">Across Africa</span>,
+      label: 'Location',
+      gradient: "from-purple-500 to-indigo-600"
     },
     {
-      icon: <Mail size={16} className="text-[#FFA500]" />,
-      content: <a href="mailto:support@carlinq.com" className="hover:text-white transition-colors text-sm">support@carlinq.com</a>,
-      label: 'Email'
+      icon: <Mail size={18} className="text-white" />,
+      content: <a href="mailto:support@carlinq.com" className="hover:text-orange-300 transition-colors text-sm font-medium">support@carlinq.com</a>,
+      label: 'Email',
+      gradient: "from-orange-500 to-red-500"
     }
   ];
 
   const legalLinks = [
-    { name: 'Terms of Service', icon: <FileText size={14} />, url: '/terms' },
-    { name: 'Privacy Policy', icon: <Shield size={14} />, url: '/privacy' },
-    { name: 'Cookie Policy', icon: <Cookie size={14} />, url: '/cookie-policy' },
+    { 
+      name: 'Terms of Service', 
+      icon: <FileText size={16} className="text-white" />, 
+      url: '/terms',
+      gradient: "from-gray-600 to-gray-700"
+    },
+    { 
+      name: 'Privacy Policy', 
+      icon: <Shield size={16} className="text-white" />, 
+      url: '/privacy',
+      gradient: "from-blue-600 to-indigo-700"
+    },
+    { 
+      name: 'Cookie Policy', 
+      icon: <Cookie size={16} className="text-white" />, 
+      url: '/cookie-policy',
+      gradient: "from-amber-600 to-orange-600"
+    },
   ];
 
   return (
@@ -64,87 +108,94 @@ export default function Footer() {
           backgroundRepeat: 'no-repeat',
           zIndex: 0,
         }}
-      ></div>
+      />
 
-      {/* Dark Blue Overlay */}
-      <div className="absolute inset-0 bg-[#000033]/85 z-[1]" />
+      {/* Gradient Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-br from-[#000033]/90 via-[#1a1a4a]/95 to-[#000033]/90 z-[1]" />
+      
+      {/* Pattern Overlay */}
+      <div 
+        className="absolute inset-0 opacity-10 z-[1]"
+        style={{
+          backgroundImage: `radial-gradient(circle at 25% 25%, #FFA500 2px, transparent 2px),
+                           radial-gradient(circle at 75% 75%, #0277BD 2px, transparent 2px)`,
+          backgroundSize: '50px 50px',
+        }}
+      />
 
-      {/* Main Footer Content */}
-      <div className="relative z-10 max-w-7xl mx-auto px-6 pt-10 pb-6">
-        {/* Top Row: Logo + Social Links + Contact Info */}
+      {/* Main Content */}
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-8">
+        {/* Top Row */}
         <motion.div
-          initial={{ opacity: 0, y: 10 }}
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.8 }}
           viewport={{ once: true }}
-          className="flex flex-col lg:flex-row items-center justify-between gap-6 mb-6"
+          className="flex flex-col lg:flex-row items-center justify-between gap-6 lg:gap-8 mb-8"
         >
-          {/* Logo and Company Name */}
+          {/* Logo */}
           <Link href="/" className="flex items-center gap-3 group flex-shrink-0">
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              transition={{ type: 'spring', stiffness: 300 }}
-              className="w-10 h-10 bg-gradient-to-br from-[#FFA500] to-yellow-600 rounded-lg flex items-center justify-center shadow-md"
-            >
-              <Car className="w-6 h-6 text-white" />
-            </motion.div>
-            <div className="text-left">
-              <motion.p
-  className="text-lg font-semibold"
-  whileHover={{ x: 3 }}
-  transition={{ type: 'spring', stiffness: 400, damping: 10 }}
->
-  {/* Car - Dark Bold Orange with black vertical line */}
-  {/* Car - skewed forward, using alpha a */}
-<span
-  className="inline-block italic transform skew-x-[10deg]"
-  style={{
-    color: theme === 'light' ? '#FF8C00' : '#CC6600', // bold dark orange
-    textShadow: `
-      0 2px 0 #000,   /* black vertical shadow slightly downward */
-      1px 1px 0 rgba(0,0,0,0.3),
-      2px 2px 0 rgba(0,0,0,0.2)
-    `,
-  }}
->
-  Cɑr
-</span>
+  <motion.div
+    whileHover={{ scale: 1.1, rotate: 5 }}
+    whileTap={{ scale: 0.95 }}
+    className="relative"
+  >
+    <div className="absolute inset-0 bg-gradient-to-br from-orange-400 to-orange-600 rounded-xl blur-md opacity-50 group-hover:opacity-70 transition-opacity" />
+    <div className="relative w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-700 rounded-xl flex items-center justify-center shadow-lg border border-orange-400/30 overflow-visible">
+      <Car className="w-6 h-6 text-white" />
+      <motion.div
+        animate={{ rotate: 360 }}
+        transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+        className="absolute -top-1 -right-1"
+      >
+        <Sparkles size={12} className="text-yellow-300" />
+      </motion.div>
+    </div>
+  </motion.div>
 
-{/* Linq - Dark Bold Blue with black vertical shadow, reduced spacing */}
-<span
-  className="inline-block italic transform skew-x-[10deg]"
-  style={{
-    color: theme === 'light' ? '#0277BD' : '#01579B', // dark blue
-    textShadow: `
-      0 2px 0 #000,  
-      1px 1px 0 rgba(0,0,0,0.3),
-      2px 2px 0 rgba(0,0,0,0.2)
-    `,
-    marginLeft: '0.1rem', // tighter spacing
-  }}
->
-  Linq
-</span>
+  <div className="text-left overflow-visible">
+    <motion.p
+      className="text-xl font-bold tracking-tight overflow-visible"
+      whileHover={{ x: 3 }}
+    >
+      <span className="inline-flex italic">
+        <span
+          style={{
+            background: 'linear-gradient(135deg, #FF8C00 0%, #FFA500 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            textShadow: `0 2px 4px rgba(0,0,0,0.3), 0 4px 8px rgba(0,0,0,0.2)`,
+          }}
+        >
+          Cɑr
+        </span>
+        <span
+          style={{
+            background: 'linear-gradient(135deg, #0277BD 0%, #029BE5 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            textShadow: `0 2px 4px rgba(0,0,0,0.3), 0 4px 8px rgba(0,0,0,0.2)`,
+          }}
+        >
+          Linq
+        </span>
+      </span>
+    </motion.p>
 
-</motion.p>
+    <motion.p className="text-sm text-orange-200/80 -mt-1 font-light tracking-wide">
+      Linking You to the Perfect Ride
+    </motion.p>
+  </div>
+</Link>
 
-              <motion.p
-                className="text-xs text-[#FFA500]/80 -mt-0.5"
-                whileHover={{ x: 2 }}
-                transition={{ type: 'spring', stiffness: 500, damping: 10 }}
-              >
-                Linking You to the Perfect Ride
-              </motion.p>
-            </div>
-          </Link>
 
           {/* Social Links */}
           <motion.div
-            initial={{ opacity: 0, y: 10 }}
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
+            transition={{ duration: 0.8, delay: 0.1 }}
             viewport={{ once: true }}
-            className="flex items-center gap-3"
+            className="flex items-center gap-2 sm:gap-3"
           >
             {socialLinks.map((social) => (
               <motion.a
@@ -152,9 +203,9 @@ export default function Footer() {
                 href={social.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[#FFE5B4]/70 hover:text-white transition-all bg-white/5 p-2 rounded-lg backdrop-blur-sm shadow-sm"
+                className={`bg-gradient-to-br ${social.gradient} ${social.hover} p-2.5 sm:p-3 rounded-xl shadow-lg backdrop-blur-sm border border-white/10`}
                 aria-label={social.name}
-                whileHover={{ scale: 1.15, y: -2 }}
+                whileHover={{ scale: 1.15, y: -3 }}
                 whileTap={{ scale: 0.95 }}
               >
                 {social.icon}
@@ -164,27 +215,26 @@ export default function Footer() {
 
           {/* Contact Info */}
           <motion.div
-            initial={{ opacity: 0, y: 10 }}
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
             viewport={{ once: true }}
-            className="flex flex-col sm:flex-row items-center gap-4 text-sm"
+            className="flex flex-col sm:flex-row items-center gap-4 sm:gap-5 text-sm"
           >
             {contactInfo.map((item, index) => (
               <motion.div
                 key={item.label}
-                className="flex items-center gap-2 text-[#FFE5B4]/80 group"
-                whileHover={{ scale: 1.05 }}
-                transition={{ delay: index * 0.1 }}
+                className="flex items-center gap-2.5 sm:gap-3 group"
+                whileHover={{ scale: 1.05, y: -2 }}
               >
-                <div className="bg-white/10 p-1.5 rounded-md shadow-sm group-hover:bg-white/20 transition-colors">
+                <div className={`bg-gradient-to-br ${item.gradient} p-2 rounded-lg shadow-lg`}>
                   {item.icon}
                 </div>
-                <div className="group-hover:text-white transition-colors whitespace-nowrap">
+                <div className="text-white/90 group-hover:text-white whitespace-nowrap font-medium">
                   {item.content}
                 </div>
                 {index < contactInfo.length - 1 && (
-                  <div className="hidden sm:block w-px h-4 bg-[#FFA500]/30 mx-1" />
+                  <div className="hidden sm:block w-px h-5 bg-gradient-to-b from-transparent via-orange-400/50 to-transparent mx-2" />
                 )}
               </motion.div>
             ))}
@@ -193,22 +243,21 @@ export default function Footer() {
 
         {/* Legal Links */}
         <motion.div
-          initial={{ opacity: 0, y: 10 }}
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.3 }}
+          transition={{ duration: 0.8, delay: 0.3 }}
           viewport={{ once: true }}
-          className="flex flex-wrap justify-center gap-3 md:gap-6 text-xs border-t border-[#FFA500]/20 pt-4"
+          className="flex flex-wrap justify-center gap-3 sm:gap-4 pt-6 border-t border-orange-400/30"
         >
           {legalLinks.map((link) => (
             <motion.a
               key={link.name}
               href={link.url}
-              className="flex items-center gap-2 text-[#FFE5B4]/70 hover:text-[#FFA500] transition-all bg-white/5 px-3 py-2 rounded-lg backdrop-blur-sm hover:bg-white/10"
+              className={`flex items-center gap-2 text-white/80 hover:text-white bg-gradient-to-br ${link.gradient} px-3.5 sm:px-4 py-2 rounded-xl backdrop-blur-sm hover:shadow-lg border border-white/10`}
               whileHover={{ scale: 1.05, y: -2 }}
-              whileTap={{ scale: 0.95 }}
             >
               {link.icon}
-              {link.name}
+              <span className="font-medium">{link.name}</span>
             </motion.a>
           ))}
         </motion.div>
@@ -217,20 +266,26 @@ export default function Footer() {
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
+          transition={{ duration: 1, delay: 0.4 }}
           viewport={{ once: true }}
-          className="text-center text-[#FFE5B4]/80 text-xs tracking-wide mt-4 pt-4 border-t border-[#FFA500]/20"
+          className="text-center text-white/70 text-sm tracking-wide mt-6 pt-6 border-t border-orange-400/20"
         >
-          <p>© {currentYear} CarLinq (PVT) LTD. All rights reserved.</p>
-          <a
+          <p className="font-light">© {currentYear} CarLinq (PVT) LTD. All rights reserved.</p>
+  <a
   href="https://mkwelatech.vercel.app"
   target="_blank"
   rel="noopener noreferrer"
-  className="text-xs mt-2 hover:text-blue-400 transition-colors inline-block"
+  className="group inline-flex items-center gap-1 mt-2 hover:text-orange-300 transition-colors font-medium"
 >
   Developed by{' '}
-  <span className="text-white">Mkwela</span>
-  <span className="text-[#FFA500]">Tech</span> Solutions
+  <span className="inline-flex">
+    <span className="text-white group-hover:text-blue-300">Mkwela</span>
+    <span className="text-orange-400 group-hover:text-orange-300">Tech</span>
+  </span>
+  <span className="text-white/60 group-hover:text-white ml-1">Solutions</span>
+  <motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ duration: 2, repeat: Infinity }} className="ml-1">
+    <Sparkles size={12} className="text-yellow-300" />
+  </motion.div>
 </a>
 
         </motion.div>

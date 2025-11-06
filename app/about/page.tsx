@@ -456,8 +456,8 @@ export default function AboutUs() {
                           </div>
                           <div>
                             <h3 className="text-lg font-bold text-white mb-1">Call Us</h3>
-                            <p className="text-white/80">+254 700 000 000</p>
-                            <p className="text-white/80">+254 711 000 000</p>
+                            <p className="text-white/80">+263 782 379 164</p>
+                            <p className="text-white/80">+263 710 312 818</p>
                           </div>
                         </div>
 
@@ -479,7 +479,7 @@ export default function AboutUs() {
                           <div>
                             <h3 className="text-lg font-bold text-white mb-1">Business Hours</h3>
                             <p className="text-white/80">Mon - Fri: 8:00 AM - 6:00 PM</p>
-                            <p className="text-white/80">Sat: 9:00 AM - 4:00 PM</p>
+                            <p className="text-white/80"></p>
                           </div>
                         </div>
                       </div>

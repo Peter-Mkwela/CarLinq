@@ -99,37 +99,20 @@ export default function Home() {
       <span className="text-white">Welcome to </span>
 
       {/* Car - skewed forward, alpha a */}
-      <span
-        className="inline-block italic transform skew-x-[10deg]"
-        style={{
-          color: theme === 'light' ? '#FF8C00' : '#CC6600', // bold dark orange
-          textShadow: `
-            0 2px 0 #000,   /* black vertical shadow */
-            1px 1px 0 rgba(0,0,0,0.3),
-            2px 2px 0 rgba(0,0,0,0.2)
-          `,
-          fontWeight: 800,
-        }}
-      >
-        Cɑr
-      </span>
-
-      {/* Linq - skewed forward, dark blue */}
-      <span
-        className="inline-block italic transform skew-x-[10deg]"
-        style={{
-          color: theme === 'light' ? '#0277BD' : '#01579B', // dark blue
-          textShadow: `
-            0 2px 0 #000,
-            1px 1px 0 rgba(0,0,0,0.3),
-            2px 2px 0 rgba(0,0,0,0.2)
-          `,
-          fontWeight: 800,
-          marginLeft: '0.1rem', // tighter spacing
-        }}
-      >
-        Linq
-      </span>
+      <span className="inline-block italic transform skew-x-[10deg]" style={{ fontWeight: 800 }}>
+  <span style={{
+    color: theme === 'light' ? '#FF8C00' : '#CC6600',
+    textShadow: '0 2px 0 #000, 1px 1px 0 rgba(0,0,0,0.3), 2px 2px 0 rgba(0,0,0,0.2)'
+  }}>
+    Car
+  </span>
+  <span style={{
+    color: theme === 'light' ? '#0277BD' : '#01579B',
+    textShadow: '0 2px 0 #000, 1px 1px 0 rgba(0,0,0,0.3), 2px 2px 0 rgba(0,0,0,0.2)'
+  }}>
+    Linq
+  </span>
+</span>
     </h1>
             
             <p className="text-lg sm:text-xl lg:text-2xl text-gray-200 mb-6 sm:mb-8 max-w-3xl mx-auto leading-relaxed px-4">
@@ -152,7 +135,7 @@ export default function Home() {
     </motion.button>
   </Link>
 
-  <Link href="/dealers" className="w-full sm:w-auto">
+  <Link href="/dealers/login" className="w-full sm:w-auto">
     <motion.button
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
@@ -442,22 +425,24 @@ export default function Home() {
             <p className="text-lg sm:text-xl text-primary-100 mb-6 sm:mb-8 max-w-2xl mx-auto">
               Join CarLinq today and experience professional car trading with trust and transparency
             </p>
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="w-full sm:w-auto bg-white text-primary-600 hover:bg-gray-100 font-semibold text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
-              >
-                Get Started Free
-              </motion.button>
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="w-full sm:w-auto border-2 border-white text-white hover:bg-white hover:text-primary-600 font-semibold text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 rounded-xl transition-all duration-300"
-              >
-                Schedule a Demo
-              </motion.button>
-            </div>
+           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
+  <motion.button
+    whileHover={{ scale: 1.05 }}
+    whileTap={{ scale: 0.95 }}
+    onClick={() => window.location.href = '/dealers/dealer-register'}
+    className="w-full sm:w-auto bg-white text-primary-600 hover:bg-gray-100 font-semibold text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+  >
+    Get Started Free
+  </motion.button>
+  <motion.button
+    whileHover={{ scale: 1.05 }}
+    whileTap={{ scale: 0.95 }}
+    onClick={() => window.location.href = '/demo'}
+    className="w-full sm:w-auto border-2 border-white text-white hover:bg-white hover:text-primary-600 font-semibold text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 rounded-xl transition-all duration-300"
+  >
+    Schedule a Demo
+  </motion.button>
+</div>
           </motion.div>
         </div>
       </section>

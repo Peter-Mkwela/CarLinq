@@ -15,7 +15,7 @@ export default function Header() {
   const navLinks = [
     { href: '/', label: 'Home' },
     { href: '/cars', label: 'Browse Cars' },
-    { href: '/dealers', label: 'For Dealers' },
+    { href: '/dealers/login', label: 'For Dealers' },
     { href: '/about', label: 'About' },
   ];
 
@@ -26,15 +26,15 @@ export default function Header() {
 
     return (
       <Link
-        href="/dealer/login"
+        href="/admin/login"
         onClick={() => setIsMenuOpen(false)}
         className={baseClasses}
-        aria-label="Dealer Login"
+        aria-label="Admin Login"
       >
         {isMobile ? (
           <>
             <User size={16} />
-            <span>Dealer Login</span>
+            <span>Admin Login</span>
           </>
         ) : (
           <User size={18} />

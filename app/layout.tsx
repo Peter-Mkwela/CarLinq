@@ -10,6 +10,11 @@ const inter = Inter({ subsets: ['latin'] });
 export const metadata: Metadata = {
   title: 'CarLinq - Professional Car Trading Platform',
   description: 'Bridging the gap between car dealers and buyers with verified listings and secure transactions',
+  icons: {
+    icon: '/icon.png',       // standard favicon
+    shortcut: '/icon.png',   // browser shortcut / pinned tab
+    apple: '/icon.png',      // iOS Safari
+  },
 };
 
 export default function RootLayout({
@@ -23,9 +28,7 @@ export default function RootLayout({
         <ThemeProvider>
           <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors flex flex-col">
             <Header />
-            <main className="flex-1">
-              {children}
-            </main>
+            <main className="flex-1">{children}</main>
             <Footer />
           </div>
         </ThemeProvider>
