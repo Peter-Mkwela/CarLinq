@@ -1,9 +1,26 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // lib/auth.ts
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import prisma from "./prisma";
 import bcrypt from "bcryptjs";
+
+// Dynamic NEXTAUTH_URL - handles both local and production automatically
+const getAuthUrl = () => {
+  // Use VERCEL_URL for preview deployments
+  if (process.env.VERCEL_URL) {
+    return `https://${process.env.VERCEL_URL}`;
+  }
+  
+  // Use NEXTAUTH_URL if explicitly set
+  if (process.env.NEXTAUTH_URL) {
+    return process.env.NEXTAUTH_URL;
+  }
+  
+  // Default to localhost for development
+  return 'http://localhost:3000';
+};
 
 // ADD THIS FUNCTION - it's missing from your current file
 export async function hashPassword(password: string): Promise<string> {
@@ -62,4 +79,16 @@ export const authOptions: NextAuthOptions = {
   session: {
     strategy: "jwt",
   },
+  // Add secure cookie configuration
+  cookies: {
+    sessionToken: {
+      name: `next-auth.session-token`,
+      options: {
+        httpOnly: true,
+        sameSite: 'lax',
+        path: '/',
+        secure: process.env.NODE_ENV === 'production' // Auto-secure in production
+      }
+    }
+  }
 };
