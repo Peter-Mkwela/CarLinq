@@ -2,12 +2,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { signIn, useSession } from 'next-auth/react';
+import { signIn, useSession, signOut } from 'next-auth/react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
 import { useTheme } from '@/app/providers/theme-provider';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import toast from 'react-hot-toast';
 
 export default function DealerLogin() {
@@ -16,6 +16,7 @@ export default function DealerLogin() {
     password: '',
   });
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { theme } = useTheme();
@@ -23,11 +24,29 @@ export default function DealerLogin() {
   // Get session from NextAuth
   const { data: session, status } = useSession();
 
-  // Redirect if already authenticated
+  // Check for session errors in URL
+  useEffect(() => {
+    const error = searchParams.get('error');
+    if (error === 'SessionInvalid' || error === 'SessionExpired') {
+      toast.error('Your session has expired. Please login again.');
+      // Clear the invalid session
+      signOut({ redirect: false });
+    }
+  }, [searchParams]);
+
+  // ✅ FIXED: Redirect only if session is valid (user exists in DB)
   useEffect(() => {
     if (status === 'authenticated' && session) {
-      toast.success('Login successful! Redirecting...');
-      setTimeout(() => router.push('/dealers/dealer-dashboard'), 1000);
+      // Check if session has valid user data (not empty IDs from deleted users)
+      if (session.user?.id && session.user.id !== '') {
+        toast.success('Login successful! Redirecting...');
+        setTimeout(() => router.push('/dealers/dealer-dashboard'), 1000);
+      } else {
+        // Session exists but user is invalid/deleted - clear it
+        console.log('🔄 Clearing invalid session...');
+        signOut({ redirect: false });
+        toast.error('Your account was not found. Please login again.');
+      }
     }
   }, [session, status, router]);
 
@@ -47,7 +66,7 @@ export default function DealerLogin() {
         toast.error('Invalid credentials, please try again.');
       } else {
         toast.success('Login successful! Redirecting...');
-        // The useEffect above will handle the redirect
+        // The useEffect above will handle the redirect after session validation
       }
     } catch (error) {
       console.error('Login error:', error);
@@ -148,27 +167,26 @@ export default function DealerLogin() {
             </div>
 
             {/* Google Sign-In Button */}
-<motion.button
-  type="button"
-  onClick={handleGoogleSignIn}
-  disabled={isLoading}
-  whileHover={{ scale: isLoading ? 1 : 1.02 }}
-  whileTap={{ scale: isLoading ? 1 : 0.98 }}
-  className="w-full flex items-center justify-center gap-3 py-3 px-4 mb-6 
-             border border-gray-300 rounded-lg bg-white text-gray-700 
-             hover:bg-gray-100 transition-all duration-200 disabled:opacity-50"
->
-  {/* Google Icon */}
-  <svg className="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
-    <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.34 30.47 0 24 0 14.62 0 6.51 5.42 2.59 13.26l7.98 6.2C12.46 13.07 17.74 9.5 24 9.5z"/>
-    <path fill="#4285F4" d="M46.5 24.5c0-1.64-.15-3.29-.47-4.88H24v9.23h12.7c-.56 2.93-2.24 5.41-4.75 7.07l7.28 5.65C43.53 37.49 46.5 31.44 46.5 24.5z"/>
-    <path fill="#FBBC05" d="M10.57 28.46c-.57-1.69-.9-3.5-.9-5.46s.33-3.77.9-5.46l-7.98-6.2C.92 15.68 0 19.98 0 24s.92 8.32 2.59 12.66l7.98-6.2z"/>
-    <path fill="#34A853" d="M24 48c6.47 0 11.93-2.13 15.91-5.79l-7.28-5.65c-2.02 1.39-4.62 2.17-7.63 2.17-6.27 0-11.56-3.57-13.43-8.76l-7.98 6.2C6.51 42.58 14.62 48 24 48z"/>
-  </svg>
+            <motion.button
+              type="button"
+              onClick={handleGoogleSignIn}
+              disabled={isLoading}
+              whileHover={{ scale: isLoading ? 1 : 1.02 }}
+              whileTap={{ scale: isLoading ? 1 : 0.98 }}
+              className="w-full flex items-center justify-center gap-3 py-3 px-4 mb-6 
+                         border border-gray-300 rounded-lg bg-white text-gray-700 
+                         hover:bg-gray-100 transition-all duration-200 disabled:opacity-50"
+            >
+              {/* Google Icon */}
+              <svg className="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+                <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.34 30.47 0 24 0 14.62 0 6.51 5.42 2.59 13.26l7.98 6.2C12.46 13.07 17.74 9.5 24 9.5z"/>
+                <path fill="#4285F4" d="M46.5 24.5c0-1.64-.15-3.29-.47-4.88H24v9.23h12.7c-.56 2.93-2.24 5.41-4.75 7.07l7.28 5.65C43.53 37.49 46.5 31.44 46.5 24.5z"/>
+                <path fill="#FBBC05" d="M10.57 28.46c-.57-1.69-.9-3.5-.9-5.46s.33-3.77.9-5.46l-7.98-6.2C.92 15.68 0 19.98 0 24s.92 8.32 2.59 12.66l7.98-6.2z"/>
+                <path fill="#34A853" d="M24 48c6.47 0 11.93-2.13 15.91-5.79l-7.28-5.65c-2.02 1.39-4.62 2.17-7.63 2.17-6.27 0-11.56-3.57-13.43-8.76l-7.98 6.2C6.51 42.58 14.62 48 24 48z"/>
+              </svg>
 
-  {isLoading ? "Signing in..." : "Sign in with Google"}
-</motion.button>
-
+              {isLoading ? "Signing in..." : "Sign in with Google"}
+            </motion.button>
 
             {/* Divider */}
             <div className="relative mb-6">

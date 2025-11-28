@@ -146,6 +146,7 @@ const handler = NextAuth({
       if (user) {
         token.id = user.id;
         token.role = (user as any).role;
+        token.email = user.email; // ✅ ADD THIS - crucial for session validation
       }
       
       // Handle Google OAuth token
@@ -158,9 +159,51 @@ const handler = NextAuth({
     },
 
     async session({ session, token }) {
-      if (session.user) {
-        session.user.id = token.id as string;
-        session.user.role = token.role as string;
+      // ✅ ADD THIS VALIDATION: Check if user still exists in database
+      if (token?.email) {
+        try {
+          const user = await prisma.user.findUnique({
+            where: { email: token.email as string },
+            select: { id: true, email: true, name: true, role: true, isVerified: true }
+          });
+          
+          if (!user) {
+            // User doesn't exist anymore - return empty/invalid session
+            return {
+              ...session,
+              user: {
+                ...session.user,
+                id: '',
+                role: '',
+                email: '',
+                name: '',
+              },
+              isValid: false
+            };
+          }
+          
+          // User exists - populate session with fresh data
+          if (session.user) {
+            session.user.id = user.id;
+            session.user.role = user.role;
+            session.user.email = user.email;
+            session.user.name = user.name;
+          }
+          
+        } catch (error) {
+          console.error('Session validation error:', error);
+          // On error, treat as invalid session
+          if (session.user) {
+            session.user.id = '';
+            session.user.role = '';
+          }
+        }
+      } else {
+        // No email in token - invalid session
+        if (session.user) {
+          session.user.id = '';
+          session.user.role = '';
+        }
       }
       
       if (token.accessToken) {

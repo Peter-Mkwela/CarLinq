@@ -22,7 +22,6 @@ const getAuthUrl = () => {
   return 'http://localhost:3000';
 };
 
-// ADD THIS FUNCTION - it's missing from your current file
 export async function hashPassword(password: string): Promise<string> {
   return await bcrypt.hash(password, 12);
 }
@@ -62,14 +61,39 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, user }) {
       if (user) {
         token.role = user.role;
+        token.id = user.id;
       }
       return token;
     },
     async session({ session, token }) {
-      if (token) {
-        session.user.id = token.sub!;
-        session.user.role = token.role as string;
+      // ✅ ADD THIS VALIDATION - Check if user still exists in database
+      if (token?.email) {
+        const user = await prisma.user.findUnique({
+          where: { email: token.email },
+          select: { id: true, email: true, name: true, role: true } // Only select needed fields
+        });
+        
+        if (!user) {
+          // User doesn't exist anymore - return empty session
+          return {
+            ...session,
+            user: {
+              ...session.user,
+              id: '',
+              role: '',
+            }
+          };
+        }
+        
+        // User exists - populate session with fresh data
+        session.user.id = user.id;
+        session.user.role = user.role;
+      } else {
+        // No email in token - invalid session
+        session.user.id = '';
+        session.user.role = '';
       }
+      
       return session;
     }
   },
@@ -78,17 +102,6 @@ export const authOptions: NextAuthOptions = {
   },
   session: {
     strategy: "jwt",
+    maxAge: 30 * 24 * 60 * 60, // 30 days
   },
-  // Add secure cookie configuration
-  cookies: {
-    sessionToken: {
-      name: `next-auth.session-token`,
-      options: {
-        httpOnly: true,
-        sameSite: 'lax',
-        path: '/',
-        secure: process.env.NODE_ENV === 'production' // Auto-secure in production
-      }
-    }
-  }
 };

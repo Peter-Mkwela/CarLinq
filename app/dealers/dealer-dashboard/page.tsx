@@ -61,11 +61,18 @@ export default function DealerDashboard() {
   // NextAuth session
   const { data: session, status: authStatus } = useSession();
 
+  // Debug mobile menu state
+  useEffect(() => {
+    console.log('🔄 mobileMenuOpen state:', mobileMenuOpen);
+  }, [mobileMenuOpen]);
+
   // Fetch listings
   useEffect(() => {
     const fetchListings = async () => {
       try {
-        const response = await fetch('/api/dealers/listings');
+        const response = await fetch('/api/dealers/listings', {
+          credentials: 'include',
+        });
         if (response.ok) {
           const data = await response.json();
           setListings(data.listings);
@@ -109,10 +116,8 @@ export default function DealerDashboard() {
     }
   }, [authStatus, router]);
 
-  // Close mobile menu on tab change
-  useEffect(() => {
-    if (mobileMenuOpen) setMobileMenuOpen(false);
-  }, [activeTab, mobileMenuOpen]);
+  // REMOVED the problematic useEffect that was closing the menu
+  // This was likely causing issue #2
 
   // Loading & unauthenticated states
   if (authStatus === 'loading') {
@@ -124,7 +129,7 @@ export default function DealerDashboard() {
   }
   if (!session) return null;
 
-  // ✅ FIXED: Apply BOTH search AND status filters correctly
+  // Apply filters
   const filteredListings = listings.filter(listing => {
     const matchesSearch = 
       `${listing.make} ${listing.model} ${listing.location}`
@@ -137,70 +142,67 @@ export default function DealerDashboard() {
     return matchesSearch && matchesStatus;
   });
 
-  // ✅ FIXED: Proper status change with database persistence
-  // ✅ FIXED: Proper status conversion for API
-const handleStatusChange = async (id: string, newStatus: string) => {
-  try {
-    console.log('Updating status for listing:', id, 'to:', newStatus);
-    
-    // Convert to uppercase for API - handle all cases properly
-    const statusMap: { [key: string]: string } = {
-      'available': 'AVAILABLE',
-      'pending': 'PENDING', 
-      'sold': 'SOLD'
-    };
-    
-    const apiStatus = statusMap[newStatus.toLowerCase()];
-    
-    if (!apiStatus) {
-      throw new Error('Invalid status value');
+  // Handle status change
+  const handleStatusChange = async (id: string, newStatus: string) => {
+    try {
+      console.log('Updating status for listing:', id, 'to:', newStatus);
+      
+      const statusMap: { [key: string]: string } = {
+        'available': 'AVAILABLE',
+        'pending': 'PENDING', 
+        'sold': 'SOLD'
+      };
+      
+      const apiStatus = statusMap[newStatus.toLowerCase()];
+      
+      if (!apiStatus) {
+        throw new Error('Invalid status value');
+      }
+
+      // Optimistic update
+      setListings(prev =>
+        prev.map(listing =>
+          listing.id === id ? { ...listing, status: newStatus.toLowerCase() } : listing
+        )
+      );
+
+      // API call
+      const response = await fetch(`/api/listings/${id}`, {
+        method: 'PATCH',
+        headers: { 
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          status: apiStatus 
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('API Error:', errorData);
+        throw new Error(errorData.error || `Failed to update status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      console.log('Status update successful:', result);
+      
+      toast.success(`Status updated to ${newStatus}`);
+    } catch (error) {
+      console.error('Error updating status:', error);
+      toast.error('Failed to update status');
+      
+      // Revert optimistic update on error
+      const refreshResponse = await fetch('/api/dealers/listings');
+      if (refreshResponse.ok) {
+        const data = await refreshResponse.json();
+        const normalizedListings = data.listings.map((listing: any) => ({
+          ...listing,
+          status: listing.status.toLowerCase()
+        }));
+        setListings(normalizedListings);
+      }
     }
-
-    // Optimistic update - keep frontend as lowercase for display
-    setListings(prev =>
-      prev.map(listing =>
-        listing.id === id ? { ...listing, status: newStatus.toLowerCase() } : listing
-      )
-    );
-
-    // API call with correct uppercase status
-    const response = await fetch(`/api/listings/${id}`, {
-      method: 'PATCH',
-      headers: { 
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ 
-        status: apiStatus 
-      }),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      console.error('API Error:', errorData);
-      throw new Error(errorData.error || `Failed to update status: ${response.status}`);
-    }
-
-    const result = await response.json();
-    console.log('Status update successful:', result);
-    
-    toast.success(`Status updated to ${newStatus}`);
-  } catch (error) {
-    console.error('Error updating status:', error);
-    toast.error('Failed to update status');
-    
-    // Revert optimistic update on error
-    const refreshResponse = await fetch('/api/dealers/listings');
-    if (refreshResponse.ok) {
-      const data = await refreshResponse.json();
-      // Normalize status to lowercase for frontend
-      const normalizedListings = data.listings.map((listing: any) => ({
-        ...listing,
-        status: listing.status.toLowerCase()
-      }));
-      setListings(normalizedListings);
-    }
-  }
-};
+  };
 
   const handleDeleteListing = async (id: string) => {
     const accepted = await confirmDelete("Are you sure you want to delete this listing? This action cannot be undone.");
@@ -317,25 +319,25 @@ const handleStatusChange = async (id: string, newStatus: string) => {
   const userName = session.user?.name || 'Dealer';
   const userEmail = session.user?.email || '';
 
-  // ✅ FIXED: Custom dropdown component for beautiful styling
+  // Custom Dropdown Component
   const CustomDropdown = ({ value, onChange, options }: { value: string; onChange: (value: string) => void; options: { value: string; label: string }[] }) => (
-  <div className="relative">
-    <select
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      className="w-full px-3 py-2 text-sm sm:text-base bg-white border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-400 appearance-none cursor-pointer pr-8"
-    >
-      {options.map((option) => (
-        <option key={option.value} value={option.value} className="text-gray-900">
-          {option.label}
-        </option>
-      ))}
-    </select>
-    <div className="absolute inset-y-0 right-2 flex items-center pointer-events-none">
-      <ChevronDown className="w-4 h-4 text-gray-500" />
+    <div className="relative">
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="w-full px-3 py-2 text-sm sm:text-base bg-white border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-400 appearance-none cursor-pointer pr-8"
+      >
+        {options.map((option) => (
+          <option key={option.value} value={option.value} className="text-gray-900">
+            {option.label}
+          </option>
+        ))}
+      </select>
+      <div className="absolute inset-y-0 right-2 flex items-center pointer-events-none">
+        <ChevronDown className="w-4 h-4 text-gray-500" />
+      </div>
     </div>
-  </div>
-);
+  );
 
   return (
     <div className="min-h-screen bg-gray-900 relative overflow-x-hidden">
@@ -348,10 +350,16 @@ const handleStatusChange = async (id: string, newStatus: string) => {
       </div>
 
       <div className="relative z-10">
-        {/* Mobile Header */}
-        <header className="bg-gray-900/80 backdrop-blur-xl border-b border-orange-800/50 lg:hidden sticky top-0 z-30">
+        {/* Mobile Header - FIXED VERSION */}
+        <header className="bg-gray-900/80 backdrop-blur-xl border-b border-orange-800/50 lg:hidden sticky top-0 z-50">
           <div className="px-4 py-3 flex justify-between items-center">
-            <button onClick={() => setMobileMenuOpen(true)} className="text-white/80 hover:text-white p-2">
+            <button 
+              onClick={() => {
+                console.log('🎯 Hamburger button clicked - setting mobileMenuOpen to TRUE');
+                setMobileMenuOpen(true);
+              }} 
+              className="text-white/80 hover:text-white p-2 transition-colors z-60"
+            >
               <Menu className="w-6 h-6" />
             </button>
             <h1 className="text-xl font-bold text-white">
@@ -388,62 +396,59 @@ const handleStatusChange = async (id: string, newStatus: string) => {
           </div>
         </header>
 
-        {/* Mobile Menu */}
-        <AnimatePresence>
-          {mobileMenuOpen && (
-            <motion.div
-              initial={{ x: '-100%', opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              exit={{ x: '-100%', opacity: 0 }}
-              className="fixed inset-0 z-40 lg:hidden"
-            >
-              <div className="absolute inset-0 bg-black/60" onClick={() => setMobileMenuOpen(false)} />
-              <div className="absolute top-0 left-0 w-64 h-full bg-gray-900/90 backdrop-blur-xl border-r border-orange-800/30 pt-16 px-4">
-                <div className="flex items-center gap-3 mb-6 p-3 bg-orange-800/20 rounded-xl">
-                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center">
-                    <User className="w-5 h-5 text-white" />
-                  </div>
-                  <div>
-                    <p className="text-white font-medium text-sm">{userName}</p>
-                    <p className="text-white/60 text-xs">{userEmail}</p>
-                  </div>
-                </div>
-                <nav className="space-y-2">
-                  {[
-                    { id: 'overview', label: 'Overview', icon: BarChart3 },
-                    { id: 'listings', label: 'My Listings', icon: Car },
-                  ].map((item) => {
-                    const Icon = item.icon;
-                    return (
-                      <button
-                        key={item.id}
-                        onClick={() => {
-                          setActiveTab(item.id);
-                          setMobileMenuOpen(false);
-                        }}
-                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-white/80 font-medium transition ${
-                          activeTab === item.id
-                            ? 'bg-orange-800/50 text-orange-300 border border-orange-700'
-                            : 'hover:bg-white/5'
-                        }`}
-                      >
-                        <Icon className="w-5 h-5" />
-                        {item.label}
-                      </button>
-                    );
-                  })}
-                  <button
-                    onClick={handleLogout}
-                    className="mt-6 w-full flex items-center gap-3 px-4 py-3 rounded-xl text-red-400 font-medium hover:bg-red-900/30"
-                  >
-                    <LogOut className="w-5 h-5" />
-                    Logout
-                  </button>
-                </nav>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {/* Mobile Menu - FIXED with HIGHER z-index */}
+        {/* Mobile Menu - GLOSSY TRANSPARENT VERSION */}
+<AnimatePresence>
+  {mobileMenuOpen && (
+    <>
+      {/* Backdrop */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
+        onClick={() => setMobileMenuOpen(false)}
+      />
+      
+      {/* Menu Panel */}
+      <motion.div
+        initial={{ x: '-100%' }}
+        animate={{ x: 0 }}
+        exit={{ x: '-100%' }}
+        transition={{ type: "spring", damping: 25, stiffness: 200 }}
+        className="fixed top-0 left-0 w-80 h-full bg-gray-900/80 backdrop-blur-xl border-r border-orange-500/20 pt-20 px-6 overflow-y-auto z-50"
+      >
+        {/* Close Button */}
+        <button
+          onClick={() => setMobileMenuOpen(false)}
+          className="absolute top-4 right-4 p-2 text-white/70 hover:text-orange-300 transition-colors"
+        >
+          <XCircle className="w-6 h-6" />
+        </button>
+
+        {/* User Info - Full Name & Email */}
+        <div className="flex items-center gap-4 mb-8 p-4 bg-white/5 rounded-xl border border-white/10 backdrop-blur-lg">
+          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center flex-shrink-0 shadow-lg">
+            <User className="w-6 h-6 text-white" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-white font-semibold text-sm truncate">{session?.user?.name || 'Dealer User'}</p>
+            <p className="text-white/60 text-xs truncate">{session?.user?.email || 'user@example.com'}</p>
+          </div>
+        </div>
+
+        {/* Logout Button */}
+        <button
+          onClick={handleLogout}
+          className="w-full flex items-center justify-center gap-3 px-4 py-4 bg-white/5 hover:bg-red-500/20 text-red-400 hover:text-red-300 rounded-xl transition-all duration-200 border border-white/10 hover:border-red-500/30 backdrop-blur-lg"
+        >
+          <LogOut className="w-5 h-5" />
+          <span className="font-medium">Logout</span>
+        </button>
+      </motion.div>
+    </>
+  )}
+</AnimatePresence>
 
         {/* Main Content */}
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
@@ -642,23 +647,25 @@ const handleStatusChange = async (id: string, newStatus: string) => {
 
                     <section className="sticky top-0 z-40">
                       <div className="bg-black/30 backdrop-blur-md rounded-2xl border border-white/20 p-4 sm:p-6">
-                        <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
-                          <div className="flex-1 w-full lg:max-w-2xl">
+                        <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
+                          {/* Search Input */}
+                          <div className="flex-1 w-full sm:max-w-2xl">
                             <div className="relative">
-                              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/60 w-4 h-4 sm:w-5 sm:h-5" />
+                              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/60 w-5 h-5" />
                               <input
                                 type="text"
                                 placeholder="Search by make, model, or location..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                className="w-full pl-9 sm:pl-10 pr-4 py-2 sm:py-3 text-sm sm:text-base border border-white/20 bg-white/10 backdrop-blur-sm rounded-lg sm:rounded-xl text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-all duration-200"
+                                className="w-full pl-10 pr-4 py-3 text-base border border-white/20 bg-white/10 backdrop-blur-sm rounded-xl text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-all duration-200"
                               />
                             </div>
                           </div>
 
-                          <div className="flex items-center gap-3 sm:gap-4 w-full lg:w-auto">
-                            {/* ✅ FIXED: Beautiful dropdown with proper filtering */}
-                            <div className="w-48">
+                          {/* Filters and Add Button */}
+                          <div className="flex flex-col sm:flex-row items-stretch gap-3 w-full sm:w-auto">
+                            {/* Status Dropdown */}
+                            <div className="w-full sm:w-48">
                               <CustomDropdown
                                 value={statusFilter}
                                 onChange={setStatusFilter}
@@ -671,13 +678,14 @@ const handleStatusChange = async (id: string, newStatus: string) => {
                               />
                             </div>
 
+                            {/* Add Car Button - Beautifully Styled */}
                             <motion.button
                               whileHover={{ scale: 1.05 }}
-                              whileTap={{ scale: 0.97 }}
+                              whileTap={{ scale: 0.95 }}
                               onClick={() => setShowAddForm(true)}
-                              className="flex items-center gap-2 px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white rounded-lg sm:rounded-xl transition-all duration-200 backdrop-blur-sm shadow-lg shadow-orange-500/25 text-sm sm:text-base font-medium"
+                              className="flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white rounded-xl transition-all duration-200 shadow-lg shadow-orange-500/25 font-semibold text-base w-full sm:w-auto"
                             >
-                              <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
+                              <Plus className="w-5 h-5" />
                               <span>Add Car</span>
                             </motion.button>
                           </div>
@@ -745,17 +753,17 @@ const handleStatusChange = async (id: string, newStatus: string) => {
                                       </div>
                                     )}
                                     
-                                    {/* ✅ FIXED: True green for available status */}
+                                    {/* Status Badge */}
                                     <div className="absolute top-2 left-2 sm:top-3 sm:left-3">
                                       <span className={`text-xs font-bold px-2 py-1 rounded backdrop-blur-sm ${
-  listing.status.toLowerCase() === 'available'
-    ? 'bg-emerald-500 text-white'   // ✅ True green + case-safe
-    : listing.status.toLowerCase() === 'sold'
-    ? 'bg-red-500 text-white'
-    : 'bg-amber-400 text-gray-900'  // pending
-}`}>
-  {listing.status.charAt(0).toUpperCase() + listing.status.slice(1)}
-</span>
+                                        listing.status.toLowerCase() === 'available'
+                                          ? 'bg-emerald-500 text-white'
+                                          : listing.status.toLowerCase() === 'sold'
+                                          ? 'bg-red-500 text-white'
+                                          : 'bg-amber-400 text-gray-900'
+                                      }`}>
+                                        {listing.status.charAt(0).toUpperCase() + listing.status.slice(1)}
+                                      </span>
                                     </div>
 
                                     <div className="absolute top-2 right-2 sm:top-3 sm:right-3 flex gap-1 sm:gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
@@ -817,7 +825,7 @@ const handleStatusChange = async (id: string, newStatus: string) => {
                                       </div>
                                     </div>
 
-                                    {/* ✅ FIXED: Status dropdown with proper database persistence */}
+                                    {/* Status Dropdown */}
                                     <div className="mt-2">
                                       <CustomDropdown
                                         value={listing.status}
