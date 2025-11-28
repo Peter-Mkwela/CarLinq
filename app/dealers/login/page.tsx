@@ -7,48 +7,32 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
 import { useTheme } from '@/app/providers/theme-provider';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
+import { Suspense } from 'react';
 
+// Wrap the main component with Suspense
 export default function DealerLogin() {
+  return (
+    <Suspense fallback={<LoginSkeleton />}>
+      <DealerLoginContent />
+    </Suspense>
+  );
+}
+
+// Move all the logic to this inner component
+function DealerLoginContent() {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
   });
   const router = useRouter();
-  const searchParams = useSearchParams();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { theme } = useTheme();
   
   // Get session from NextAuth
   const { data: session, status } = useSession();
-
-  // Check for session errors in URL
-  useEffect(() => {
-    const error = searchParams.get('error');
-    if (error === 'SessionInvalid' || error === 'SessionExpired') {
-      toast.error('Your session has expired. Please login again.');
-      // Clear the invalid session
-      signOut({ redirect: false });
-    }
-  }, [searchParams]);
-
-  // ✅ FIXED: Redirect only if session is valid (user exists in DB)
-  useEffect(() => {
-    if (status === 'authenticated' && session) {
-      // Check if session has valid user data (not empty IDs from deleted users)
-      if (session.user?.id && session.user.id !== '') {
-        toast.success('Login successful! Redirecting...');
-        setTimeout(() => router.push('/dealers/dealer-dashboard'), 1000);
-      } else {
-        // Session exists but user is invalid/deleted - clear it
-        console.log('🔄 Clearing invalid session...');
-        signOut({ redirect: false });
-        toast.error('Your account was not found. Please login again.');
-      }
-    }
-  }, [session, status, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -66,7 +50,7 @@ export default function DealerLogin() {
         toast.error('Invalid credentials, please try again.');
       } else {
         toast.success('Login successful! Redirecting...');
-        // The useEffect above will handle the redirect after session validation
+        // The useEffect below will handle the redirect after session validation
       }
     } catch (error) {
       console.error('Login error:', error);
@@ -92,13 +76,25 @@ export default function DealerLogin() {
     }));
   };
 
+  // ✅ FIXED: Redirect only if session is valid (user exists in DB)
+  useEffect(() => {
+    if (status === 'authenticated' && session) {
+      // Check if session has valid user data (not empty IDs from deleted users)
+      if (session.user?.id && session.user.id !== '') {
+        toast.success('Login successful! Redirecting...');
+        setTimeout(() => router.push('/dealers/dealer-dashboard'), 1000);
+      } else {
+        // Session exists but user is invalid/deleted - clear it
+        console.log('🔄 Clearing invalid session...');
+        signOut({ redirect: false });
+        toast.error('Your account was not found. Please login again.');
+      }
+    }
+  }, [session, status, router]);
+
   // Show loading while checking authentication
   if (status === 'loading') {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-white">Loading...</div>
-      </div>
-    );
+    return <LoginSkeleton />;
   }
 
   return (
@@ -291,6 +287,15 @@ export default function DealerLogin() {
           </motion.div>
         </div>
       </div>
+    </div>
+  );
+}
+
+// Skeleton loader for the Suspense fallback
+function LoginSkeleton() {
+  return (
+    <div className="min-h-screen flex items-center justify-center">
+      <div className="text-white">Loading login form...</div>
     </div>
   );
 }

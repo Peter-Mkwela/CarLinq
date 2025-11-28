@@ -5,8 +5,17 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 
+// ✅ FIX: Force dynamic rendering to prevent static build issues
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: NextRequest) {
   try {
+    // ✅ FIX: Handle build-time execution gracefully
+    if (process.env.NEXT_PHASE === 'phase-production-build') {
+      console.log('🏗️ Build time - returning empty user profile');
+      return NextResponse.json({ user: null });
+    }
+
     const session = await getServerSession(authOptions);
     
     if (!session?.user?.email) {
@@ -48,6 +57,12 @@ export async function GET(request: NextRequest) {
 
 export async function PUT(request: NextRequest) {
   try {
+    // ✅ FIX: Handle build-time execution for PUT as well
+    if (process.env.NEXT_PHASE === 'phase-production-build') {
+      console.log('🏗️ Build time - skipping profile update');
+      return NextResponse.json({ user: null });
+    }
+
     const session = await getServerSession(authOptions);
     
     if (!session?.user?.email) {
