@@ -1,17 +1,69 @@
+// app/components/client-layout.tsx
 'use client';
 
+import { useState, useEffect, Suspense, useCallback } from 'react';
+import { usePathname, useSearchParams } from 'next/navigation';
 import { ThemeProvider } from '@/app/providers/theme-provider';
 import { Toaster } from 'react-hot-toast';
+import Loading from './Loading';
 
 export default function ClientLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const [loading, setLoading] = useState({
+    isLoading: false,
+    progress: 0
+  });
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  // Function to simulate loading progress
+  const simulateProgress = useCallback(() => {
+    setLoading({ isLoading: true, progress: 0 });
+    
+    const interval = setInterval(() => {
+      setLoading(prev => {
+        if (prev.progress >= 95) {
+          clearInterval(interval);
+          return { ...prev, progress: 95 };
+        }
+        const increment = Math.random() * 15;
+        return { ...prev, progress: Math.min(prev.progress + increment, 95) };
+      });
+    }, 200);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    // Don't show loading for initial page load (handled by suspense)
+    if (pathname !== '/' && !loading.isLoading) {
+      const cleanup = simulateProgress();
+      
+      const timer = setTimeout(() => {
+        setLoading({ isLoading: false, progress: 100 });
+      }, 800); // Minimum loading time
+
+      return () => {
+        cleanup();
+        clearTimeout(timer);
+      };
+    }
+  }, [pathname, searchParams, simulateProgress]);
+
   return (
     <ThemeProvider>
       <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors flex flex-col">
-        {children}
+        {/* Show loading screen during route transitions */}
+        {loading.isLoading ? (
+          <Loading />
+        ) : (
+          <Suspense fallback={<Loading />}>
+            {children}
+          </Suspense>
+        )}
       </div>
 
       {/* 🌟 Toast Notification System - CarLinq Style */}

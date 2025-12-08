@@ -33,6 +33,9 @@ import {
   Share2,
   Calendar,
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  X
 } from 'lucide-react';
 import AddListingModal, { Listing } from '@/components/AddListingModal';
 import CompleteProfileModal from '@/components/CompleteProfileModal';
@@ -48,7 +51,160 @@ interface NewListingForm {
   status: string;
 }
 
+// Image Gallery Modal Component (for dealer dashboard)
+function ImageGalleryModal({ 
+  images, 
+  isOpen, 
+  onClose, 
+  initialIndex = 0 
+}: { 
+  images: string[]; 
+  isOpen: boolean; 
+  onClose: () => void; 
+  initialIndex?: number; 
+}) {
+  const [currentIndex, setCurrentIndex] = useState(initialIndex);
+
+  useEffect(() => {
+    if (isOpen) {
+      setCurrentIndex(initialIndex);
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'auto';
+    }
+
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, [isOpen, initialIndex]);
+
+  const nextImage = () => {
+    setCurrentIndex((prev) => (prev + 1) % images.length);
+  };
+
+  const prevImage = () => {
+    setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
+  };
+
+  const handleKeyDown = (e: KeyboardEvent) => {
+    if (!isOpen) return;
+    
+    switch (e.key) {
+      case 'ArrowLeft':
+        prevImage();
+        break;
+      case 'ArrowRight':
+        nextImage();
+        break;
+      case 'Escape':
+        onClose();
+        break;
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen]);
+
+  if (!isOpen) return null;
+
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <>
+          {/* Backdrop */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={onClose}
+            className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-sm"
+          />
+
+          {/* Modal */}
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="relative w-full max-w-6xl h-[90vh] bg-black/90 rounded-xl overflow-hidden"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Close Button */}
+              <button
+                onClick={onClose}
+                className="absolute top-4 right-4 z-10 p-2 bg-black/50 text-white rounded-full hover:bg-black/70 transition-colors"
+              >
+                <X className="w-6 h-6" />
+              </button>
+
+              {/* Navigation Arrows */}
+              {images.length > 1 && (
+                <>
+                  <button
+                    onClick={prevImage}
+                    className="absolute left-4 top-1/2 -translate-y-1/2 z-10 p-3 bg-black/50 text-white rounded-full hover:bg-black/70 transition-colors"
+                  >
+                    <ChevronLeft className="w-6 h-6" />
+                  </button>
+                  <button
+                    onClick={nextImage}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 z-10 p-3 bg-black/50 text-white rounded-full hover:bg-black/70 transition-colors"
+                  >
+                    <ChevronRight className="w-6 h-6" />
+                  </button>
+                </>
+              )}
+
+              {/* Main Image */}
+              <div className="relative w-full h-full flex items-center justify-center">
+                <img
+                  src={images[currentIndex]}
+                  alt={`Car image ${currentIndex + 1}`}
+                  className="max-w-full max-h-full object-contain p-4"
+                />
+              </div>
+
+              {/* Thumbnails */}
+              {images.length > 1 && (
+                <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2 p-4 overflow-x-auto">
+                  {images.map((image, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setCurrentIndex(index)}
+                      className={`relative w-20 h-16 rounded-lg overflow-hidden flex-shrink-0 border-2 transition-all ${
+                        index === currentIndex
+                          ? 'border-orange-500 scale-105'
+                          : 'border-transparent hover:border-white/50'
+                      }`}
+                    >
+                      <img
+                        src={image}
+                        alt={`Thumbnail ${index + 1}`}
+                        className="w-full h-full object-cover"
+                      />
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {/* Image Counter */}
+              <div className="absolute bottom-4 right-4 z-10 px-3 py-1 bg-black/50 text-white text-sm rounded-full">
+                {currentIndex + 1} / {images.length}
+              </div>
+            </motion.div>
+          </div>
+        </>
+      )}
+    </AnimatePresence>
+  );
+}
+
 export default function DealerDashboard() {
+  const [selectedCarImages, setSelectedCarImages] = useState<string[]>([]);
+  const [isGalleryOpen, setIsGalleryOpen] = useState(false);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [activeTab, setActiveTab] = useState('overview');
   const [listings, setListings] = useState<Listing[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -116,9 +272,6 @@ export default function DealerDashboard() {
     }
   }, [authStatus, router]);
 
-  // REMOVED the problematic useEffect that was closing the menu
-  // This was likely causing issue #2
-
   // Loading & unauthenticated states
   if (authStatus === 'loading') {
     return (
@@ -141,6 +294,13 @@ export default function DealerDashboard() {
     
     return matchesSearch && matchesStatus;
   });
+
+  // Open image gallery
+  const openImageGallery = (images: string[], index: number = 0) => {
+    setSelectedCarImages(images);
+    setSelectedImageIndex(index);
+    setIsGalleryOpen(true);
+  };
 
   // Handle status change
   const handleStatusChange = async (id: string, newStatus: string) => {
@@ -397,58 +557,57 @@ export default function DealerDashboard() {
         </header>
 
         {/* Mobile Menu - FIXED with HIGHER z-index */}
-        {/* Mobile Menu - GLOSSY TRANSPARENT VERSION */}
-<AnimatePresence>
-  {mobileMenuOpen && (
-    <>
-      {/* Backdrop */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
-        onClick={() => setMobileMenuOpen(false)}
-      />
-      
-      {/* Menu Panel */}
-      <motion.div
-        initial={{ x: '-100%' }}
-        animate={{ x: 0 }}
-        exit={{ x: '-100%' }}
-        transition={{ type: "spring", damping: 25, stiffness: 200 }}
-        className="fixed top-0 left-0 w-80 h-full bg-gray-900/80 backdrop-blur-xl border-r border-orange-500/20 pt-20 px-6 overflow-y-auto z-50"
-      >
-        {/* Close Button */}
-        <button
-          onClick={() => setMobileMenuOpen(false)}
-          className="absolute top-4 right-4 p-2 text-white/70 hover:text-orange-300 transition-colors"
-        >
-          <XCircle className="w-6 h-6" />
-        </button>
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <>
+              {/* Backdrop */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
+                onClick={() => setMobileMenuOpen(false)}
+              />
+              
+              {/* Menu Panel */}
+              <motion.div
+                initial={{ x: '-100%' }}
+                animate={{ x: 0 }}
+                exit={{ x: '-100%' }}
+                transition={{ type: "spring", damping: 25, stiffness: 200 }}
+                className="fixed top-0 left-0 w-80 h-full bg-gray-900/80 backdrop-blur-xl border-r border-orange-500/20 pt-20 px-6 overflow-y-auto z-50"
+              >
+                {/* Close Button */}
+                <button
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="absolute top-4 right-4 p-2 text-white/70 hover:text-orange-300 transition-colors"
+                >
+                  <XCircle className="w-6 h-6" />
+                </button>
 
-        {/* User Info - Full Name & Email */}
-        <div className="flex items-center gap-4 mb-8 p-4 bg-white/5 rounded-xl border border-white/10 backdrop-blur-lg">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center flex-shrink-0 shadow-lg">
-            <User className="w-6 h-6 text-white" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-white font-semibold text-sm truncate">{session?.user?.name || 'Dealer User'}</p>
-            <p className="text-white/60 text-xs truncate">{session?.user?.email || 'user@example.com'}</p>
-          </div>
-        </div>
+                {/* User Info - Full Name & Email */}
+                <div className="flex items-center gap-4 mb-8 p-4 bg-white/5 rounded-xl border border-white/10 backdrop-blur-lg">
+                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center flex-shrink-0 shadow-lg">
+                    <User className="w-6 h-6 text-white" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-white font-semibold text-sm truncate">{session?.user?.name || 'Dealer User'}</p>
+                    <p className="text-white/60 text-xs truncate">{session?.user?.email || 'user@example.com'}</p>
+                  </div>
+                </div>
 
-        {/* Logout Button */}
-        <button
-          onClick={handleLogout}
-          className="w-full flex items-center justify-center gap-3 px-4 py-4 bg-white/5 hover:bg-red-500/20 text-red-400 hover:text-red-300 rounded-xl transition-all duration-200 border border-white/10 hover:border-red-500/30 backdrop-blur-lg"
-        >
-          <LogOut className="w-5 h-5" />
-          <span className="font-medium">Logout</span>
-        </button>
-      </motion.div>
-    </>
-  )}
-</AnimatePresence>
+                {/* Logout Button */}
+                <button
+                  onClick={handleLogout}
+                  className="w-full flex items-center justify-center gap-3 px-4 py-4 bg-white/5 hover:bg-red-500/20 text-red-400 hover:text-red-300 rounded-xl transition-all duration-200 border border-white/10 hover:border-red-500/30 backdrop-blur-lg"
+                >
+                  <LogOut className="w-5 h-5" />
+                  <span className="font-medium">Logout</span>
+                </button>
+              </motion.div>
+            </>
+          )}
+        </AnimatePresence>
 
         {/* Main Content */}
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
@@ -740,15 +899,42 @@ export default function DealerDashboard() {
                                   transition={{ delay: index * 0.1 }}
                                   className="bg-white/90 backdrop-blur-md rounded-lg sm:rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-white/20 overflow-hidden group"
                                 >
-                                  <div className="relative h-36 sm:h-48 bg-gray-200 overflow-hidden">
+                                  {/* Car Image with Gallery Feature */}
+                                  <div className="relative h-36 sm:h-48 bg-gray-200 overflow-hidden cursor-pointer">
                                     {listing.images && listing.images.length > 0 ? (
-                                      <img 
-                                        src={listing.images[0]} 
-                                        alt={`${listing.make} ${listing.model}`}
-                                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                                      />
+                                      <>
+                                        <img 
+                                          src={listing.images[0]} 
+                                          alt={`${listing.make} ${listing.model}`}
+                                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                          onClick={() => openImageGallery(listing.images, 0)}
+                                        />
+                                        {listing.images.length > 1 && (
+                                          <div 
+                                            className="absolute bottom-2 right-2 flex items-center gap-1 cursor-pointer"
+                                            onClick={() => openImageGallery(listing.images, 0)}
+                                          >
+                                            <div className="flex">
+                                              {listing.images.slice(0, 3).map((_, idx) => (
+                                                <div 
+                                                  key={idx}
+                                                  className={`w-1.5 h-1.5 rounded-full mx-0.5 ${
+                                                    idx === 0 ? 'bg-white' : 'bg-white/60'
+                                                  }`}
+                                                />
+                                              ))}
+                                            </div>
+                                            <span className="text-xs text-white bg-black/50 px-2 py-1 rounded">
+                                              +{listing.images.length - 1}
+                                            </span>
+                                          </div>
+                                        )}
+                                      </>
                                     ) : (
-                                      <div className="w-full h-full bg-gradient-to-br from-orange-100 to-orange-200 flex items-center justify-center">
+                                      <div 
+                                        className="w-full h-full bg-gradient-to-br from-orange-100 to-orange-200 flex items-center justify-center cursor-pointer"
+                                        onClick={() => openImageGallery(listing.images, 0)}
+                                      >
                                         <Car className="w-10 h-10 sm:w-12 sm:h-12 text-orange-500" />
                                       </div>
                                     )}
@@ -766,15 +952,20 @@ export default function DealerDashboard() {
                                       </span>
                                     </div>
 
+                                    {/* Delete Button */}
                                     <div className="absolute top-2 right-2 sm:top-3 sm:right-3 flex gap-1 sm:gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                                       <button
-                                        onClick={() => handleDeleteListing(listing.id)}
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          handleDeleteListing(listing.id);
+                                        }}
                                         className="p-1.5 sm:p-2 rounded-full bg-white/90 backdrop-blur-sm text-gray-600 hover:text-red-500 transition-colors duration-200"
                                       >
                                         <Trash2 className="w-3 h-3 sm:w-4 sm:h-4" />
                                       </button>
                                     </div>
 
+                                    {/* Views & Inquiries Counter */}
                                     <div className="absolute bottom-2 left-2 sm:bottom-3 sm:left-3">
                                       <div className="flex gap-2 text-xs text-white backdrop-blur-sm bg-black/30 rounded-full px-2 py-1">
                                         <span className="flex items-center gap-1">
@@ -789,6 +980,7 @@ export default function DealerDashboard() {
                                     </div>
                                   </div>
 
+                                  {/* Car Details */}
                                   <div className="p-3 sm:p-4">
                                     <div className="flex justify-between items-start mb-2 sm:mb-3">
                                       <div className="flex-1 min-w-0">
@@ -870,6 +1062,14 @@ export default function DealerDashboard() {
             />
           )}
         </AnimatePresence>
+
+        {/* Image Gallery Modal */}
+        <ImageGalleryModal
+          images={selectedCarImages}
+          isOpen={isGalleryOpen}
+          onClose={() => setIsGalleryOpen(false)}
+          initialIndex={selectedImageIndex}
+        />
       </div>
     </div>
   );

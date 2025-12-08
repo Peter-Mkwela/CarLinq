@@ -37,25 +37,25 @@ export default function Home() {
   ];
 
   const testimonials = [
-    {
-      name: 'Sarah Johnson',
-      role: 'Car Dealer',
-      content: 'CarLinq has transformed how I do business. The verified buyer system saves me so much time!',
-      rating: 5
-    },
-    {
-      name: 'Mike Chen',
-      role: 'Car Buyer',
-      content: 'Finally found a platform where I can trust the listings. No more scams or misrepresentations.',
-      rating: 5
-    },
-    {
-      name: 'David Park',
-      role: 'Dealership Owner',
-      content: 'The analytics dashboard helped us optimize our inventory and increase sales by 40%.',
-      rating: 5
-    }
-  ];
+  {
+    name: 'Thomas Chigwida',
+    role: 'Vehicle Buyer',
+    content: 'Found my perfect family SUV in just 3 days. The verified listings gave me confidence in the purchase.',
+    rating: 5
+  },
+  {
+    name: 'Sarah Makoni',
+    role: 'Car Dealer',
+    content: 'My sales have increased by 60% since joining. The platform connects me with serious buyers daily.',
+    rating: 5
+  },
+  {
+    name: 'David Moyo',
+    role: 'Dealership Owner',
+    content: 'Managing multiple locations is now effortless. The analytics help us stock what customers actually want.',
+    rating: 5
+  }
+];
 
   return (
     <div className="min-h-screen">

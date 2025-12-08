@@ -1,8 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import toast from 'react-hot-toast';
 import { 
   Search, 
   Filter, 
@@ -17,10 +19,28 @@ import {
   Phone,
   MessageCircle,
   Building,
-  ChevronDown
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  X
 } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+
+// Add this function right after your imports, before the component definition
+function getOrCreateSessionId(): string {
+  if (typeof window === 'undefined') return '';
+  
+  let sessionId = localStorage.getItem('car_session_id');
+  
+  if (!sessionId) {
+    // Generate a unique session ID
+    sessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    localStorage.setItem('car_session_id', sessionId);
+  }
+  
+  return sessionId;
+}
 
 interface CarListing {
   id: string;
@@ -44,7 +64,161 @@ interface CarListing {
   inquiries: number;
 }
 
+// Image Gallery Modal Component
+function ImageGalleryModal({ 
+  images, 
+  isOpen, 
+  onClose, 
+  initialIndex = 0 
+}: { 
+  images: string[]; 
+  isOpen: boolean; 
+  onClose: () => void; 
+  initialIndex?: number; 
+}) {
+  const [currentIndex, setCurrentIndex] = useState(initialIndex);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  useEffect(() => {
+    if (isOpen) {
+      setCurrentIndex(initialIndex);
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'auto';
+    }
+
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, [isOpen, initialIndex]);
+
+  const nextImage = () => {
+    setCurrentIndex((prev) => (prev + 1) % images.length);
+  };
+
+  const prevImage = () => {
+    setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
+  };
+
+  const handleKeyDown = (e: KeyboardEvent) => {
+    if (!isOpen) return;
+    
+    switch (e.key) {
+      case 'ArrowLeft':
+        prevImage();
+        break;
+      case 'ArrowRight':
+        nextImage();
+        break;
+      case 'Escape':
+        onClose();
+        break;
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen]);
+
+  if (!isOpen) return null;
+
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <>
+          {/* Backdrop */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={onClose}
+            className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-sm"
+          />
+
+          {/* Modal */}
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="relative w-full max-w-6xl h-[90vh] bg-black/90 rounded-xl overflow-hidden"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Close Button */}
+              <button
+                onClick={onClose}
+                className="absolute top-4 right-4 z-10 p-2 bg-black/50 text-white rounded-full hover:bg-black/70 transition-colors"
+              >
+                <X className="w-6 h-6" />
+              </button>
+
+              {/* Navigation Arrows */}
+              {images.length > 1 && (
+                <>
+                  <button
+                    onClick={prevImage}
+                    className="absolute left-4 top-1/2 -translate-y-1/2 z-10 p-3 bg-black/50 text-white rounded-full hover:bg-black/70 transition-colors"
+                  >
+                    <ChevronLeft className="w-6 h-6" />
+                  </button>
+                  <button
+                    onClick={nextImage}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 z-10 p-3 bg-black/50 text-white rounded-full hover:bg-black/70 transition-colors"
+                  >
+                    <ChevronRight className="w-6 h-6" />
+                  </button>
+                </>
+              )}
+
+              {/* Main Image */}
+              <div className="relative w-full h-full flex items-center justify-center">
+                <img
+                  src={images[currentIndex]}
+                  alt={`Car image ${currentIndex + 1}`}
+                  className="max-w-full max-h-full object-contain p-4"
+                />
+              </div>
+
+              {/* Thumbnails */}
+              {images.length > 1 && (
+                <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2 p-4 overflow-x-auto">
+                  {images.map((image, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setCurrentIndex(index)}
+                      className={`relative w-20 h-16 rounded-lg overflow-hidden flex-shrink-0 border-2 transition-all ${
+                        index === currentIndex
+                          ? 'border-orange-500 scale-105'
+                          : 'border-transparent hover:border-white/50'
+                      }`}
+                    >
+                      <img
+                        src={image}
+                        alt={`Thumbnail ${index + 1}`}
+                        className="w-full h-full object-cover"
+                      />
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {/* Image Counter */}
+              <div className="absolute bottom-4 right-4 z-10 px-3 py-1 bg-black/50 text-white text-sm rounded-full">
+                {currentIndex + 1} / {images.length}
+              </div>
+            </motion.div>
+          </div>
+        </>
+      )}
+    </AnimatePresence>
+  );
+}
+
 export default function BrowseCars() {
+  const [selectedCarImages, setSelectedCarImages] = useState<string[]>([]);
+  const [isGalleryOpen, setIsGalleryOpen] = useState(false);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [cars, setCars] = useState<CarListing[]>([]);
   const [filteredCars, setFilteredCars] = useState<CarListing[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -83,12 +257,12 @@ export default function BrowseCars() {
       try {
         setLoading(true);
         
-        // Fetch car listings
+        // 1. Fetch car listings
         const listingsResponse = await fetch('/api/car-listings');
         if (!listingsResponse.ok) throw new Error('Failed to fetch listings');
         const listingsData = await listingsResponse.json();
         
-        // Fetch filter options
+        // 2. Fetch filter options
         const filtersResponse = await fetch('/api/car-filters');
         if (!filtersResponse.ok) throw new Error('Failed to fetch filters');
         const filtersData = await filtersResponse.json();
@@ -96,17 +270,36 @@ export default function BrowseCars() {
         setCars(listingsData.listings);
         setFilteredCars(listingsData.listings);
         setFilterOptions(filtersData.filterOptions);
-
-        // Fetch user favorites if logged in
-        if (session) {
-          const favoritesResponse = await fetch('/api/favorites');
-          if (favoritesResponse.ok) {
-            const favoritesData = await favoritesResponse.json();
-            setFavorites(favoritesData.favorites.map((fav: CarListing) => fav.id));
+        
+        // 3. Get session ID
+        const sessionId = getOrCreateSessionId();
+        
+        // 4. Load favorites from database (for this session)
+        const favoritesResponse = await fetch(`/api/favorites/all?sessionId=${sessionId}`);
+        if (favoritesResponse.ok) {
+          const dbFavorites = await favoritesResponse.json();
+          // dbFavorites is an array of { listingId: string } objects
+          const dbFavoriteIds = dbFavorites.map((fav: any) => fav.listingId);
+          setFavorites(dbFavoriteIds);
+          
+          // Also save to localStorage for offline use
+          localStorage.setItem('clientFavorites', JSON.stringify(dbFavoriteIds));
+        } else {
+          // Fallback to localStorage if DB fails
+          const storedFavorites = localStorage.getItem('clientFavorites');
+          if (storedFavorites) {
+            setFavorites(JSON.parse(storedFavorites));
           }
         }
+        
       } catch (error) {
         console.error('Error fetching data:', error);
+        
+        // On error, use localStorage as fallback
+        const storedFavorites = localStorage.getItem('clientFavorites');
+        if (storedFavorites) {
+          setFavorites(JSON.parse(storedFavorites));
+        }
       } finally {
         setLoading(false);
       }
@@ -194,6 +387,12 @@ export default function BrowseCars() {
     }));
   };
 
+  const openImageGallery = (images: string[], index: number = 0) => {
+    setSelectedCarImages(images);
+    setSelectedImageIndex(index);
+    setIsGalleryOpen(true);
+  };
+
   const clearFilters = () => {
     setFilters({
       make: '',
@@ -211,40 +410,45 @@ export default function BrowseCars() {
     setSearchTerm('');
   };
 
-  // Toggle favorite
+  // Toggle favorite - UPDATED VERSION (Hybrid: localStorage + database)
   const toggleFavorite = async (carId: string) => {
-    if (!session) {
-      // Redirect to login if not authenticated
-      router.push('/login');
-      return;
-    }
-
-    const isCurrentlyFavorite = favorites.includes(carId);
-    const action = isCurrentlyFavorite ? 'remove' : 'add';
-
     try {
-      const response = await fetch('/api/favorites', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          listingId: carId,
-          action: action,
-        }),
-      });
-
-      if (response.ok) {
-        if (isCurrentlyFavorite) {
-          setFavorites(prev => prev.filter(id => id !== carId));
-        } else {
-          setFavorites(prev => [...prev, carId]);
-        }
+      // Get session ID (for anonymous users)
+      const sessionId = getOrCreateSessionId();
+      
+      // For instant UI feedback, use localStorage first
+      const storedFavorites = localStorage.getItem('clientFavorites');
+      let currentFavorites = storedFavorites ? JSON.parse(storedFavorites) : [];
+      const isCurrentlyFavorite = currentFavorites.includes(carId);
+      
+      if (isCurrentlyFavorite) {
+        // Remove from local favorites
+        currentFavorites = currentFavorites.filter((id: string) => id !== carId);
+        setFavorites(currentFavorites);
+        toast.success('Removed from favorites');
       } else {
-        console.error('Failed to update favorite');
+        // Add to local favorites
+        currentFavorites.push(carId);
+        setFavorites(currentFavorites);
+        toast.success('Added to favorites');
       }
+      
+      // Save to localStorage for offline persistence
+      localStorage.setItem('clientFavorites', JSON.stringify(currentFavorites));
+      const action = isCurrentlyFavorite ? 'remove' : 'add';
+      fetch('/api/favorites', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          listingId: carId, 
+          sessionId: sessionId,  // Add sessionId
+          action: action 
+        }),
+      }).catch(error => console.error('Database sync failed:', error));
+      
     } catch (error) {
-      console.error('Error updating favorite:', error);
+      console.error('Error toggling favorite:', error);
+      toast.error('Failed to update favorites');
     }
   };
 
@@ -295,14 +499,6 @@ export default function BrowseCars() {
   };
 
   const activeFilterCount = Object.values(filters).filter(value => value !== '').length;
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <div className="text-white text-lg">Loading premium vehicles...</div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen flex flex-col relative">
@@ -610,15 +806,41 @@ export default function BrowseCars() {
                           className="bg-white/90 backdrop-blur-md rounded-lg sm:rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-white/20 overflow-hidden group"
                         >
                           {/* Car Image */}
-                          <div className="relative h-36 sm:h-48 bg-gray-200 overflow-hidden">
+                          <div className="relative h-36 sm:h-48 bg-gray-200 overflow-hidden cursor-pointer">
                             {car.images && car.images.length > 0 ? (
-                              <img 
-                                src={car.images[0]} 
-                                alt={`${car.make} ${car.model}`}
-                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                              />
+                              <>
+                                <img 
+                                  src={car.images[0]} 
+                                  alt={`${car.make} ${car.model}`}
+                                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                  onClick={() => openImageGallery(car.images, 0)}
+                                />
+                                {car.images.length > 1 && (
+                                  <div 
+                                    className="absolute bottom-2 right-2 flex items-center gap-1 cursor-pointer"
+                                    onClick={() => openImageGallery(car.images, 0)}
+                                  >
+                                    <div className="flex">
+                                      {car.images.slice(0, 3).map((_, idx) => (
+                                        <div 
+                                          key={idx}
+                                          className={`w-1.5 h-1.5 rounded-full mx-0.5 ${
+                                            idx === 0 ? 'bg-white' : 'bg-white/60'
+                                          }`}
+                                        />
+                                      ))}
+                                    </div>
+                                    <span className="text-xs text-white bg-black/50 px-2 py-1 rounded">
+                                      +{car.images.length - 1}
+                                    </span>
+                                  </div>
+                                )}
+                              </>
                             ) : (
-                              <div className="w-full h-full bg-gradient-to-br from-orange-100 to-amber-100 flex items-center justify-center">
+                              <div 
+                                className="w-full h-full bg-gradient-to-br from-orange-100 to-amber-100 flex items-center justify-center cursor-pointer"
+                                onClick={() => openImageGallery(car.images, 0)}
+                              >
                                 <Car className="w-10 h-10 sm:w-12 sm:h-12 text-orange-500" />
                               </div>
                             )}
@@ -636,7 +858,10 @@ export default function BrowseCars() {
                             <div className="absolute top-2 right-2 sm:top-3 sm:right-3 flex gap-1 sm:gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                               {/* Favorite Button */}
                               <button
-                                onClick={() => toggleFavorite(car.id)}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  toggleFavorite(car.id);
+                                }}
                                 className={`p-1.5 sm:p-2 rounded-full bg-white/90 backdrop-blur-sm ${
                                   favorites.includes(car.id) 
                                     ? 'text-red-500' 
@@ -651,7 +876,10 @@ export default function BrowseCars() {
                               
                               {/* Share Button */}
                               <button 
-                                onClick={() => shareCar(car)}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  shareCar(car);
+                                }}
                                 className="p-1.5 sm:p-2 rounded-full bg-white/90 backdrop-blur-sm text-gray-600 hover:text-green-500 transition-colors duration-200"
                               >
                                 <Share2 className="w-3 h-3 sm:w-4 sm:h-4" />
@@ -735,6 +963,7 @@ export default function BrowseCars() {
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="flex-1 bg-green-600 hover:bg-green-700 text-white py-1.5 sm:py-2 px-3 rounded-lg transition-colors duration-200 text-xs sm:text-sm font-medium flex items-center justify-center gap-2"
+                                onClick={(e) => e.stopPropagation()}
                               >
                                 <MessageCircle className="w-3 h-3 sm:w-4 sm:h-4" />
                                 WhatsApp
@@ -751,6 +980,14 @@ export default function BrowseCars() {
           </section>
         </div>
       </div>
+
+      {/* Image Gallery Modal */}
+      <ImageGalleryModal
+        images={selectedCarImages}
+        isOpen={isGalleryOpen}
+        onClose={() => setIsGalleryOpen(false)}
+        initialIndex={selectedImageIndex}
+      />
     </div>
   );
 }

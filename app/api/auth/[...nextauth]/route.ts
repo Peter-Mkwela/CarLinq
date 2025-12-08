@@ -2,6 +2,7 @@
 // app/api/auth/[...nextauth]/route.ts
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
+import { obscuredRoutes } from '@/lib/route-obfuscation';
 import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { compare } from "bcryptjs";
@@ -224,7 +225,7 @@ const handler = NextAuth({
   },
 
   pages: {
-    signIn: "/dealers/login",
+    signIn: obscuredRoutes.dealerLogin,
     error: "/dealers/login",
   },
 

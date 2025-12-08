@@ -8,83 +8,66 @@ datasource db {
 }
 
 model User {
-  id            String   @id @default(cuid())
-  email         String   @unique
-  password      String?          // optional for OAuth users
+  id            String     @id @default(cuid())
+  email         String     @unique
+  password      String?
   role          UserRole
   name          String
   phone         String?
   avatar        String?
   emailVerified DateTime?
-
   companyName   String?
   address       String?
-  isVerified    Boolean  @default(false)
-
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-
-  listings      Listing[]
+  isVerified    Boolean    @default(false)
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
   accounts      Account[]
-  favorites     Favorite[]  // ADD THIS LINE
+  favorites     Favorite[]
+  listings      Listing[]
 
   @@map("users")
 }
 
 model Account {
-  id                 String   @id @default(cuid())
-  userId             String
-  type               String
-  provider           String
-  providerAccountId  String
-  refresh_token      String?
-  access_token       String?
-  expires_at         Int?
-  token_type         String?
-  scope              String?
-  id_token           String?
-  session_state      String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
 
 model Listing {
-  id          String    @id @default(cuid())
-  make        String
-  model       String
-  year        Int
-  price       Float
-  mileage     Int
-  location    String    // Added location field
-  transmission String?  // Added transmission field
-  fuelType    String?   // Added fuelType field
-  status      CarStatus @default(AVAILABLE)
-  description String?
-  images      String[]  // Array of image URLs
-  views       Int       @default(0)
-  inquiries   Int       @default(0)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-
-  dealerId String
-  dealer   User   @relation(fields: [dealerId], references: [id], onDelete: Cascade)
-  favorites Favorite[]  // ADD THIS LINE
+  id           String     @id @default(cuid())
+  make         String
+  model        String
+  year         Int
+  price        Float
+  mileage      Int
+  location     String
+  transmission String?
+  fuelType     String?
+  status       CarStatus  @default(AVAILABLE)
+  description  String?
+  images       String[]
+  views        Int        @default(0)
+  inquiries    Int        @default(0)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  dealerId     String
+  favorites    Favorite[]
+  dealer       User       @relation(fields: [dealerId], references: [id], onDelete: Cascade)
 
   @@map("listings")
-}
-
-enum UserRole {
-  ADMIN
-  DEALER
-}
-
-enum CarStatus {
-  AVAILABLE
-  SOLD
-  PENDING
-  UNAVAILABLE
 }
 
 model Favorite {
@@ -92,9 +75,8 @@ model Favorite {
   userId    String
   listingId String
   createdAt DateTime @default(now())
-
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  listing Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  listing   Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  users     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, listingId])
   @@map("favorites")
@@ -109,4 +91,16 @@ model ContactMessage {
   createdAt DateTime @default(now())
 
   @@map("contact_messages")
+}
+
+enum UserRole {
+  ADMIN
+  DEALER
+}
+
+enum CarStatus {
+  AVAILABLE
+  SOLD
+  PENDING
+  UNAVAILABLE
 }

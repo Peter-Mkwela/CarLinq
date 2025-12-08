@@ -27,7 +27,15 @@ import {
   CheckCircle,
   Trash2,
   Plus,
-  Cog
+  Cog,
+  Fuel,
+  User,
+  Phone,
+  Mail,
+  Upload,
+  Camera,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -81,6 +89,11 @@ export default function AddListingModal({ isOpen, onClose, onAddListing }: AddLi
   const [imageUrls, setImageUrls] = useState<string[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const [filesSelected, setFilesSelected] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+
+  const transmissions = ['Automatic', 'Manual', 'Semi-Automatic', 'CVT', 'Dual-Clutch'];
+  const fuelTypes = ['Petrol', 'Diesel', 'Electric', 'Hybrid'];
+  const currentYear = new Date().getFullYear();
 
   const handleInputChange = (field: keyof NewListingForm, value: string) => {
     setNewListing(prev => ({ ...prev, [field]: value }));
@@ -164,188 +177,222 @@ export default function AddListingModal({ isOpen, onClose, onAddListing }: AddLi
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 bg-black/80 backdrop-blur-xl flex items-center justify-center p-4 z-50"
-      onClick={(e) => e.target === e.currentTarget && handleClose()}
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-4"
     >
+      {/* Background Overlay */}
+      <div className="absolute inset-0 bg-black/50 backdrop-blur-[1px]"
+        onClick={handleClose}>
+      </div>
+
+      {/* Premium Background Image */}
+      <div className="absolute inset-0 bg-cover bg-center bg-no-repeat z-0"
+        style={{ backgroundImage: "url('/background/carbackground.jpg')" }}>
+        <div className="absolute inset-0 bg-black/50 backdrop-blur-[1px]"></div>
+      </div>
+
+      {/* Modal Container */}
       <motion.div
         initial={{ scale: 0.9, opacity: 0, y: 20 }}
         animate={{ scale: 1, opacity: 1, y: 0 }}
         exit={{ scale: 0.9, opacity: 0, y: 20 }}
-        className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border border-orange-500/20 rounded-3xl w-full max-w-4xl max-h-[95vh] overflow-hidden shadow-2xl"
+        className="relative z-10 w-full max-w-4xl mx-auto bg-white/10 backdrop-blur-md rounded-2xl shadow-2xl border border-white/20 overflow-hidden max-h-[90vh]"
+        onClick={(e) => e.stopPropagation()}
       >
-        {/* Premium Header */}
-        <div className="bg-gradient-to-r from-orange-500/10 via-orange-600/10 to-amber-600/10 border-b border-orange-500/30 px-8 py-6">
+        {/* Premium Header with Glass Effect */}
+        <div className="bg-white/10 backdrop-blur-sm border-b border-white/20 px-8 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <div className="relative">
-                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center shadow-lg shadow-orange-500/25">
-                  <Car className="w-6 h-6 text-white" />
-                </div>
-                <div className="absolute -top-1 -right-1 w-5 h-5 bg-green-400 rounded-full border-2 border-gray-900 flex items-center justify-center">
-                  <Plus className="w-3 h-3 text-gray-900" />
-                </div>
+              <div className="w-12 h-12 rounded-full flex items-center justify-center border-2 border-white/30 bg-white/20 text-white shadow-lg">
+                <Car className="w-6 h-6" />
               </div>
               <div>
-                <h3 className="text-2xl font-bold bg-gradient-to-r from-white to-orange-200 bg-clip-text text-transparent">
+                <h3 className="text-2xl font-bold text-white drop-shadow">
                   Add New Vehicle
                 </h3>
-                <p className="text-orange-200/70 text-sm flex items-center gap-2 mt-1">
-                  <Sparkles className="w-4 h-4" />
+                <p className="text-white/80 text-sm mt-1 drop-shadow">
                   Create your premium vehicle listing
                 </p>
               </div>
             </div>
             <button 
               onClick={handleClose}
-              className="w-10 h-10 rounded-xl bg-white/5 hover:bg-red-500/20 border border-white/10 hover:border-red-400/30 flex items-center justify-center transition-all duration-300 group"
+              className="w-10 h-10 rounded-xl border border-white/20 bg-white/10 backdrop-blur-sm text-white flex items-center justify-center hover:bg-white/20 transition-all duration-200"
             >
-              <X className="w-5 h-5 text-white/70 group-hover:text-red-300 transition-colors duration-300" />
+              <X className="w-5 h-5" />
             </button>
           </div>
         </div>
 
-        {/* Modern Form Content */}
-        <div className="p-8 max-h-[calc(95vh-140px)] overflow-y-auto">
+        {/* Modern Form Content with Glass Effect */}
+        <div className="p-8 max-h-[calc(90vh-140px)] overflow-y-auto">
           <form onSubmit={handleSubmit} className="space-y-8">
-            {/* Vehicle Details - Modern Grid Layout */}
-            <div className="space-y-6">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-2 h-8 bg-gradient-to-b from-orange-400 to-amber-500 rounded-full"></div>
-                <div className="flex items-center gap-3">
-                  <Settings className="w-6 h-6 text-orange-400" />
-                  <h4 className="text-xl font-semibold text-white">Vehicle Information</h4>
-                </div>
+            {/* Vehicle Details - Premium Grid Layout */}
+            <div className="space-y-8">
+              <div className="mb-6">
+                <h4 className="text-2xl font-bold text-white mb-2 drop-shadow">Vehicle Information</h4>
+                <p className="text-white/70 text-base">Fill in all the essential details about your vehicle</p>
               </div>
               
-              {/* Modern Grid with Better Spacing */}
+              {/* Modern Grid with Premium Styling */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {([
-                  { field: 'make', label: 'Vehicle Make', placeholder: 'e.g., Mercedes-Benz', icon: Badge },
-                  { field: 'model', label: 'Model Series', placeholder: 'e.g., C-Class', icon: FileText },
-                  { field: 'year', label: 'Manufacture Year', placeholder: 'e.g., 2023', icon: Calendar },
-                  { field: 'price', label: 'Asking Price ($)', placeholder: 'e.g., 45,000', icon: DollarSign },
-                ] as const).map(({ field, label, placeholder, icon: Icon }) => (
-                  <div key={field} className="group">
-                    <label className="block text-white/80 text-sm font-medium mb-3 flex items-center gap-2">
-                      <Icon className="w-4 h-4 text-orange-400" />
-                      {label}
-                    </label>
-                    <div className="relative">
-                      <input
-                        type={field === 'year' || field === 'price' ? 'number' : 'text'}
-                        required
-                        value={newListing[field]}
-                        onChange={(e) => handleInputChange(field, e.target.value)}
-                        className="w-full px-4 pl-12 py-4 bg-white/5 border border-white/10 rounded-2xl text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all duration-300 group-hover:border-white/20 backdrop-blur-sm"
-                        placeholder={placeholder}
-                        min={field === 'year' ? '1990' : field === 'price' ? '0' : undefined}
-                        max={field === 'year' ? '2025' : undefined}
-                      />
-                      <div className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40 group-hover:text-orange-400 transition-colors duration-300">
-                        {field === 'make' && <Car className="w-5 h-5" />}
-                        {field === 'model' && <FileText className="w-5 h-5" />}
-                        {field === 'year' && <Calendar className="w-5 h-5" />}
-                        {field === 'price' && <DollarSign className="w-5 h-5" />}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Mileage & Location - Modern Side by Side */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Vehicle Make - Manual Input */}
                 <div className="group">
-                  <label className="block text-white/80 text-sm font-medium mb-3 flex items-center gap-2">
-                    <Gauge className="w-4 h-4 text-orange-400" />
-                    Vehicle Mileage
+                  <label className="block text-base font-medium text-white/90 mb-3 drop-shadow">
+                    Vehicle Make
                   </label>
                   <div className="relative">
+                    <Car className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white/60 w-5 h-5" />
+                    <input
+                      type="text"
+                      required
+                      value={newListing.make}
+                      onChange={(e) => handleInputChange('make', e.target.value)}
+                      className="w-full pl-12 pr-4 py-4 text-base border border-white/30 bg-white/10 backdrop-blur-sm rounded-xl text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-transparent transition-all duration-200"
+                      placeholder="e.g., Mercedes-Benz, Toyota, BMW"
+                    />
+                  </div>
+                </div>
+
+                {/* Model Series */}
+                <div className="group">
+                  <label className="block text-base font-medium text-white/90 mb-3 drop-shadow">
+                    Model Series
+                  </label>
+                  <div className="relative">
+                    <FileText className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white/60 w-5 h-5" />
+                    <input
+                      type="text"
+                      required
+                      value={newListing.model}
+                      onChange={(e) => handleInputChange('model', e.target.value)}
+                      className="w-full pl-12 pr-4 py-4 text-base border border-white/30 bg-white/10 backdrop-blur-sm rounded-xl text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-transparent transition-all duration-200"
+                      placeholder="e.g., C-Class, Corolla, X5"
+                    />
+                  </div>
+                </div>
+
+                {/* Manufacture Year - Manual Input */}
+                <div className="group">
+                  <label className="block text-base font-medium text-white/90 mb-3 drop-shadow">
+                    Manufacture Year
+                  </label>
+                  <div className="relative">
+                    <Calendar className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white/60 w-5 h-5" />
+                    <input
+                      type="number"
+                      required
+                      value={newListing.year}
+                      onChange={(e) => handleInputChange('year', e.target.value)}
+                      className="w-full pl-12 pr-4 py-4 text-base border border-white/30 bg-white/10 backdrop-blur-sm rounded-xl text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-transparent transition-all duration-200"
+                      placeholder="e.g., 2023, 2024"
+                      min="1990"
+                      max={currentYear}
+                    />
+                  </div>
+                </div>
+
+                {/* Asking Price */}
+                <div className="group">
+                  <label className="block text-base font-medium text-white/90 mb-3 drop-shadow">
+                    Asking Price ($)
+                  </label>
+                  <div className="relative">
+                    <DollarSign className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white/60 w-5 h-5" />
+                    <input
+                      type="number"
+                      required
+                      value={newListing.price}
+                      onChange={(e) => handleInputChange('price', e.target.value)}
+                      className="w-full pl-12 pr-4 py-4 text-base border border-white/30 bg-white/10 backdrop-blur-sm rounded-xl text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-transparent transition-all duration-200"
+                      placeholder="e.g., 45,000"
+                      min="0"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Mileage & Location - Premium Side by Side */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-base font-medium text-white/90 mb-3 drop-shadow">
+                    Vehicle Mileage (km)
+                  </label>
+                  <div className="relative">
+                    <Gauge className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white/60 w-5 h-5" />
                     <input
                       type="number"
                       required
                       value={newListing.mileage}
                       onChange={(e) => handleInputChange('mileage', e.target.value)}
-                      className="w-full px-4 pl-12 py-4 bg-white/5 border border-white/10 rounded-2xl text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all duration-300 group-hover:border-white/20 backdrop-blur-sm"
+                      className="w-full pl-12 pr-4 py-4 text-base border border-white/30 bg-white/10 backdrop-blur-sm rounded-xl text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-transparent transition-all duration-200"
                       placeholder="e.g., 15,000"
                       min="0"
                     />
-                    <Gauge className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40 group-hover:text-orange-400 transition-colors duration-300" />
-                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-white/40 text-sm">km</span>
                   </div>
                 </div>
 
-                <div className="group">
-                  <label className="block text-white/80 text-sm font-medium mb-3 flex items-center gap-2">
-                    <MapPin className="w-4 h-4 text-orange-400" />
+                <div>
+                  <label className="block text-base font-medium text-white/90 mb-3 drop-shadow">
                     Vehicle Location
                   </label>
                   <div className="relative">
+                    <MapPin className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white/60 w-5 h-5" />
                     <input
                       type="text"
                       required
                       value={newListing.location}
                       onChange={(e) => handleInputChange('location', e.target.value)}
-                      className="w-full px-4 pl-12 py-4 bg-white/5 border border-white/10 rounded-2xl text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all duration-300 group-hover:border-white/20 backdrop-blur-sm"
-                      placeholder="e.g., Harare, Zimbabwe"
+                      className="w-full pl-12 pr-4 py-4 text-base border border-white/30 bg-white/10 backdrop-blur-sm rounded-xl text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-transparent transition-all duration-200"
+                      placeholder="e.g., Nairobi, Kenya"
                     />
-                    <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40 group-hover:text-orange-400 transition-colors duration-300" />
                   </div>
                 </div>
               </div>
 
-              {/* Fuel Type & Transmission - Side by Side */}
+              {/* Fuel Type & Transmission - Premium Dropdowns */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Fuel Type Dropdown */}
-                <div className="group">
-                  <label className="block text-white/80 text-sm font-medium mb-3 flex items-center gap-2">
-                    <Car className="w-4 h-4 text-orange-400" />
+                <div>
+                  <label className="block text-base font-medium text-white/90 mb-3 drop-shadow">
                     Fuel Type
                   </label>
                   <div className="relative">
+                    <Fuel className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white/60 w-5 h-5" />
                     <select
                       value={newListing.fuelType}
                       onChange={(e) => handleInputChange('fuelType', e.target.value)}
-                      className="w-full px-4 pl-12 pr-12 py-4 bg-white/5 border border-white/10 rounded-2xl text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all duration-300 group-hover:border-white/20 backdrop-blur-sm appearance-none cursor-pointer"
+                      className="w-full pl-12 pr-10 py-4 text-base border border-white/30 bg-white/10 backdrop-blur-sm rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-transparent transition-all duration-200 appearance-none cursor-pointer"
                     >
-                      <option value="Petrol" className="bg-gray-900 text-white">Petrol</option>
-                      <option value="Diesel" className="bg-gray-900 text-white">Diesel</option>
-                      <option value="Electric" className="bg-gray-900 text-white">Electric</option>
-                      <option value="Hybrid" className="bg-gray-900 text-white">Hybrid</option>
+                      {fuelTypes.map(type => (
+                        <option key={type} value={type} className="text-gray-900 bg-white">{type}</option>
+                      ))}
                     </select>
-                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40 group-hover:text-orange-400 transition-colors duration-300">
-                      <Car className="w-5 h-5" />
-                    </div>
-                    <div className="absolute right-4 top-1/2 -translate-y-1/2 text-white/40 group-hover:text-orange-400 transition-colors duration-300 pointer-events-none">
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
+                      <svg className="w-5 h-5 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                       </svg>
                     </div>
                   </div>
                 </div>
 
-                {/* Transmission Dropdown */}
-                <div className="group">
-                  <label className="block text-white/80 text-sm font-medium mb-3 flex items-center gap-2">
-                    <Cog className="w-4 h-4 text-orange-400" />
+                {/* Transmission Dropdown with CVT and Dual-Clutch */}
+                <div>
+                  <label className="block text-base font-medium text-white/90 mb-3 drop-shadow">
                     Transmission
                   </label>
                   <div className="relative">
+                    <Settings className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white/60 w-5 h-5" />
                     <select
                       value={newListing.transmission}
                       onChange={(e) => handleInputChange('transmission', e.target.value)}
-                      className="w-full px-4 pl-12 pr-12 py-4 bg-white/5 border border-white/10 rounded-2xl text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all duration-300 group-hover:border-white/20 backdrop-blur-sm appearance-none cursor-pointer"
+                      className="w-full pl-12 pr-10 py-4 text-base border border-white/30 bg-white/10 backdrop-blur-sm rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-transparent transition-all duration-200 appearance-none cursor-pointer"
                     >
-                      <option value="Automatic" className="bg-gray-900 text-white">Automatic</option>
-                      <option value="Manual" className="bg-gray-900 text-white">Manual</option>
-                      <option value="Semi-Automatic" className="bg-gray-900 text-white">Semi-Automatic</option>
-                      <option value="CVT" className="bg-gray-900 text-white">CVT</option>
-                      <option value="Dual-Clutch" className="bg-gray-900 text-white">Dual-Clutch</option>
+                      {transmissions.map(trans => (
+                        <option key={trans} value={trans} className="text-gray-900 bg-white">{trans}</option>
+                      ))}
                     </select>
-                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40 group-hover:text-orange-400 transition-colors duration-300">
-                      <Cog className="w-5 h-5" />
-                    </div>
-                    <div className="absolute right-4 top-1/2 -translate-y-1/2 text-white/40 group-hover:text-orange-400 transition-colors duration-300 pointer-events-none">
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
+                      <svg className="w-5 h-5 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                       </svg>
                     </div>
@@ -354,17 +401,14 @@ export default function AddListingModal({ isOpen, onClose, onAddListing }: AddLi
               </div>
             </div>
 
-            {/* Modern Image Upload Section with UploadThing */}
-            <div className="space-y-6">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-2 h-8 bg-gradient-to-b from-orange-400 to-amber-500 rounded-full"></div>
-                <div className="flex items-center gap-3">
-                  <ImageIcon className="w-6 h-6 text-orange-400" />
-                  <h4 className="text-xl font-semibold text-white">Vehicle Gallery</h4>
-                </div>
+            {/* Premium Image Upload Section */}
+            <div className="space-y-8">
+              <div className="mb-6">
+                <h4 className="text-2xl font-bold text-white mb-2 drop-shadow">Vehicle Gallery</h4>
+                <p className="text-white/70 text-base">Add photos of your vehicle for better visibility. Include exterior, interior, and engine shots.</p>
               </div>
 
-              {/* UploadThing Dropzone */}
+              {/* UploadThing Dropzone with Premium Styling */}
               <UploadDropzone<OurFileRouter, "imageUploader">
                 endpoint="imageUploader"
                 onUploadBegin={() => {
@@ -400,37 +444,29 @@ export default function AddListingModal({ isOpen, onClose, onAddListing }: AddLi
                   toast.error(`Upload failed: ${error.message}`);
                 }}
                 onDrop={(acceptedFiles) => {
-  console.log("Files selected:", acceptedFiles);
-  setFilesSelected(true);
-  toast(`Selected ${acceptedFiles.length} file(s). Click "Upload" to continue.`, {
-    icon: '📁',
-    duration: 3000,
-  });
-}}
+                  console.log("Files selected:", acceptedFiles);
+                  setFilesSelected(true);
+                  toast(`Selected ${acceptedFiles.length} file(s). Click "Upload" to continue.`, {
+                    icon: '',
+                    duration: 3000,
+                  });
+                }}
                 appearance={{
                   container: `
-                    border-2 border-dashed rounded-3xl p-12 text-center cursor-pointer transition-all duration-500 backdrop-blur-sm
-                    border-white/10 bg-gradient-to-br from-white/5 to-white/2 hover:border-orange-400/50 hover:bg-white/10 shadow-lg
-                    ut-ready:border-orange-400 ut-ready:bg-orange-500/20 ut-ready:scale-[1.02] ut-ready:shadow-2xl ut-ready:shadow-orange-500/20
+                    border-2 border-dashed rounded-xl p-12 text-center cursor-pointer transition-all duration-300 backdrop-blur-sm
+                    border-white/30 hover:border-primary-400 hover:bg-white/5
                   `,
                   uploadIcon: `
-                    text-white/50 w-10 h-10 transition-all duration-500
-                    ut-ready:text-white ut-ready:scale-110
+                    text-white/60 w-16 h-16
                   `,
                   label: `
-                    text-white font-bold text-xl mb-3 bg-gradient-to-r from-white to-orange-200 bg-clip-text text-transparent
-                    ut-ready:text-orange-200
+                    text-white font-bold text-xl mb-3
                   `,
                   allowedContent: `
-                    text-white/60 text-base mb-2
-                    ut-ready:text-orange-100
+                    text-white/60 text-base mb-4
                   `,
                   button: `
-                    bg-gradient-to-r from-orange-500 to-amber-600 text-white rounded-xl px-6 py-3 font-medium
-                    hover:from-orange-600 hover:to-amber-700 transform hover:scale-105 transition-all duration-300
-                    shadow-lg shadow-orange-500/25
-                    ut-ready:bg-green-500 ut-ready:hover:bg-green-600
-                    ut-uploading:from-orange-400 ut-uploading:to-amber-500 ut-uploading:cursor-not-allowed
+                    px-8 py-4 text-base bg-primary-500 hover:bg-primary-600 text-white rounded-xl transition-all duration-200 shadow-lg shadow-primary-500/25
                   `,
                 }}
               />
@@ -440,29 +476,28 @@ export default function AddListingModal({ isOpen, onClose, onAddListing }: AddLi
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="text-center p-4 bg-orange-500/10 border border-orange-500/20 rounded-xl"
+                  className="text-center p-6 bg-primary-500/10 border border-primary-500/20 rounded-xl"
                 >
-                  <p className="text-orange-300 font-medium">
-                    💡 Files selected! Click the <strong>"Upload X files"</strong> button above to start uploading.
+                  <p className="text-white font-medium text-base">
+                    📁 Files selected! Click the <strong>"Upload X files"</strong> button above to start uploading.
                   </p>
                 </motion.div>
               )}
 
-              {/* Modern Image Previews */}
+              {/* Premium Image Previews */}
               {imageUrls.length > 0 && (
                 <motion.div
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: 'auto' }}
-                  className="space-y-4"
+                  className="space-y-6"
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <CheckCircle className="w-5 h-5 text-green-400" />
-                      <p className="text-white font-semibold">Uploaded Photos ({imageUrls.length})</p>
+                      <CheckCircle className="w-6 h-6 text-white" />
+                      <p className="text-white font-semibold text-lg">Uploaded Photos ({imageUrls.length})</p>
                     </div>
-                    <span className="text-orange-400 text-sm flex items-center gap-2">
-                      <MousePointer className="w-4 h-4" />
-                      Click to remove
+                    <span className="text-white/60 text-sm">
+                      Click X to remove
                     </span>
                   </div>
                   <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
@@ -472,22 +507,23 @@ export default function AddListingModal({ isOpen, onClose, onAddListing }: AddLi
                         initial={{ scale: 0.8, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
                         transition={{ delay: i * 0.1 }}
-                        className="relative group cursor-pointer"
-                        onClick={() => removeImage(i)}
+                        className="relative group"
                       >
-                        <div className="aspect-square rounded-2xl overflow-hidden bg-gradient-to-br from-white/5 to-white/10 border border-white/10 group-hover:border-red-400/50 transition-all duration-300 shadow-lg group-hover:shadow-red-500/20">
+                        <div className="aspect-square rounded-xl overflow-hidden bg-gradient-to-br from-white/5 to-white/10 border border-white/10">
                           <img 
                             src={src} 
                             alt={`Vehicle preview ${i + 1}`} 
-                            className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
+                            className="w-full h-full object-cover"
                           />
                         </div>
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 rounded-2xl flex items-end justify-center pb-3">
-                          <div className="w-10 h-10 bg-red-500 rounded-xl flex items-center justify-center transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 shadow-lg">
-                            <Trash2 className="w-5 h-5 text-white" />
-                          </div>
-                        </div>
-                        <div className="absolute top-3 right-3 w-7 h-7 bg-gradient-to-br from-orange-500 to-amber-600 rounded-full flex items-center justify-center text-xs font-bold text-white shadow-lg">
+                        <button
+                          type="button"
+                          onClick={() => removeImage(i)}
+                          className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-200 hover:scale-110 shadow-lg"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                        <div className="absolute top-2 right-2 w-7 h-7 bg-primary-500 rounded-full flex items-center justify-center text-xs font-bold text-white shadow-lg">
                           {i + 1}
                         </div>
                       </motion.div>
@@ -497,24 +533,24 @@ export default function AddListingModal({ isOpen, onClose, onAddListing }: AddLi
               )}
             </div>
 
-            {/* Modern Action Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 pt-8 border-t border-white/10">
+            {/* Premium Action Buttons */}
+            <div className="flex flex-col sm:flex-row gap-6 pt-8 border-t border-white/20">
               <button
                 type="button"
                 onClick={handleClose}
-                className="flex-1 px-8 py-4 border border-white/20 text-white/80 rounded-2xl hover:bg-white/5 hover:text-white hover:border-white/30 transition-all duration-300 font-medium flex items-center justify-center gap-3 group"
+                className="flex-1 px-8 py-4 border border-white/20 bg-white/10 backdrop-blur-sm text-white rounded-xl hover:bg-white/20 transition-all duration-200 font-medium text-base flex items-center justify-center gap-3"
               >
-                <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform duration-300" />
+                <ArrowLeft className="w-5 h-5" />
                 Cancel Listing
               </button>
               <button
                 type="submit"
                 disabled={imageUrls.length === 0 || isUploading}
-                className="flex-1 px-8 py-4 bg-gradient-to-r from-orange-500 to-amber-600 text-white rounded-2xl font-bold disabled:opacity-50 disabled:cursor-not-allowed hover:from-orange-600 hover:to-amber-700 transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 shadow-2xl shadow-orange-500/25 flex items-center justify-center gap-3 group"
+                className="flex-1 px-8 py-4 bg-primary-500 hover:bg-primary-600 text-white rounded-xl font-bold disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg shadow-primary-500/25 text-base flex items-center justify-center gap-3"
               >
-                <Sparkles className="w-5 h-5 group-hover:rotate-12 transition-transform duration-300" />
+                <Sparkles className="w-5 h-5" />
                 {isUploading ? 'Uploading...' : imageUrls.length === 0 ? 'Add Photos to Continue' : 'Publish Vehicle Listing'}
-                <CheckCircle className="w-5 h-5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <CheckCircle className="w-5 h-5" />
               </button>
             </div>
           </form>

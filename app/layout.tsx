@@ -1,11 +1,14 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // app/layout.tsx
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
+import { Suspense } from 'react';
 import './globals.css';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import ClientLayout from '@/components/client-layout';
-import AuthSessionProvider from './providers/session-provider'; // ⬅️ import SessionProvider
+import AuthSessionProvider from './providers/session-provider';
+import Loading from '@/components/Loading';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -27,10 +30,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>
-        {/* 👇 Wrap everything with SessionProvider */}
+      <body className={`${inter.className} antialiased`}>
         <AuthSessionProvider>
-          {/* 👇 All client logic is handled here */}
+          {/* Remove Suspense from here since we're handling it in ClientLayout */}
           <ClientLayout>
             <Header />
             <main className="flex-1">{children}</main>

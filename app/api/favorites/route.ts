@@ -1,122 +1,80 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
-import prisma from '@/lib/prisma';
-
-// Get user's favorites
-export async function GET() {
+// GET: Get all favorite cars for current session
+export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
+    // Get session ID from query params
+    const sessionId = request.nextUrl.searchParams.get('sessionId');
     
-    if (!session?.user?.email) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    console.log('🔍 [API] GET /api/favorites called');
+    console.log('📝 Session ID from query:', sessionId);
+    
+    if (!sessionId) {
+      console.log('❌ No session ID provided');
+      return NextResponse.json(
+        { error: 'Session ID required' },
+        { status: 400 }
+      );
     }
 
-    const user = await prisma.user.findUnique({
-      where: { email: session.user.email },
+    // Check if database has any favorites at all
+    const allFavoritesCount = await prisma.favorite.count();
+    console.log('📊 Total favorites in database:', allFavoritesCount);
+
+    // Get all favorites for this session with full car details
+    const favorites = await prisma.favorite.findMany({
+      where: { sessionId },
       include: {
-        favorites: {
+        listing: {
           include: {
-            listing: {
-              include: {
-                dealer: {
-                  select: {
-                    companyName: true,
-                    phone: true,
-                    name: true,
-                  },
-                },
-              },
-            },
-          },
-        },
+            dealer: {
+              select: {
+                name: true,
+                companyName: true,
+                phone: true
+              }
+            }
+          }
+        }
       },
+      orderBy: { createdAt: 'desc' }
     });
 
-    if (!user) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 });
-    }
+    console.log('🎯 Favorites found for session:', favorites.length);
+    console.log('📋 Favorite records:', JSON.stringify(favorites, null, 2));
 
-    const favorites = user.favorites.map(fav => ({
+    // Transform the data to match your CarListing interface
+    const favoriteCars = favorites.map(fav => ({
       id: fav.listing.id,
       make: fav.listing.make,
       model: fav.listing.model,
       year: fav.listing.year,
       price: fav.listing.price,
       mileage: fav.listing.mileage,
-      transmission: fav.listing.transmission,
-      fuelType: fav.listing.fuelType,
+      transmission: fav.listing.transmission || 'Not specified',
+      fuelType: fav.listing.fuelType || 'Not specified',
       location: fav.listing.location,
       images: fav.listing.images,
+      status: fav.listing.status,
+      views: fav.listing.viewCount || 0,
+      inquiries: fav.listing.inquiryCount || 0,
       dealer: {
         companyName: fav.listing.dealer.companyName || fav.listing.dealer.name,
-        phone: fav.listing.dealer.phone,
-        name: fav.listing.dealer.name,
-      },
-      status: fav.listing.status.toLowerCase(),
-      datePosted: fav.listing.createdAt.toISOString(),
+        phone: fav.listing.dealer.phone || 'Not provided',
+        name: fav.listing.dealer.name
+      }
     }));
 
-    return NextResponse.json({ favorites });
+    console.log('🚗 Transformed cars:', favoriteCars.length);
+    console.log('📤 Sending response...');
+
+    return NextResponse.json({ 
+      favorites: favoriteCars,
+      count: favorites.length 
+    });
+    
   } catch (error) {
-    console.error('Error fetching favorites:', error);
+    console.error('💥 Error fetching favorites:', error);
     return NextResponse.json(
       { error: 'Failed to fetch favorites' },
-      { status: 500 }
-    );
-  }
-}
-
-// Add/Remove favorite
-export async function POST(request: NextRequest) {
-  try {
-    const session = await getServerSession(authOptions);
-    
-    if (!session?.user?.email) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const { listingId, action } = await request.json();
-
-    if (!listingId || !action) {
-      return NextResponse.json({ error: 'Listing ID and action are required' }, { status: 400 });
-    }
-
-    const user = await prisma.user.findUnique({
-      where: { email: session.user.email },
-    });
-
-    if (!user) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 });
-    }
-
-    if (action === 'add') {
-      // Add to favorites
-      await prisma.user.update({
-        where: { id: user.id },
-        data: {
-          favorites: {
-            create: {
-              listingId: listingId,
-            },
-          },
-        },
-      });
-    } else if (action === 'remove') {
-      // Remove from favorites
-      await prisma.favorite.deleteMany({
-        where: {
-          userId: user.id,
-          listingId: listingId,
-        },
-      });
-    }
-
-    return NextResponse.json({ message: 'Favorite updated successfully' });
-  } catch (error) {
-    console.error('Error updating favorite:', error);
-    return NextResponse.json(
-      { error: 'Failed to update favorite' },
       { status: 500 }
     );
   }

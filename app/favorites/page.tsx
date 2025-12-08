@@ -49,6 +49,21 @@ interface CarListing {
   inquiries: number;
 }
 
+// Add this session helper function
+function getSessionId(): string {
+  if (typeof window === 'undefined') return '';
+  
+  let sessionId = localStorage.getItem('car_session_id');
+  
+  if (!sessionId) {
+    // Generate a unique session ID
+    sessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    localStorage.setItem('car_session_id', sessionId);
+  }
+  
+  return sessionId;
+}
+
 export default function FavoritesPage() {
   const [favorites, setFavorites] = useState<CarListing[]>([]);
   const [loading, setLoading] = useState(true);
@@ -57,28 +72,44 @@ export default function FavoritesPage() {
   const router = useRouter();
 
   useEffect(() => {
-    if (status === 'loading') return;
-
-    if (!session) {
-      router.push('/login');
-      return;
-    }
-
     fetchFavorites();
-  }, [session, status, router]);
+  }, []);
 
   const fetchFavorites = async () => {
     try {
-      const response = await fetch('/api/favorites');
+      const sessionId = getSessionId();
+      const response = await fetch(`/api/favorites?sessionId=${sessionId}`);
+      
       if (response.ok) {
         const data = await response.json();
         setFavorites(data.favorites || []);
+        
+        // Also update localStorage for consistency
+        const favoriteIds = data.favorites.map((car: CarListing) => car.id);
+        localStorage.setItem('clientFavorites', JSON.stringify(favoriteIds));
       } else {
-        throw new Error('Failed to fetch favorites');
+        // Fallback to localStorage if API fails
+        const storedFavorites = localStorage.getItem('clientFavorites');
+        if (storedFavorites) {
+          const favoriteIds = JSON.parse(storedFavorites);
+          
+          // We need to fetch car details for each ID
+          const carsResponse = await fetch('/api/car-listings');
+          if (carsResponse.ok) {
+            const allCars = await carsResponse.json();
+            const favoriteCars = allCars.listings.filter((car: CarListing) => 
+              favoriteIds.includes(car.id)
+            );
+            setFavorites(favoriteCars);
+          }
+        }
       }
     } catch (error) {
       console.error('Error fetching favorites:', error);
       toast.error('Failed to load favorites');
+      
+      // Ultimate fallback: empty array
+      setFavorites([]);
     } finally {
       setLoading(false);
     }
@@ -87,12 +118,23 @@ export default function FavoritesPage() {
   const removeFromFavorites = async (carId: string) => {
     setRemovingId(carId);
     try {
-      const response = await fetch(`/api/favorites/${carId}`, {
+      const sessionId = getSessionId();
+      const response = await fetch(`/api/favorites/${carId}?sessionId=${sessionId}`, {
         method: 'DELETE',
       });
 
       if (response.ok) {
+        // Remove from state
         setFavorites(prev => prev.filter(car => car.id !== carId));
+        
+        // Update localStorage
+        const storedFavorites = localStorage.getItem('clientFavorites');
+        if (storedFavorites) {
+          const currentFavorites = JSON.parse(storedFavorites);
+          const updatedFavorites = currentFavorites.filter((id: string) => id !== carId);
+          localStorage.setItem('clientFavorites', JSON.stringify(updatedFavorites));
+        }
+        
         toast.success('Removed from favorites');
       } else {
         throw new Error('Failed to remove favorite');
@@ -132,23 +174,6 @@ export default function FavoritesPage() {
     const message = `Hi, I'm interested in your ${car.make} ${car.model} (${car.year}) listed for $${car.price.toLocaleString()}. Could you provide more details?`;
     return `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
   };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="text-center"
-        >
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center shadow-lg shadow-orange-500/25 mx-auto mb-4">
-            <Heart className="w-8 h-8 text-white fill-current" />
-          </div>
-          <p className="text-white/70 text-lg font-medium">Loading your favorite cars...</p>
-        </motion.div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen relative">
@@ -252,29 +277,29 @@ export default function FavoritesPage() {
                                         </div>
                                     )}
                                     
-                                    {/* Status Badge */}
-                                    <div className="absolute top-4 left-4">
-                                        <span className={`px-3 py-1 rounded-full text-xs font-bold backdrop-blur-sm ${
-                                            car.status === 'AVAILABLE' 
-                                                ? 'bg-green-500/30 text-green-200 border border-green-500/50' 
-                                                : 'bg-orange-500/30 text-orange-200 border border-orange-500/50'
-                                        }`}>
-                                            {car.status}
-                                        </span>
-                                    </div>
+                                    {/* Status Badge - FIXED (Green with white text) */}
+<div className="absolute top-4 left-4">
+  <span className={`px-3 py-1 rounded-full text-xs font-bold ${
+    car.status === 'AVAILABLE' 
+      ? 'bg-green-600 text-white border border-green-700 shadow-lg shadow-green-600/20' 
+      : 'bg-green-600 text-white border border-orange-700 shadow-lg shadow-green-600/20'
+  }`}>
+    {car.status}
+  </span>
+</div>
 
-                                    {/* Remove Button */}
-                                    <button
-                                        onClick={() => removeFromFavorites(car.id)}
-                                        disabled={removingId === car.id}
-                                        className="absolute top-4 right-4 w-10 h-10 bg-red-500/30 hover:bg-red-500/40 border border-red-500/50 hover:border-red-400/60 rounded-xl flex items-center justify-center transition-all duration-300 group/remove backdrop-blur-sm"
-                                    >
-                                        {removingId === car.id ? (
-                                            <div className="w-4 h-4 border-2 border-white/70 border-t-transparent rounded-full animate-spin" />
-                                        ) : (
-                                            <Trash2 className="w-5 h-5 text-white/80 group-hover/remove:text-red-200 transition-colors duration-300" />
-                                        )}
-                                    </button>
+                                    {/* Remove Button - FIXED (Red) */}
+<button
+  onClick={() => removeFromFavorites(car.id)}
+  disabled={removingId === car.id}
+  className="absolute top-4 right-4 w-10 h-10 bg-red-500/80 hover:bg-red-600 border border-red-500 hover:border-red-600 rounded-xl flex items-center justify-center transition-all duration-300 group/remove backdrop-blur-sm shadow-lg shadow-red-500/20"
+>
+  {removingId === car.id ? (
+    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+  ) : (
+    <Trash2 className="w-5 h-5 text-white" />
+  )}
+</button>
 
                                     {/* Views & Inquiries */}
                                     <div className="absolute bottom-4 left-4 flex items-center gap-4 text-white/80 text-sm">
@@ -365,5 +390,5 @@ export default function FavoritesPage() {
             </div>
         </div>
     </div>
-);
+  );
 }
