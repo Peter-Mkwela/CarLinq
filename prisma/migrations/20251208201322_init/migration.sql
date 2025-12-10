@@ -55,8 +55,9 @@ CREATE TABLE "public"."listings" (
     "status" "public"."CarStatus" NOT NULL DEFAULT 'AVAILABLE',
     "description" TEXT,
     "images" TEXT[],
-    "views" INTEGER NOT NULL DEFAULT 0,
-    "inquiries" INTEGER NOT NULL DEFAULT 0,
+    "viewCount" INTEGER NOT NULL DEFAULT 0,
+    "likeCount" INTEGER NOT NULL DEFAULT 0,
+    "inquiryCount" INTEGER NOT NULL DEFAULT 0,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "dealerId" TEXT NOT NULL,
@@ -67,11 +68,37 @@ CREATE TABLE "public"."listings" (
 -- CreateTable
 CREATE TABLE "public"."favorites" (
     "id" TEXT NOT NULL,
-    "userId" TEXT NOT NULL,
+    "sessionId" TEXT NOT NULL,
     "listingId" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "favorites_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "public"."views" (
+    "id" TEXT NOT NULL,
+    "sessionId" TEXT NOT NULL,
+    "listingId" TEXT NOT NULL,
+    "viewedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "ipAddress" TEXT,
+    "userAgent" TEXT,
+
+    CONSTRAINT "views_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "public"."inquiries" (
+    "id" TEXT NOT NULL,
+    "sessionId" TEXT NOT NULL,
+    "listingId" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "email" TEXT NOT NULL,
+    "phone" TEXT,
+    "message" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "inquiries_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -93,7 +120,7 @@ CREATE UNIQUE INDEX "users_email_key" ON "public"."users"("email");
 CREATE UNIQUE INDEX "Account_provider_providerAccountId_key" ON "public"."Account"("provider", "providerAccountId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "favorites_userId_listingId_key" ON "public"."favorites"("userId", "listingId");
+CREATE UNIQUE INDEX "favorites_sessionId_listingId_key" ON "public"."favorites"("sessionId", "listingId");
 
 -- AddForeignKey
 ALTER TABLE "public"."Account" ADD CONSTRAINT "Account_userId_fkey" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -105,4 +132,7 @@ ALTER TABLE "public"."listings" ADD CONSTRAINT "listings_dealerId_fkey" FOREIGN 
 ALTER TABLE "public"."favorites" ADD CONSTRAINT "favorites_listingId_fkey" FOREIGN KEY ("listingId") REFERENCES "public"."listings"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."favorites" ADD CONSTRAINT "favorites_userId_fkey" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "public"."views" ADD CONSTRAINT "views_listingId_fkey" FOREIGN KEY ("listingId") REFERENCES "public"."listings"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."inquiries" ADD CONSTRAINT "inquiries_listingId_fkey" FOREIGN KEY ("listingId") REFERENCES "public"."listings"("id") ON DELETE CASCADE ON UPDATE CASCADE;

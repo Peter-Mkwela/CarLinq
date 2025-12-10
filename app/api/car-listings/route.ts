@@ -22,7 +22,7 @@ export async function GET() {
       },
     });
 
-    // Transform the data for frontend - using REAL dealer data
+    // Simple transformation - remove problematic fields first
     const transformedListings = listings.map(listing => ({
       id: listing.id,
       make: listing.make,
@@ -41,8 +41,7 @@ export async function GET() {
       },
       status: listing.status.toLowerCase(),
       datePosted: listing.createdAt.toISOString(),
-      views: listing.views,
-      inquiries: listing.inquiries,
+      // Add these only if they exist in your query
     }));
 
     return NextResponse.json({ 

@@ -7,9 +7,10 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// ========== USER MODELS (DEALERS ONLY) ==========
 model User {
-  id            String     @id @default(cuid())
-  email         String     @unique
+  id            String   @id @default(cuid())
+  email         String   @unique
   password      String?
   role          UserRole
   name          String
@@ -18,70 +19,118 @@ model User {
   emailVerified DateTime?
   companyName   String?
   address       String?
-  isVerified    Boolean    @default(false)
-  createdAt     DateTime   @default(now())
-  updatedAt     DateTime   @updatedAt
-  accounts      Account[]
-  favorites     Favorite[]
+  isVerified    Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relations
   listings      Listing[]
+  accounts      Account[]
 
   @@map("users")
 }
 
 model Account {
-  id                String  @id @default(cuid())
-  userId            String
-  type              String
-  provider          String
-  providerAccountId String
-  refresh_token     String?
-  access_token      String?
-  expires_at        Int?
-  token_type        String?
-  scope             String?
-  id_token          String?
-  session_state     String?
-  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                 String   @id @default(cuid())
+  userId             String
+  type               String
+  provider           String
+  providerAccountId  String
+  refresh_token      String?
+  access_token       String?
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String?
+  session_state      String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
 
+// ========== CARS LISTINGS ==========
 model Listing {
-  id           String     @id @default(cuid())
-  make         String
-  model        String
-  year         Int
-  price        Float
-  mileage      Int
-  location     String
+  id          String    @id @default(cuid())
+  make        String
+  model       String
+  year        Int
+  price       Float
+  mileage     Int
+  location    String
   transmission String?
-  fuelType     String?
-  status       CarStatus  @default(AVAILABLE)
-  description  String?
-  images       String[]
-  views        Int        @default(0)
-  inquiries    Int        @default(0)
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt
-  dealerId     String
-  favorites    Favorite[]
-  dealer       User       @relation(fields: [dealerId], references: [id], onDelete: Cascade)
+  fuelType    String?
+  status      CarStatus @default(AVAILABLE)
+  description String?
+  images      String[]
+  
+  // DEALER ANALYTICS - Updated counts
+  viewCount   Int       @default(0)
+  likeCount   Int       @default(0)
+  inquiryCount Int      @default(0)
+  
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relations
+  dealerId    String
+  dealer      User     @relation(fields: [dealerId], references: [id], onDelete: Cascade)
+  
+  // Client interactions
+  favorites   Favorite[]  // Who favorited this car
+  views       View[]      // Detailed view tracking
+  inquiries   Inquiry[]   // Contact inquiries for this car
 
   @@map("listings")
 }
 
+// ========== CLIENT FAVORITES (ANONYMOUS) ==========
 model Favorite {
   id        String   @id @default(cuid())
-  userId    String
+  sessionId String   // From browser localStorage/cookie
   listingId String
   createdAt DateTime @default(now())
-  listing   Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
-  users     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([userId, listingId])
+  // Relations
+  listing Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  @@unique([sessionId, listingId])  // Prevent duplicate likes per user
   @@map("favorites")
 }
 
+// ========== VIEW TRACKING FOR ANALYTICS ==========
+model View {
+  id        String   @id @default(cuid())
+  sessionId String   // Anonymous session ID
+  listingId String
+  viewedAt  DateTime @default(now())
+  ipAddress String?  // Optional for location analytics
+  userAgent String?  // Optional for device/browser analytics
+
+  // Relations
+  listing Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  @@map("views")
+}
+
+// ========== CONTACT INQUIRIES ==========
+model Inquiry {
+  id        String   @id @default(cuid())
+  sessionId String   // Anonymous session ID
+  listingId String
+  name      String
+  email     String
+  phone     String?
+  message   String
+  createdAt DateTime @default(now())
+  
+  // Relations
+  listing Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  @@map("inquiries")
+}
+
+// ========== CONTACT FORM (GENERAL) ==========
 model ContactMessage {
   id        String   @id @default(cuid())
   name      String
@@ -93,6 +142,7 @@ model ContactMessage {
   @@map("contact_messages")
 }
 
+// ========== ENUMS ==========
 enum UserRole {
   ADMIN
   DEALER

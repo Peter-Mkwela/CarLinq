@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @next/next/no-img-element */
 'use client';
@@ -412,45 +413,48 @@ export default function BrowseCars() {
 
   // Toggle favorite - UPDATED VERSION (Hybrid: localStorage + database)
   const toggleFavorite = async (carId: string) => {
-    try {
-      // Get session ID (for anonymous users)
-      const sessionId = getOrCreateSessionId();
-      
-      // For instant UI feedback, use localStorage first
-      const storedFavorites = localStorage.getItem('clientFavorites');
-      let currentFavorites = storedFavorites ? JSON.parse(storedFavorites) : [];
-      const isCurrentlyFavorite = currentFavorites.includes(carId);
-      
-      if (isCurrentlyFavorite) {
-        // Remove from local favorites
-        currentFavorites = currentFavorites.filter((id: string) => id !== carId);
-        setFavorites(currentFavorites);
-        toast.success('Removed from favorites');
-      } else {
-        // Add to local favorites
-        currentFavorites.push(carId);
-        setFavorites(currentFavorites);
-        toast.success('Added to favorites');
-      }
-      
-      // Save to localStorage for offline persistence
-      localStorage.setItem('clientFavorites', JSON.stringify(currentFavorites));
-      const action = isCurrentlyFavorite ? 'remove' : 'add';
-      fetch('/api/favorites', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          listingId: carId, 
-          sessionId: sessionId,  // Add sessionId
-          action: action 
-        }),
-      }).catch(error => console.error('Database sync failed:', error));
-      
-    } catch (error) {
-      console.error('Error toggling favorite:', error);
-      toast.error('Failed to update favorites');
+  try {
+    // Get session ID
+    const sessionId = getOrCreateSessionId();
+    
+    // Get current favorites from localStorage for instant UI feedback
+    const storedFavorites = localStorage.getItem('clientFavorites');
+    let currentFavorites = storedFavorites ? JSON.parse(storedFavorites) : [];
+    const isCurrentlyFavorite = currentFavorites.includes(carId);
+    
+    // Instant UI update
+    if (isCurrentlyFavorite) {
+      currentFavorites = currentFavorites.filter((id: string) => id !== carId);
+      toast.success('Removed from favorites');
+    } else {
+      currentFavorites.push(carId);
+      toast.success('Added to favorites');
     }
-  };
+    
+    // Update state and localStorage
+    setFavorites(currentFavorites);
+    localStorage.setItem('clientFavorites', JSON.stringify(currentFavorites));
+    
+    // Sync with database
+    const response = await fetch('/api/favorites', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+        listingId: carId, 
+        sessionId: sessionId,
+        action: isCurrentlyFavorite ? 'remove' : 'add'
+      }),
+    });
+
+    if (!response.ok) {
+      console.error('Failed to sync with database');
+    }
+    
+  } catch (error) {
+    console.error('Error toggling favorite:', error);
+    toast.error('Failed to update favorites');
+  }
+};
 
   // Share car via WhatsApp
   const shareCar = (car: CarListing) => {
