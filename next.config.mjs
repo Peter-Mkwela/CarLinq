@@ -1,12 +1,17 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Completely disable static generation
-  output: 'export',
-  // Skip all checks
-  eslint: { ignoreDuringBuilds: true },
-  typescript: { ignoreBuildErrors: true },
-  // Disable image optimization if causing issues
-  images: { unoptimized: true },
+  // Remove 'output: export' - it's incompatible with NextAuth
+  // output: 'standalone', // Keep this for Vercel
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  // Important: Disable static optimization for dynamic pages
+  experimental: {
+    serverComponentsExternalPackages: ['@prisma/client', 'prisma'],
+  },
 };
 
 export default nextConfig;
