@@ -411,6 +411,7 @@ export default function BrowseCars() {
     setSearchTerm('');
   };
 
+  
   // Toggle favorite - UPDATED VERSION (Hybrid: localStorage + database)
   const toggleFavorite = async (carId: string) => {
   try {
@@ -456,6 +457,25 @@ export default function BrowseCars() {
   }
 };
 
+// Add this function near your other functions
+const trackInquiry = async (carId: string) => {
+  try {
+    const sessionId = getOrCreateSessionId();
+    const response = await fetch(`/api/listings/${carId}/inquiry`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+        sessionId,
+      }),
+    });
+    
+    if (!response.ok) {
+      console.error('Failed to track inquiry');
+    }
+  } catch (error) {
+    console.error('Error tracking inquiry:', error);
+  }
+};
   // Share car via WhatsApp
   const shareCar = (car: CarListing) => {
     const message = `Check out this ${car.make} ${car.model} (${car.year}) for $${car.price.toLocaleString()}!\n\nLocation: ${car.location}\nMileage: ${car.mileage.toLocaleString()} km\nTransmission: ${car.transmission}\nFuel Type: ${car.fuelType}\n\nDealer: ${car.dealer.companyName}`;
@@ -503,6 +523,26 @@ export default function BrowseCars() {
   };
 
   const activeFilterCount = Object.values(filters).filter(value => value !== '').length;
+
+  const trackView = async (carId: string) => {
+  try {
+    const sessionId = getOrCreateSessionId(); // Your existing session function
+    const response = await fetch(`/api/listings/${carId}/view`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+        sessionId,
+        // Optional: ipAddress and userAgent if you want to track them
+      }),
+    });
+    
+    if (!response.ok) {
+      console.error('Failed to track view');
+    }
+  } catch (error) {
+    console.error('Error tracking view:', error);
+  }
+};
 
   return (
     <div className="min-h-screen flex flex-col relative">
@@ -810,86 +850,100 @@ export default function BrowseCars() {
                           className="bg-white/90 backdrop-blur-md rounded-lg sm:rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-white/20 overflow-hidden group"
                         >
                           {/* Car Image */}
-                          <div className="relative h-36 sm:h-48 bg-gray-200 overflow-hidden cursor-pointer">
-                            {car.images && car.images.length > 0 ? (
-                              <>
-                                <img 
-                                  src={car.images[0]} 
-                                  alt={`${car.make} ${car.model}`}
-                                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                                  onClick={() => openImageGallery(car.images, 0)}
-                                />
-                                {car.images.length > 1 && (
-                                  <div 
-                                    className="absolute bottom-2 right-2 flex items-center gap-1 cursor-pointer"
-                                    onClick={() => openImageGallery(car.images, 0)}
-                                  >
-                                    <div className="flex">
-                                      {car.images.slice(0, 3).map((_, idx) => (
-                                        <div 
-                                          key={idx}
-                                          className={`w-1.5 h-1.5 rounded-full mx-0.5 ${
-                                            idx === 0 ? 'bg-white' : 'bg-white/60'
-                                          }`}
-                                        />
-                                      ))}
-                                    </div>
-                                    <span className="text-xs text-white bg-black/50 px-2 py-1 rounded">
-                                      +{car.images.length - 1}
-                                    </span>
-                                  </div>
-                                )}
-                              </>
-                            ) : (
-                              <div 
-                                className="w-full h-full bg-gradient-to-br from-orange-100 to-amber-100 flex items-center justify-center cursor-pointer"
-                                onClick={() => openImageGallery(car.images, 0)}
-                              >
-                                <Car className="w-10 h-10 sm:w-12 sm:h-12 text-orange-500" />
-                              </div>
-                            )}
-                            
-                            {/* Badges */}
-                            <div className="absolute top-2 left-2 sm:top-3 sm:left-3">
-                              {car.status === 'available' && (
-                                <span className="bg-green-500 text-white text-xs font-bold px-1.5 sm:px-2 py-0.5 sm:py-1 rounded backdrop-blur-sm">
-                                  Available
-                                </span>
-                              )}
-                            </div>
+<div className="relative h-36 sm:h-48 bg-gray-200 overflow-hidden cursor-pointer">
+  {car.images && car.images.length > 0 ? (
+    <>
+      <div 
+        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 cursor-pointer"
+        onClick={() => {
+          trackView(car.id); // ✅ Track view when image is clicked
+          openImageGallery(car.images, 0);
+        }}
+      >
+        <img 
+          src={car.images[0]} 
+          alt={`${car.make} ${car.model}`}
+          className="w-full h-full object-cover"
+        />
+      </div>
+      {car.images.length > 1 && (
+        <div 
+          className="absolute bottom-2 right-2 flex items-center gap-1 cursor-pointer"
+          onClick={() => {
+            trackView(car.id); // ✅ Track view when gallery button is clicked
+            openImageGallery(car.images, 0);
+          }}
+        >
+          <div className="flex">
+            {car.images.slice(0, 3).map((_, idx) => (
+              <div 
+                key={idx}
+                className={`w-1.5 h-1.5 rounded-full mx-0.5 ${
+                  idx === 0 ? 'bg-white' : 'bg-white/60'
+                }`}
+              />
+            ))}
+          </div>
+          <span className="text-xs text-white bg-black/50 px-2 py-1 rounded">
+            +{car.images.length - 1}
+          </span>
+        </div>
+      )}
+    </>
+  ) : (
+    <div 
+      className="w-full h-full bg-gradient-to-br from-orange-100 to-amber-100 flex items-center justify-center cursor-pointer"
+      onClick={() => {
+        trackView(car.id); // ✅ Track view even for placeholder image
+        openImageGallery(car.images, 0);
+      }}
+    >
+      <Car className="w-10 h-10 sm:w-12 sm:h-12 text-orange-500" />
+    </div>
+  )}
+  
+  {/* Badges */}
+  <div className="absolute top-2 left-2 sm:top-3 sm:left-3">
+    {car.status === 'available' && (
+      <span className="bg-green-500 text-white text-xs font-bold px-1.5 sm:px-2 py-0.5 sm:py-1 rounded backdrop-blur-sm">
+        Available
+      </span>
+    )}
+  </div>
 
-                            {/* Action Buttons */}
-                            <div className="absolute top-2 right-2 sm:top-3 sm:right-3 flex gap-1 sm:gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                              {/* Favorite Button */}
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  toggleFavorite(car.id);
-                                }}
-                                className={`p-1.5 sm:p-2 rounded-full bg-white/90 backdrop-blur-sm ${
-                                  favorites.includes(car.id) 
-                                    ? 'text-red-500' 
-                                    : 'text-gray-600 hover:text-red-500'
-                                } transition-colors duration-200`}
-                              >
-                                <Heart 
-                                  className="w-3 h-3 sm:w-4 sm:h-4" 
-                                  fill={favorites.includes(car.id) ? 'currentColor' : 'none'}
-                                />
-                              </button>
-                              
-                              {/* Share Button */}
-                              <button 
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  shareCar(car);
-                                }}
-                                className="p-1.5 sm:p-2 rounded-full bg-white/90 backdrop-blur-sm text-gray-600 hover:text-green-500 transition-colors duration-200"
-                              >
-                                <Share2 className="w-3 h-3 sm:w-4 sm:h-4" />
-                              </button>
-                            </div>
-                          </div>
+  {/* Action Buttons */}
+  <div className="absolute top-2 right-2 sm:top-3 sm:right-3 flex gap-1 sm:gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+    {/* Favorite Button - ALREADY TRACKS LIKE */}
+    <button
+      onClick={(e) => {
+        e.stopPropagation();
+        toggleFavorite(car.id); // This already tracks likes
+      }}
+      className={`p-1.5 sm:p-2 rounded-full bg-white/90 backdrop-blur-sm ${
+        favorites.includes(car.id) 
+          ? 'text-red-500' 
+          : 'text-gray-600 hover:text-red-500'
+      } transition-colors duration-200`}
+    >
+      <Heart 
+        className="w-3 h-3 sm:w-4 sm:h-4" 
+        fill={favorites.includes(car.id) ? 'currentColor' : 'none'}
+      />
+    </button>
+    
+    {/* Share Button - TRACK AS VIEW */}
+    <button 
+      onClick={(e) => {
+        e.stopPropagation();
+        trackView(car.id); // ✅ Track view when sharing
+        shareCar(car);
+      }}
+      className="p-1.5 sm:p-2 rounded-full bg-white/90 backdrop-blur-sm text-gray-600 hover:text-green-500 transition-colors duration-200"
+    >
+      <Share2 className="w-3 h-3 sm:w-4 sm:h-4" />
+    </button>
+  </div>
+</div>
 
                           {/* Car Details */}
                           <div className="p-3 sm:p-4">
@@ -962,16 +1016,19 @@ export default function BrowseCars() {
 
                             {/* Action Buttons */}
                             <div className="flex gap-2 mt-3 sm:mt-4">
-                              <a
-                                href={createWhatsAppLink(car.dealer.phone, car)}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="flex-1 bg-green-600 hover:bg-green-700 text-white py-1.5 sm:py-2 px-3 rounded-lg transition-colors duration-200 text-xs sm:text-sm font-medium flex items-center justify-center gap-2"
-                                onClick={(e) => e.stopPropagation()}
-                              >
-                                <MessageCircle className="w-3 h-3 sm:w-4 sm:h-4" />
-                                WhatsApp
-                              </a>
+                               <a
+    href={createWhatsAppLink(car.dealer.phone, car)}
+    target="_blank"
+    rel="noopener noreferrer"
+    className="flex-1 bg-green-600 hover:bg-green-700 text-white py-1.5 sm:py-2 px-3 rounded-lg transition-colors duration-200 text-xs sm:text-sm font-medium flex items-center justify-center gap-2"
+    onClick={(e) => {
+      e.stopPropagation();
+      trackInquiry(car.id); // ✅ Track inquiry when contacting dealer
+    }}
+  >
+    <MessageCircle className="w-3 h-3 sm:w-4 sm:h-4" />
+    WhatsApp
+  </a>
                             </div>
                           </div>
                         </motion.div>

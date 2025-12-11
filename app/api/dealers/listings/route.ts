@@ -68,7 +68,25 @@ export async function GET(request: NextRequest) {
     const listings = await prisma.listing.findMany({
       where,
       orderBy: { createdAt: 'desc' },
-      include: {
+      select: {
+        id: true,
+        make: true,
+        model: true,
+        year: true,
+        price: true,
+        mileage: true,
+        location: true,
+        transmission: true,
+        fuelType: true,
+        status: true,
+        images: true,
+        description: true,
+        viewCount: true,      // ✅ Add this
+        inquiryCount: true,   // ✅ Add this
+        likeCount: true,      // ✅ Add this if you want to show likes too
+        createdAt: true,
+        updatedAt: true,
+        dealerId: true,
         dealer: {
           select: {
             name: true,
@@ -82,6 +100,8 @@ export async function GET(request: NextRequest) {
 
     console.log('📊 API Route - Listings found:', listings.length);
     console.log('🚗 API Route - Sample listing:', listings[0]);
+    console.log('👁️ API Route - ViewCount of first listing:', listings[0]?.viewCount);
+    console.log('📞 API Route - InquiryCount of first listing:', listings[0]?.inquiryCount);
 
     return NextResponse.json({ listings });
 

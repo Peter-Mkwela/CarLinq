@@ -40,6 +40,8 @@ import {
 import toast from 'react-hot-toast';
 
 export interface Listing {
+  viewCount: number;
+  inquiryCount: number;
   transmission: string;
   id: string;
   make: string;

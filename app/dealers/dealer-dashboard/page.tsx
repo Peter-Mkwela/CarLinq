@@ -49,6 +49,9 @@ interface NewListingForm {
   mileage: string;
   location: string;
   status: string;
+   viewCount: number;      // ✅ Add this
+  inquiryCount: number;   // ✅ Add this
+  likeCount?: number;     // ✅ Optional: Add if you want to show likes too
 }
 
 // Image Gallery Modal Component (for dealer dashboard)
@@ -271,15 +274,7 @@ export default function DealerDashboard() {
       router.push('/dealers/login');
     }
   }, [authStatus, router]);
-
-  // Loading & unauthenticated states
-  if (authStatus === 'loading') {
-    return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <div className="text-white text-lg">Loading...</div>
-      </div>
-    );
-  }
+  
   if (!session) return null;
 
   // Apply filters
@@ -467,14 +462,14 @@ export default function DealerDashboard() {
     );
   };
 
-  const stats = {
-    totalListings: listings.length,
-    availableListings: listings.filter(l => l.status.toLowerCase() === 'available').length,
-    soldListings: listings.filter(l => l.status.toLowerCase() === 'sold').length,
-    totalViews: listings.reduce((sum, l) => sum + l.views, 0),
-    totalInquiries: listings.reduce((sum, l) => sum + l.inquiries, 0),
-    conversionRate: Math.round((listings.filter(l => l.status.toLowerCase() === 'sold').length / (listings.length || 1)) * 100) || 0
-  };
+ const stats = {
+  totalListings: listings.length,
+  availableListings: listings.filter(l => l.status.toLowerCase() === 'available').length,
+  soldListings: listings.filter(l => l.status.toLowerCase() === 'sold').length,
+  totalViews: listings.reduce((sum, l) => sum + (l.viewCount || 0), 0), // ✅ Use viewCount
+  totalInquiries: listings.reduce((sum, l) => sum + (l.inquiryCount || 0), 0), // ✅ Use inquiryCount
+  conversionRate: Math.round((listings.filter(l => l.status.toLowerCase() === 'sold').length / (listings.length || 1)) * 100) || 0
+};
 
   const userName = session.user?.name || 'Dealer';
   const userEmail = session.user?.email || '';
@@ -966,18 +961,18 @@ export default function DealerDashboard() {
                                     </div>
 
                                     {/* Views & Inquiries Counter */}
-                                    <div className="absolute bottom-2 left-2 sm:bottom-3 sm:left-3">
-                                      <div className="flex gap-2 text-xs text-white backdrop-blur-sm bg-black/30 rounded-full px-2 py-1">
-                                        <span className="flex items-center gap-1">
-                                          <Eye className="w-3 h-3" />
-                                          {listing.views}
-                                        </span>
-                                        <span className="flex items-center gap-1">
-                                          <MessageCircle className="w-3 h-3" />
-                                          {listing.inquiries}
-                                        </span>
-                                      </div>
-                                    </div>
+<div className="absolute bottom-2 left-2 sm:bottom-3 sm:left-3">
+  <div className="flex gap-2 text-xs text-white backdrop-blur-sm bg-black/30 rounded-full px-2 py-1">
+    <span className="flex items-center gap-1">
+      <Eye className="w-3 h-3" />
+      {listing.viewCount || 0} {/* ✅ Use viewCount */}
+    </span>
+    <span className="flex items-center gap-1">
+      <MessageCircle className="w-3 h-3" />
+      {listing.inquiryCount || 0} {/* ✅ Use inquiryCount */}
+    </span>
+  </div>
+</div>
                                   </div>
 
                                   {/* Car Details */}

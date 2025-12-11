@@ -20,7 +20,7 @@ export default function ImageGalleryModal({
   initialIndex = 0 
 }: ImageGalleryModalProps) {
   const [currentIndex, setCurrentIndex] = useState(initialIndex)
-  const [isFullscreen, setIsFullscreen] = useState(false)
+  const [, setIsFullscreen] = useState(false)
 
   useEffect(() => {
     if (isOpen) {
