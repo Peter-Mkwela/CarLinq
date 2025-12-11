@@ -140,7 +140,7 @@ function DealerLoginContent() {
                     fontWeight: 800,
                   }}
                 >
-                  CÉ‘r
+                  Car
                 </span>
                 <span
                   className="inline-block italic transform skew-x-[10deg]"

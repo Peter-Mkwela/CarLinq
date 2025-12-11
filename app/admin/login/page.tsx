@@ -100,7 +100,7 @@ const handleSubmit = async (e: React.FormEvent) => {
                     fontWeight: 800,
                   }}
                 >
-                  CÉ‘r
+                  Car
                 </span>
                 <span
                   className="inline-block italic transform skew-x-[10deg]"
@@ -228,7 +228,7 @@ const handleSubmit = async (e: React.FormEvent) => {
                   href="/"
                   className="text-orange-400 hover:text-orange-300 font-medium transition-colors"
                 >
-                  â† Back to Home
+                  Back to Home
                 </Link>
               </p>
             </div>
