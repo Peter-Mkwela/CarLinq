@@ -1,5 +1,5 @@
-﻿export const dynamic = 'force-dynamic';
-'use client';
+﻿'use client';
+export const dynamic = 'force-dynamic';
 
 import { motion } from 'framer-motion';
 import { Car, Shield, TrendingUp, Users, CheckCircle, Star } from 'lucide-react';
@@ -450,3 +450,4 @@ export default function Home() {
     </div>
   );
 }
+
