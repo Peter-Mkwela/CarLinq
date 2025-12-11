@@ -97,24 +97,40 @@ export default function Home() {
             </motion.div>
             
             <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold mb-4 sm:mb-6 leading-tight px-2">
-      <span className="text-white">Welcome to </span>
-
-      {/* Car - skewed forward, alpha a */}
-      <span className="inline-block italic transform skew-x-[10deg]" style={{ fontWeight: 800 }}>
-  <span style={{
-    color: theme === 'light' ? '#FF8C00' : '#CC6600',
-    textShadow: '0 2px 0 #000, 1px 1px 0 rgba(0,0,0,0.3), 2px 2px 0 rgba(0,0,0,0.2)'
-  }}>
-    Car
+  <span className="text-white">Welcome to </span>
+  
+  {/* CarLinq - using second style but in first style's structure with reduced spacing */}
+  <span className="inline-block italic">
+    {/* Car - using alpha a */}
+    <span
+      style={{
+        color: theme === 'light' ? '#FF8C00' : '#CC6600',
+        textShadow: `
+          0 2px 0 #000,  /* black vertical shadow slightly downward */
+          1px 1px 0 rgba(0,0,0,0.3), 
+          2px 2px 0 rgba(0,0,0,0.2)
+        `,
+      }}
+    >
+      Cɑr
+    </span>
+    
+    {/* Linq - with reduced spacing */}
+    <span
+      style={{
+        color: theme === 'light' ? '#0277BD' : '#01579B',
+        textShadow: `
+          0 2px 0 #000,  /* black vertical shadow slightly downward */
+          1px 1px 0 rgba(0,0,0,0.3), 
+          2px 2px 0 rgba(0,0,0,0.2)
+        `,
+        marginLeft: '-1.4px', // Reduced spacing between Car and Linq
+      }}
+    >
+      Linq
+    </span>
   </span>
-  <span style={{
-    color: theme === 'light' ? '#0277BD' : '#01579B',
-    textShadow: '0 2px 0 #000, 1px 1px 0 rgba(0,0,0,0.3), 2px 2px 0 rgba(0,0,0,0.2)'
-  }}>
-    Linq
-  </span>
-</span>
-    </h1>
+</h1>
             
             <p className="text-lg sm:text-xl lg:text-2xl text-gray-200 mb-6 sm:mb-8 max-w-3xl mx-auto leading-relaxed px-4">
               Linking You to the Perfect Ride
@@ -264,8 +280,38 @@ export default function Home() {
             className="text-center mb-12 sm:mb-16"
           >
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-3 sm:mb-4">
-              Why Choose CarLinq?
-            </h2>
+  Why Choose 
+  <span className="inline-block italic ml-1">
+    {/* Car - using alpha a */}
+    <span
+      style={{
+        color: theme === 'light' ? '#FF8C00' : '#CC6600',
+        textShadow: `
+          0 2px 0 #000,
+          1px 1px 0 rgba(0,0,0,0.3), 
+          2px 2px 0 rgba(0,0,0,0.2)
+        `,
+      }}
+    >
+      Cɑr
+    </span>
+    
+    {/* Linq - with reduced spacing */}
+    <span
+      style={{
+        color: theme === 'light' ? '#0277BD' : '#01579B',
+        textShadow: `
+          0 2px 0 #000,
+          1px 1px 0 rgba(0,0,0,0.3), 
+          2px 2px 0 rgba(0,0,0,0.2)
+        `,
+        marginLeft: '-2px',
+      }}
+    >
+      Linq ?
+    </span>
+  </span>
+</h2>
             <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
               The professional SaaS platform built for African car trading
             </p>

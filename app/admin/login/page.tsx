@@ -84,40 +84,42 @@ const handleSubmit = async (e: React.FormEvent) => {
             {/* Logo */}
             <div className="text-center mb-8">
               <motion.h1
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="text-3xl font-bold tracking-tight select-none"
-              >
-                <span
-                  className="inline-block italic transform skew-x-[10deg]"
-                  style={{
-                    color: theme === 'light' ? '#FF8C00' : '#CC6600',
-                    textShadow: `
-                      0 2px 0 #000,
-                      1px 1px 0 rgba(0,0,0,0.3),
-                      2px 2px 0 rgba(0,0,0,0.2)
-                    `,
-                    fontWeight: 800,
-                  }}
-                >
-                  Car
-                </span>
-                <span
-                  className="inline-block italic transform skew-x-[10deg]"
-                  style={{
-                    color: theme === 'light' ? '#0277BD' : '#01579B',
-                    textShadow: `
-                      0 2px 0 #000,
-                      1px 1px 0 rgba(0,0,0,0.3),
-                      2px 2px 0 rgba(0,0,0,0.2)
-                    `,
-                    fontWeight: 800,
-                    marginLeft: '0.1rem',
-                  }}
-                >
-                  Linq
-                </span>
-              </motion.h1>
+    initial={{ opacity: 0, x: -10 }}
+    animate={{ opacity: 1, x: 0 }}
+    className="text-2xl sm:text-3xl font-extrabold tracking-tight select-none italic transition-colors duration-300"
+  >
+    {/* Car - Dark Bold Orange with black vertical line */}
+    {/* Car - using alpha a */}
+<span
+  className="ml-0"
+  style={{
+    color: theme === 'light' ? '#FF8C00' : '#CC6600', // bold dark orange
+    textShadow: `
+      0 2px 0 #000,  /* black vertical shadow slightly downward */
+      1px 1px 0 rgba(0,0,0,0.3), 
+      2px 2px 0 rgba(0,0,0,0.2)
+    `,
+  }}
+>
+  Cɑr
+</span>
+
+{/* Linq - Dark Bold Blue with black vertical shadow */}
+<span
+  className="ml-1"
+  style={{
+    color: theme === 'light' ? '#0277BD' : '#01579B', // dark blue
+    textShadow: `
+      0 2px 0 #000,  /* black vertical shadow slightly downward */
+      1px 1px 0 rgba(0,0,0,0.3), 
+      2px 2px 0 rgba(0,0,0,0.2)
+    `,
+  }}
+>
+  Linq
+</span>
+
+  </motion.h1>
               <div className="flex items-center justify-center gap-2 mt-2">
                 <Shield className="w-5 h-5 text-orange-400" />
                 <p className="text-white/80 text-sm">

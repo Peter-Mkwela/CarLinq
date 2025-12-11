@@ -141,41 +141,41 @@ export default function AboutUs() {
                 transition={{ duration: 0.8 }}
                 className="text-center max-w-4xl mx-auto"
               >
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold mb-4 sm:mb-6 drop-shadow-lg">
-      <span className="text-white">About </span>
-
-      {/* Car - skewed forward, using alpha a */}
-      <span
-        className="ml-0 inline-block italic transform skew-x-[10deg]"
-        style={{
-          color: theme === 'light' ? '#FF8C00' : '#CC6600',
-          textShadow: `
-            0 2px 0 #000,
-            1px 1px 0 rgba(0,0,0,0.3),
-            2px 2px 0 rgba(0,0,0,0.2)
-          `,
-          fontWeight: 800,
-        }}
-      >
-        CÉ‘r
-      </span>
-
-      {/* Linq - skewed forward */}
-      <span
-        className="ml-1 inline-block italic transform skew-x-[10deg]"
-        style={{
-          color: theme === 'light' ? '#0277BD' : '#01579B',
-          textShadow: `
-            0 2px 0 #000,
-            1px 1px 0 rgba(0,0,0,0.3),
-            2px 2px 0 rgba(0,0,0,0.2)
-          `,
-          fontWeight: 800,
-        }}
-      >
-        Linq
-      </span>
-    </h1>
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold mb-4 sm:mb-6 leading-tight px-2">
+  <span className="text-white">About </span>
+  
+  {/* CarLinq - using second style but in first style's structure with reduced spacing */}
+  <span className="inline-block italic">
+    {/* Car - using alpha a */}
+    <span
+      style={{
+        color: theme === 'light' ? '#FF8C00' : '#CC6600',
+        textShadow: `
+          0 2px 0 #000,  /* black vertical shadow slightly downward */
+          1px 1px 0 rgba(0,0,0,0.3), 
+          2px 2px 0 rgba(0,0,0,0.2)
+        `,
+      }}
+    >
+      Cɑr
+    </span>
+    
+    {/* Linq - with reduced spacing */}
+    <span
+      style={{
+        color: theme === 'light' ? '#0277BD' : '#01579B',
+        textShadow: `
+          0 2px 0 #000,  /* black vertical shadow slightly downward */
+          1px 1px 0 rgba(0,0,0,0.3), 
+          2px 2px 0 rgba(0,0,0,0.2)
+        `,
+        marginLeft: '-1.4px', // Reduced spacing between Car and Linq
+      }}
+    >
+      Linq
+    </span>
+  </span>
+</h1>
                 <p className="text-lg sm:text-xl lg:text-2xl text-white/90 mb-6 sm:mb-8 drop-shadow max-w-3xl mx-auto">
                   Linking You to the Perfect Ride
                 </p>
