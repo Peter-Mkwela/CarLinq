@@ -540,7 +540,7 @@ export default function DealerDashboard() {
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-white/90 font-medium">{userName}</span>
-                  <span className="text-white/40">â€¢</span>
+                  <span className="text-white/40"></span>
                   <span className="text-white/60 text-sm">{userEmail}</span>
                 </div>
               </div>
@@ -702,7 +702,7 @@ export default function DealerDashboard() {
                     <div className="bg-gradient-to-br from-orange-800/40 to-orange-900/30 backdrop-blur-xl rounded-2xl border border-orange-700/50 p-6 shadow-xl">
                       <div className="flex flex-col md:flex-row md:items-center justify-between gap-5">
                         <div>
-                          <h2 className="text-2xl font-bold text-white">Welcome back, <span className="text-orange-300">{userName}</span>! ðŸŽ‰</h2>
+                          <h2 className="text-2xl font-bold text-white">Welcome back, <span className="text-orange-300">{userName}</span>! </h2>
                           <p className="text-orange-100 mt-1">
                             {listings.length === 0 
                               ? 'Start by adding your first vehicle listing to get started.' 
@@ -984,7 +984,7 @@ export default function DealerDashboard() {
                                           {listing.make} {listing.model}
                                         </h3>
                                         <p className="text-gray-600 text-xs sm:text-sm">
-                                          {listing.year} â€¢ {listing.location}
+                                          {listing.year}  {listing.location}
                                         </p>
                                       </div>
                                       <div className="text-right ml-2">
