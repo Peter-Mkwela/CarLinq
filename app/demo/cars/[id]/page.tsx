@@ -1,6 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-// app/cars/[id]/page.tsx - COMPLETE WORKING CODE WITH WHATSAPP SHARING
+// app/cars/[id]/page.tsx - COMPLETE WORKING CODE
 import { notFound } from 'next/navigation';
 import prisma from '@/lib/prisma';
 import { Metadata } from 'next';
@@ -28,19 +27,12 @@ import {
   Clock,
   ArrowLeft,
   PhoneCall,
-  Star,
-  Copy,
-  Check,
-  Camera,
-  ExternalLink,
-  AlertCircle
+  Star
 } from 'lucide-react';
 import Link from 'next/link';
 import { Suspense } from 'react';
 import CarGallery from './CarGallery';
 import ContactButtons from './ContactButtons';
-import WhatsAppShareButton from '@/components/WhatsappShareButton';
-import { headers } from 'next/headers';
 
 interface CarDetailPageProps {
   params: {
@@ -206,66 +198,6 @@ async function incrementViewCount(carId: string) {
   }
 }
 
-// Helper function to create WhatsApp message for sharing
-function createWhatsAppShareMessage(car: any, currentUrl: string): string {
-  const carImageUrl = car.images && car.images.length > 0 
-    ? car.images[0] 
-    : 'https://via.placeholder.com/600x400/1e3a8a/ffffff?text=Car+Image';
-  
-  const message = `🚗 *${car.make} ${car.model} (${car.year})*\n\n` +
-    `💰 *Price:* $${car.price.toLocaleString()}\n` +
-    `📏 *Mileage:* ${car.mileage.toLocaleString()} km\n` +
-    `⚙️ *Transmission:* ${car.transmission}\n` +
-    `⛽ *Fuel Type:* ${car.fuelType}\n` +
-    `📍 *Location:* ${car.location}\n\n` +
-    `🏢 *Dealer:* ${car.dealer.companyName}\n\n` +
-    `📸 *Car Image:* ${carImageUrl}\n` +
-    `🔗 *View Full Details:* ${currentUrl}\n\n` +
-    `_Check out this amazing vehicle!_\n` +
-    `_Shared via Premium CarDealer App_`;
-  
-  return message;
-}
-
-// Helper function to create WhatsApp message for contacting dealer
-function createWhatsAppDealerMessage(car: any, currentUrl: string): string {
-  const carImageUrl = car.images && car.images.length > 0 
-    ? car.images[0] 
-    : 'https://via.placeholder.com/600x400/1e3a8a/ffffff?text=Car+Image';
-  
-  const message = `Hello ${car.dealer.name || car.dealer.companyName},\n\n` +
-    `I am interested in your *${car.make} ${car.model} (${car.year})* listed for *$${car.price.toLocaleString()}*.\n\n` +
-    `*Vehicle Details:*\n` +
-    `• Make & Model: ${car.make} ${car.model}\n` +
-    `• Year: ${car.year}\n` +
-    `• Price: $${car.price.toLocaleString()}\n` +
-    `• Mileage: ${car.mileage.toLocaleString()} km\n` +
-    `• Transmission: ${car.transmission}\n` +
-    `• Fuel Type: ${car.fuelType}\n` +
-    `• Location: ${car.location}\n\n` +
-    `*Car Image:* ${carImageUrl}\n` +
-    `*View Full Listing:* ${currentUrl}\n\n` +
-    `Could you please provide me with:\n` +
-    `1. Vehicle history report/service records\n` +
-    `2. Additional high-quality photos\n` +
-    `3. Available test drive dates & location\n` +
-    `4. Any financing or payment options\n` +
-    `5. Current condition and any issues\n\n` +
-    `Thank you!\n\n` +
-    `Best regards,\n` +
-    `[Your Name/Contact Info]`;
-  
-  return message;
-}
-
-// Function to get current URL for sharing
-function getCurrentUrl(): string {
-  const headersList = headers();
-  const host = headersList.get('host');
-  const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
-  return `${protocol}://${host}`;
-}
-
 export default async function CarDetailPage({ params }: CarDetailPageProps) {
   const car = await getCar(params.id);
 
@@ -279,33 +211,19 @@ export default async function CarDetailPage({ params }: CarDetailPageProps) {
   const daysListed = getDaysSinceListing(car.createdAt);
   const formattedPhone = formatPhoneNumber(car.dealer.phone);
   const formattedJoinedDate = formatDate(car.dealer.joinedDate);
-  const currentUrl = `${getCurrentUrl()}/cars/${car.id}`;
-  const shareMessage = createWhatsAppShareMessage(car, currentUrl);
-  const dealerMessage = createWhatsAppDealerMessage(car, currentUrl);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
       {/* Back Navigation */}
       <div className="sticky top-0 z-40 bg-white/80 backdrop-blur-sm border-b">
         <div className="max-w-7xl mx-auto px-4 py-3">
-          <div className="flex items-center justify-between">
-            <Link 
-              href="/cars"
-              className="flex items-center gap-2 text-gray-700 hover:text-orange-600 transition-colors"
-            >
-              <ArrowLeft className="w-5 h-5" />
-              <span>Back to Browse</span>
-            </Link>
-            
-            {/* Share Button */}
-            <WhatsAppShareButton 
-              message={shareMessage}
-              className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
-            >
-              <Share2 className="w-4 h-4" />
-              <span>Share on WhatsApp</span>
-            </WhatsAppShareButton>
-          </div>
+          <Link 
+            href="/cars"
+            className="flex items-center gap-2 text-gray-700 hover:text-orange-600 transition-colors"
+          >
+            <ArrowLeft className="w-5 h-5" />
+            <span>Back to Browse</span>
+          </Link>
         </div>
       </div>
 
@@ -332,28 +250,21 @@ export default async function CarDetailPage({ params }: CarDetailPageProps) {
           <div className="space-y-6">
             {/* Title and Price */}
             <div className="bg-white rounded-2xl p-6 shadow-lg">
-              <div className="flex justify-between items-start">
-                <div>
-                  <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-2">
-                    {car.year} {car.make} {car.model}
-                  </h1>
-                  <div className="text-4xl lg:text-5xl font-bold text-orange-600 mb-4">
-                    ${car.price.toLocaleString()}
-                  </div>
+              <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-2">
+                {car.year} {car.make} {car.model}
+              </h1>
+              <div className="flex items-center justify-between">
+                <div className="text-4xl lg:text-5xl font-bold text-orange-600">
+                  ${car.price.toLocaleString()}
                 </div>
-                
-                {/* Quick Share Button */}
-                <WhatsAppShareButton 
-                  message={shareMessage}
-                  className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 transition-colors"
-                  title="Share on WhatsApp"
-                >
-                  <Share2 className="w-5 h-5" />
-                </WhatsAppShareButton>
+                <div className="flex items-center gap-2 text-gray-600">
+                  <Eye className="w-5 h-5" />
+                  <span className="font-medium">{car.viewCount.toLocaleString()} views</span>
+                </div>
               </div>
               
               {/* Status Badge */}
-              <div className="mb-4">
+              <div className="mt-4">
                 <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
                   car.status === 'AVAILABLE'
                     ? 'bg-green-100 text-green-800'
@@ -365,11 +276,7 @@ export default async function CarDetailPage({ params }: CarDetailPageProps) {
                 </span>
               </div>
               
-              <div className="flex items-center gap-4 text-sm text-gray-600">
-                <div className="flex items-center gap-1">
-                  <Eye className="w-4 h-4" />
-                  <span>{car.viewCount.toLocaleString()} views</span>
-                </div>
+              <div className="flex items-center gap-4 mt-4 text-sm text-gray-600">
                 <div className="flex items-center gap-1">
                   <Clock className="w-4 h-4" />
                   <span>Listed {daysListed} day{daysListed !== 1 ? 's' : ''} ago</span>
@@ -490,54 +397,10 @@ export default async function CarDetailPage({ params }: CarDetailPageProps) {
               </div>
             </div>
 
-            {/* Contact Buttons with WhatsApp */}
-            <div className="bg-white rounded-2xl p-6 shadow-lg">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Contact Dealer</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* WhatsApp Button */}
-                <a
-                  href={`https://wa.me/${car.dealer.phone.replace(/\D/g, '')}?text=${encodeURIComponent(dealerMessage)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-3 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 hover:shadow-lg"
-                >
-                  <MessageCircle className="w-5 h-5" />
-                  <span>Contact via WhatsApp</span>
-                </a>
-                
-                {/* Call Button */}
-                <a
-                  href={`tel:${car.dealer.phone}`}
-                  className="flex items-center justify-center gap-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 hover:shadow-lg"
-                >
-                  <PhoneCall className="w-5 h-5" />
-                  <span>Call Dealer</span>
-                </a>
-              </div>
-              
-              {/* Share Link Section */}
-              <div className="mt-6 pt-6 border-t border-gray-200">
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">Share this listing</h3>
-                <div className="flex items-center gap-2">
-                  <input
-                    type="text"
-                    value={currentUrl}
-                    readOnly
-                    className="flex-1 px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 text-sm"
-                  />
-                  <button
-                    onClick={() => {
-                      navigator.clipboard.writeText(currentUrl);
-                      // Add toast notification here
-                    }}
-                    className="px-4 py-2 bg-gray-800 hover:bg-gray-900 text-white rounded-lg transition-colors flex items-center gap-2"
-                  >
-                    <Copy className="w-4 h-4" />
-                    Copy Link
-                  </button>
-                </div>
-              </div>
-            </div>
+            {/* Contact Buttons */}
+            <Suspense fallback={<div className="h-20 animate-pulse bg-gray-200 rounded-xl" />}>
+              <ContactButtons car={car} formattedPhone={formattedPhone} />
+            </Suspense>
           </div>
         </div>
       </div>

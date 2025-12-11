@@ -4,7 +4,6 @@
 export const dynamic = 'force-dynamic';;
 
 import { motion } from 'framer-motion';
-import Footer from '@/components/Footer';
 import { useTheme } from '@/app/providers/theme-provider';
 import { 
   Users, 
@@ -125,7 +124,7 @@ export default function AboutUs() {
       <div className="flex-1 flex flex-col relative">
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat z-0"
-          style={{ backgroundImage: "url('/background/carbackground.jpg')" }}
+          style={{ backgroundImage: "url('/background/about.jpg')" }}
         >
           <div className="absolute inset-0 bg-black/50 backdrop-blur-[1px]"></div>
         </div>
@@ -228,52 +227,91 @@ export default function AboutUs() {
 
           {/* Introduction Section */}
           <section className="py-12 sm:py-16">
-            <div className="container mx-auto px-3 sm:px-4">
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-                className="bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 shadow-xl overflow-hidden"
-              >
-                <div className="p-6 sm:p-8 lg:p-12">
-                  <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-start">
-                    <motion.div
-                      initial={{ opacity: 0, x: -30 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.2 }}
-                    >
-                      <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-4 sm:mb-6 drop-shadow">
-                        What is CarLinq?
-                      </h2>
-                      <div className="space-y-4 text-white/90">
-                        <p className="text-base sm:text-lg leading-relaxed">
-                          <span className="text-primary-400 font-semibold">CarLinq</span> is a SaaS-based car trading web platform designed to bridge the gap between car dealers and buyers. Unlike Facebook Marketplace or WhatsApp groups where transactions are informal and often lack credibility, CarLinq offers a professional, secure, and data-driven marketplace dedicated solely to vehicle sales.
-                        </p>
-                        <p className="text-base sm:text-lg leading-relaxed">
-                          We focus on giving car dealers visibility, credibility, and access to verified buyersâ€”while buyers enjoy trust, convenience, and incentives through our smart verification system.
-                        </p>
-                      </div>
-                    </motion.div>
-                    <motion.div
-                      initial={{ opacity: 0, x: 30 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.4 }}
-                      className="flex justify-center"
-                    >
-                      <div className="relative">
-                        <div className="w-full h-64 sm:h-80 lg:h-96 bg-gradient-to-br from-primary-500/20 to-secondary-500/20 rounded-2xl flex items-center justify-center">
-                          <Car className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 text-primary-400" />
-                        </div>
-                        <div className="absolute -bottom-4 -right-4 bg-primary-500 text-white px-4 py-2 rounded-xl shadow-lg">
-                          Professional Platform
-                        </div>
-                      </div>
-                    </motion.div>
-                  </div>
-                </div>
-              </motion.div>
+  <div className="container mx-auto px-3 sm:px-4">
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6 }}
+      className="bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 shadow-xl overflow-hidden"
+    >
+      <div className="p-6 sm:p-8 lg:p-12">
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-start">
+
+          {/* TEXT */}
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.2 }}
+          >
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white dark:text-white mb-3 sm:mb-4">
+              What is 
+              <span className="inline-block italic ml-1">
+                <span
+                  style={{
+                    color: theme === 'light' ? '#FF8C00' : '#CC6600',
+                    textShadow: `
+                      0 2px 0 #000,
+                      1px 1px 0 rgba(0,0,0,0.3), 
+                      2px 2px 0 rgba(0,0,0,0.2)
+                    `,
+                  }}
+                >
+                  Cɑr
+                </span>
+                <span
+                  style={{
+                    color: theme === 'light' ? '#0277BD' : '#01579B',
+                    textShadow: `
+                      0 2px 0 #000,
+                      1px 1px 0 rgba(0,0,0,0.3), 
+                      2px 2px 0 rgba(0,0,0,0.2)
+                    `,
+                    marginLeft: '-2px',
+                  }}
+                >
+                  Linq ?
+                </span>
+              </span>
+            </h2>
+
+            <div className="space-y-4 text-white/95">
+              <p className="text-base sm:text-lg leading-relaxed">
+                <span className="text-orange-400 font-bold">CarLinq</span>
+                {' '}is a premium online car trading platform connecting trusted car dealers with serious buyers.
+                Unlike informal spaces such as Facebook Marketplace or WhatsApp groups—where listings are scattered and trust is never guaranteed. CarLinq offers a professional, secure marketplace designed exclusively for vehicle sales.
+              </p>
             </div>
-          </section>
+          </motion.div>
+
+          {/* IMAGE / CARD */}
+          <motion.div
+            initial={{ opacity: 0, x: 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.4 }}
+            className="flex justify-center lg:justify-end"
+          >
+            <div className="relative w-full max-w-sm sm:max-w-md">
+
+              {/* Card height reduced */}
+              <div className="w-full h-48 sm:h-56 lg:h-64 bg-gradient-to-br from-primary-500/20 to-secondary-500/20 
+                              rounded-2xl flex items-center justify-center">
+                <Car className="w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 text-primary-400" />
+              </div>
+
+              {/* Positioned inside bottom-right, not too far down */}
+              <div className="absolute bottom-3 right-3 bg-primary-500 text-white px-3 py-1.5 rounded-lg shadow-lg text-sm sm:text-base">
+                Professional Platform
+              </div>
+
+            </div>
+          </motion.div>
+
+        </div>
+      </div>
+    </motion.div>
+  </div>
+</section>
+
 
           {/* Problem Statement Section */}
           <section className="py-12 sm:py-16">

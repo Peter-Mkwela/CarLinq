@@ -1,4 +1,5 @@
-﻿/* eslint-disable @typescript-eslint/no-explicit-any */
+﻿
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @next/next/no-img-element */
 'use client';
@@ -411,148 +412,77 @@ export default function BrowseCars() {
     setSearchTerm('');
   };
 
+  
   // Toggle favorite - UPDATED VERSION (Hybrid: localStorage + database)
   const toggleFavorite = async (carId: string) => {
-    try {
-      // Get session ID
-      const sessionId = getOrCreateSessionId();
-      
-      // Get current favorites from localStorage for instant UI feedback
-      const storedFavorites = localStorage.getItem('clientFavorites');
-      let currentFavorites = storedFavorites ? JSON.parse(storedFavorites) : [];
-      const isCurrentlyFavorite = currentFavorites.includes(carId);
-      
-      // Instant UI update
-      if (isCurrentlyFavorite) {
-        currentFavorites = currentFavorites.filter((id: string) => id !== carId);
-        toast.success('Removed from favorites');
-      } else {
-        currentFavorites.push(carId);
-        toast.success('Added to favorites');
-      }
-      
-      // Update state and localStorage
-      setFavorites(currentFavorites);
-      localStorage.setItem('clientFavorites', JSON.stringify(currentFavorites));
-      
-      // Sync with database
-      const response = await fetch('/api/favorites', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          listingId: carId, 
-          sessionId: sessionId,
-          action: isCurrentlyFavorite ? 'remove' : 'add'
-        }),
-      });
-
-      if (!response.ok) {
-        console.error('Failed to sync with database');
-      }
-      
-    } catch (error) {
-      console.error('Error toggling favorite:', error);
-      toast.error('Failed to update favorites');
-    }
-  };
-
-  // Add this function near your other functions
-  const trackInquiry = async (carId: string) => {
-    try {
-      const sessionId = getOrCreateSessionId();
-      const response = await fetch(`/api/listings/${carId}/inquiry`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          sessionId,
-        }),
-      });
-      
-      if (!response.ok) {
-        console.error('Failed to track inquiry');
-      }
-    } catch (error) {
-      console.error('Error tracking inquiry:', error);
-    }
-  };
-
-  // Enhanced WhatsApp sharing with image and browser link
-  const shareCarToWhatsApp = (car: CarListing) => {
-    // Get the car image URL (use first image or placeholder)
-    const carImageUrl = car.images && car.images.length > 0 
-      ? car.images[0] 
-      : 'https://via.placeholder.com/600x400/1e3a8a/ffffff?text=Car+Image'; // Placeholder URL
+  try {
+    // Get session ID
+    const sessionId = getOrCreateSessionId();
     
-    // Get the browser link to the car
-    // IMPORTANT: You need to create a car details page at /cars/[id]
-    const carBrowserLink = `${window.location.origin}/cars/${car.id}`;
+    // Get current favorites from localStorage for instant UI feedback
+    const storedFavorites = localStorage.getItem('clientFavorites');
+    let currentFavorites = storedFavorites ? JSON.parse(storedFavorites) : [];
+    const isCurrentlyFavorite = currentFavorites.includes(carId);
     
-    // For now, use a fallback link if car details page doesn't exist
-    const browserLink = `${window.location.origin}/browse-cars?highlight=${car.id}`;
-    
-    // Create a rich message with image and link (like premium sites)
-    const message = `*${car.make} ${car.model} (${car.year})*\n\n` +
-      `*Price:* $${car.price.toLocaleString()}\n` +
-      `*Mileage:* ${car.mileage.toLocaleString()} km\n` +
-      `*Transmission:* ${car.transmission}\n` +
-      `*Fuel Type:* ${car.fuelType}\n` +
-      `*Location:* ${car.location}\n\n` +
-      `*Dealer:* ${car.dealer.companyName}\n\n` +
-      `*Car Image:* ${carImageUrl}\n` +
-      `*View Full Details:* ${browserLink}\n\n` +
-      `_Check out this amazing vehicle!_\n` +
-      `_Shared via carlinq.com`;
-    
-    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
-    window.open(whatsappUrl, '_blank');
-  };
-
-  // Enhanced contact dealer with car details, image, and link
-  const contactDealerWhatsApp = (car: CarListing) => {
-    if (!car.dealer.phone || car.dealer.phone === 'Not provided') {
-      toast.error('Dealer phone number not available');
-      return;
+    // Instant UI update
+    if (isCurrentlyFavorite) {
+      currentFavorites = currentFavorites.filter((id: string) => id !== carId);
+      toast.success('Removed from favorites');
+    } else {
+      currentFavorites.push(carId);
+      toast.success('Added to favorites');
     }
     
-    const cleanedPhone = car.dealer.phone.replace(/\D/g, '');
-    let whatsappNumber = cleanedPhone;
+    // Update state and localStorage
+    setFavorites(currentFavorites);
+    localStorage.setItem('clientFavorites', JSON.stringify(currentFavorites));
     
-    if (cleanedPhone.startsWith('0') && cleanedPhone.length === 10) {
-      whatsappNumber = '263' + cleanedPhone.slice(1);
-    } else if (cleanedPhone.length === 9) {
-      whatsappNumber = '263' + cleanedPhone;
-    } else if (cleanedPhone.startsWith('263') && cleanedPhone.length === 12) {
-      whatsappNumber = cleanedPhone;
-    } else if (cleanedPhone.startsWith('+263') && cleanedPhone.length === 13) {
-      whatsappNumber = cleanedPhone.slice(1);
+    // Sync with database
+    const response = await fetch('/api/favorites', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+        listingId: carId, 
+        sessionId: sessionId,
+        action: isCurrentlyFavorite ? 'remove' : 'add'
+      }),
+    });
+
+    if (!response.ok) {
+      console.error('Failed to sync with database');
     }
     
-    // Get car image URL
-    const carImageUrl = car.images && car.images.length > 0 
-      ? car.images[0] 
-      : 'https://via.placeholder.com/600x400/1e3a8a/ffffff?text=Car+Image';
+  } catch (error) {
+    console.error('Error toggling favorite:', error);
+    toast.error('Failed to update favorites');
+  }
+};
+
+// Add this function near your other functions
+const trackInquiry = async (carId: string) => {
+  try {
+    const sessionId = getOrCreateSessionId();
+    const response = await fetch(`/api/listings/${carId}/inquiry`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+        sessionId,
+      }),
+    });
     
-    // Get browser link
-    const browserLink = `${window.location.origin}/cars/${car.id}`;
-    const fallbackLink = `${window.location.origin}/browse-cars?highlight=${car.id}`;
+    if (!response.ok) {
+      console.error('Failed to track inquiry');
+    }
+  } catch (error) {
+    console.error('Error tracking inquiry:', error);
+  }
+};
+  // Share car via WhatsApp
+  const shareCar = (car: CarListing) => {
+    const message = `Check out this ${car.make} ${car.model} (${car.year}) for $${car.price.toLocaleString()}!\n\nLocation: ${car.location}\nMileage: ${car.mileage.toLocaleString()} km\nTransmission: ${car.transmission}\nFuel Type: ${car.fuelType}\n\nDealer: ${car.dealer.companyName}`;
     
-    // Create a professional inquiry message with all details
-    const message = `Hello ${car.dealer.name || car.dealer.companyName},\n\n` +
-      `I am interested in your *${car.make} ${car.model} (${car.year})* listed for *$${car.price.toLocaleString()}*.\n\n` +
-      `*Vehicle Details:*\n` +
-      `• Make & Model: ${car.make} ${car.model}\n` +
-      `• Year: ${car.year}\n` +
-      `• Price: $${car.price.toLocaleString()}\n` +
-      `• Mileage: ${car.mileage.toLocaleString()} km\n` +
-      `• Transmission: ${car.transmission}\n` +
-      `• Fuel Type: ${car.fuelType}\n` +
-      `• Location: ${car.location}\n\n` +
-      `*Car Image:* ${carImageUrl}\n` +
-      `*View Full Listing:* ${browserLink || fallbackLink}\n\n` 
-    ;
-    
-    const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
-    window.open(whatsappUrl, '_blank');
+    const shareUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
+    window.open(shareUrl, '_blank');
   };
 
   const formatPhoneNumber = (phone: string) => {
@@ -573,33 +503,47 @@ export default function BrowseCars() {
     return phone;
   };
 
-  // Optional: Generate QR code for sharing (Premium Feature)
-  const generateShareQR = (car: CarListing) => {
-    const browserLink = `${window.location.origin}/cars/${car.id}`;
-    const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(browserLink)}`;
-    return qrCodeUrl;
-  };
-
-  const trackView = async (carId: string) => {
-    try {
-      const sessionId = getOrCreateSessionId();
-      const response = await fetch(`/api/listings/${carId}/view`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          sessionId,
-        }),
-      });
-      
-      if (!response.ok) {
-        console.error('Failed to track view');
-      }
-    } catch (error) {
-      console.error('Error tracking view:', error);
+  const createWhatsAppLink = (phone: string, car: CarListing) => {
+    if (!phone || phone === 'Not provided') return '#';
+    
+    const cleanedPhone = phone.replace(/\D/g, '');
+    let whatsappNumber = cleanedPhone;
+    
+    if (cleanedPhone.startsWith('0') && cleanedPhone.length === 10) {
+      whatsappNumber = '263' + cleanedPhone.slice(1);
+    } else if (cleanedPhone.length === 9) {
+      whatsappNumber = '263' + cleanedPhone;
+    } else if (cleanedPhone.startsWith('263') && cleanedPhone.length === 12) {
+      whatsappNumber = cleanedPhone;
+    } else if (cleanedPhone.startsWith('+263') && cleanedPhone.length === 13) {
+      whatsappNumber = cleanedPhone.slice(1);
     }
+    
+    const message = `Hi, I'm interested in your ${car.make} ${car.model} (${car.year}) listed for $${car.price.toLocaleString()}. Could you provide more details?`;
+    return `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
   };
 
   const activeFilterCount = Object.values(filters).filter(value => value !== '').length;
+
+  const trackView = async (carId: string) => {
+  try {
+    const sessionId = getOrCreateSessionId(); // Your existing session function
+    const response = await fetch(`/api/listings/${carId}/view`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+        sessionId,
+        // Optional: ipAddress and userAgent if you want to track them
+      }),
+    });
+    
+    if (!response.ok) {
+      console.error('Failed to track view');
+    }
+  } catch (error) {
+    console.error('Error tracking view:', error);
+  }
+};
 
   return (
     <div className="min-h-screen flex flex-col relative">
@@ -907,101 +851,100 @@ export default function BrowseCars() {
                           className="bg-white/90 backdrop-blur-md rounded-lg sm:rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-white/20 overflow-hidden group"
                         >
                           {/* Car Image */}
-                          <div className="relative h-36 sm:h-48 bg-gray-200 overflow-hidden cursor-pointer">
-                            {car.images && car.images.length > 0 ? (
-                              <>
-                                <div 
-                                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 cursor-pointer"
-                                  onClick={() => {
-                                    trackView(car.id);
-                                    openImageGallery(car.images, 0);
-                                  }}
-                                >
-                                  <img 
-                                    src={car.images[0]} 
-                                    alt={`${car.make} ${car.model}`}
-                                    className="w-full h-full object-cover"
-                                  />
-                                </div>
-                                {car.images.length > 1 && (
-                                  <div 
-                                    className="absolute bottom-2 right-2 flex items-center gap-1 cursor-pointer"
-                                    onClick={() => {
-                                      trackView(car.id);
-                                      openImageGallery(car.images, 0);
-                                    }}
-                                  >
-                                    <div className="flex">
-                                      {car.images.slice(0, 3).map((_, idx) => (
-                                        <div 
-                                          key={idx}
-                                          className={`w-1.5 h-1.5 rounded-full mx-0.5 ${
-                                            idx === 0 ? 'bg-white' : 'bg-white/60'
-                                          }`}
-                                        />
-                                      ))}
-                                    </div>
-                                    <span className="text-xs text-white bg-black/50 px-2 py-1 rounded">
-                                      +{car.images.length - 1}
-                                    </span>
-                                  </div>
-                                )}
-                              </>
-                            ) : (
-                              <div 
-                                className="w-full h-full bg-gradient-to-br from-orange-100 to-amber-100 flex items-center justify-center cursor-pointer"
-                                onClick={() => {
-                                  trackView(car.id);
-                                  openImageGallery(car.images, 0);
-                                }}
-                              >
-                                <Car className="w-10 h-10 sm:w-12 sm:h-12 text-orange-500" />
-                              </div>
-                            )}
-                            
-                            {/* Badges */}
-                            <div className="absolute top-2 left-2 sm:top-3 sm:left-3">
-                              {car.status === 'available' && (
-                                <span className="bg-green-500 text-white text-xs font-bold px-1.5 sm:px-2 py-0.5 sm:py-1 rounded backdrop-blur-sm">
-                                  Available
-                                </span>
-                              )}
-                            </div>
+<div className="relative h-36 sm:h-48 bg-gray-200 overflow-hidden cursor-pointer">
+  {car.images && car.images.length > 0 ? (
+    <>
+      <div 
+        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 cursor-pointer"
+        onClick={() => {
+          trackView(car.id); // âœ… Track view when image is clicked
+          openImageGallery(car.images, 0);
+        }}
+      >
+        <img 
+          src={car.images[0]} 
+          alt={`${car.make} ${car.model}`}
+          className="w-full h-full object-cover"
+        />
+      </div>
+      {car.images.length > 1 && (
+        <div 
+          className="absolute bottom-2 right-2 flex items-center gap-1 cursor-pointer"
+          onClick={() => {
+            trackView(car.id); // âœ… Track view when gallery button is clicked
+            openImageGallery(car.images, 0);
+          }}
+        >
+          <div className="flex">
+            {car.images.slice(0, 3).map((_, idx) => (
+              <div 
+                key={idx}
+                className={`w-1.5 h-1.5 rounded-full mx-0.5 ${
+                  idx === 0 ? 'bg-white' : 'bg-white/60'
+                }`}
+              />
+            ))}
+          </div>
+          <span className="text-xs text-white bg-black/50 px-2 py-1 rounded">
+            +{car.images.length - 1}
+          </span>
+        </div>
+      )}
+    </>
+  ) : (
+    <div 
+      className="w-full h-full bg-gradient-to-br from-orange-100 to-amber-100 flex items-center justify-center cursor-pointer"
+      onClick={() => {
+        trackView(car.id); // âœ… Track view even for placeholder image
+        openImageGallery(car.images, 0);
+      }}
+    >
+      <Car className="w-10 h-10 sm:w-12 sm:h-12 text-orange-500" />
+    </div>
+  )}
+  
+  {/* Badges */}
+  <div className="absolute top-2 left-2 sm:top-3 sm:left-3">
+    {car.status === 'available' && (
+      <span className="bg-green-500 text-white text-xs font-bold px-1.5 sm:px-2 py-0.5 sm:py-1 rounded backdrop-blur-sm">
+        Available
+      </span>
+    )}
+  </div>
 
-                            {/* Action Buttons */}
-                            <div className="absolute top-2 right-2 sm:top-3 sm:right-3 flex gap-1 sm:gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                              {/* Favorite Button */}
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  toggleFavorite(car.id);
-                                }}
-                                className={`p-1.5 sm:p-2 rounded-full bg-white/90 backdrop-blur-sm ${
-                                  favorites.includes(car.id) 
-                                    ? 'text-red-500' 
-                                    : 'text-gray-600 hover:text-red-500'
-                                } transition-colors duration-200`}
-                              >
-                                <Heart 
-                                  className="w-3 h-3 sm:w-4 sm:h-4" 
-                                  fill={favorites.includes(car.id) ? 'currentColor' : 'none'}
-                                />
-                              </button>
-                              
-                              {/* Share Button - Now with enhanced WhatsApp sharing */}
-                              <button 
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  trackView(car.id);
-                                  shareCarToWhatsApp(car);
-                                }}
-                                className="p-1.5 sm:p-2 rounded-full bg-white/90 backdrop-blur-sm text-gray-600 hover:text-green-500 transition-colors duration-200"
-                                title="Share car with image and link"
-                              >
-                                <Share2 className="w-3 h-3 sm:w-4 sm:h-4" />
-                              </button>
-                            </div>
-                          </div>
+  {/* Action Buttons */}
+  <div className="absolute top-2 right-2 sm:top-3 sm:right-3 flex gap-1 sm:gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+    {/* Favorite Button - ALREADY TRACKS LIKE */}
+    <button
+      onClick={(e) => {
+        e.stopPropagation();
+        toggleFavorite(car.id); // This already tracks likes
+      }}
+      className={`p-1.5 sm:p-2 rounded-full bg-white/90 backdrop-blur-sm ${
+        favorites.includes(car.id) 
+          ? 'text-red-500' 
+          : 'text-gray-600 hover:text-red-500'
+      } transition-colors duration-200`}
+    >
+      <Heart 
+        className="w-3 h-3 sm:w-4 sm:h-4" 
+        fill={favorites.includes(car.id) ? 'currentColor' : 'none'}
+      />
+    </button>
+    
+    {/* Share Button - TRACK AS VIEW */}
+    <button 
+      onClick={(e) => {
+        e.stopPropagation();
+        trackView(car.id); // âœ… Track view when sharing
+        shareCar(car);
+      }}
+      className="p-1.5 sm:p-2 rounded-full bg-white/90 backdrop-blur-sm text-gray-600 hover:text-green-500 transition-colors duration-200"
+    >
+      <Share2 className="w-3 h-3 sm:w-4 sm:h-4" />
+    </button>
+  </div>
+</div>
 
                           {/* Car Details */}
                           <div className="p-3 sm:p-4">
@@ -1042,7 +985,7 @@ export default function BrowseCars() {
                               </div>
                             </div>
 
-                            {/* Location */}
+                            {/* Location - Removed Views */}
                             <div className="flex items-center text-xs sm:text-sm mb-2">
                               <div className="flex items-center gap-1 text-gray-600 flex-1 min-w-0">
                                 <MapPin className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
@@ -1074,19 +1017,19 @@ export default function BrowseCars() {
 
                             {/* Action Buttons */}
                             <div className="flex gap-2 mt-3 sm:mt-4">
-                              {/* WhatsApp Contact Button - Now with enhanced functionality */}
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  trackInquiry(car.id);
-                                  contactDealerWhatsApp(car);
-                                }}
-                                className="flex-1 bg-green-600 hover:bg-green-700 text-white py-1.5 sm:py-2 px-3 rounded-lg transition-colors duration-200 text-xs sm:text-sm font-medium flex items-center justify-center gap-2"
-                                title="Contact dealer with car details, image, and link"
-                              >
-                                <MessageCircle className="w-3 h-3 sm:w-4 sm:h-4" />
-                                WhatsApp Dealer
-                              </button>
+                               <a
+    href={createWhatsAppLink(car.dealer.phone, car)}
+    target="_blank"
+    rel="noopener noreferrer"
+    className="flex-1 bg-green-600 hover:bg-green-700 text-white py-1.5 sm:py-2 px-3 rounded-lg transition-colors duration-200 text-xs sm:text-sm font-medium flex items-center justify-center gap-2"
+    onClick={(e) => {
+      e.stopPropagation();
+      trackInquiry(car.id); // âœ… Track inquiry when contacting dealer
+    }}
+  >
+    <MessageCircle className="w-3 h-3 sm:w-4 sm:h-4" />
+    WhatsApp
+  </a>
                             </div>
                           </div>
                         </motion.div>
