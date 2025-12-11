@@ -1,17 +1,14 @@
-// app/components/client-layout.tsx
+// components/client-layout.tsx - UPDATED
 'use client';
-export const dynamic = 'force-dynamic';
+
 import { useState, useEffect, Suspense, useCallback } from 'react';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { ThemeProvider } from '@/app/providers/theme-provider';
 import { Toaster } from 'react-hot-toast';
 import Loading from './Loading';
 
-export default function ClientLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+// Create a separate client component that uses useSearchParams
+function ClientLayoutContent({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState({
     isLoading: false,
     progress: 0
@@ -53,17 +50,26 @@ export default function ClientLayout({
     }
   }, [pathname, searchParams, simulateProgress]);
 
+  // Show loading screen during route transitions
+  if (loading.isLoading) {
+    return <Loading />;
+  }
+
+  return <>{children}</>;
+}
+
+export default function ClientLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <ThemeProvider>
       <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors flex flex-col">
-        {/* Show loading screen during route transitions */}
-        {loading.isLoading ? (
-          <Loading />
-        ) : (
-          <Suspense fallback={<Loading />}>
-            {children}
-          </Suspense>
-        )}
+        {/* Wrap the content that uses useSearchParams in Suspense */}
+        <Suspense fallback={<Loading />}>
+          <ClientLayoutContent>{children}</ClientLayoutContent>
+        </Suspense>
       </div>
 
       {/* 🌟 Toast Notification System - CarLinq Style */}

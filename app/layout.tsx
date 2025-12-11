@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-// app/layout.tsx
+// app/layout.tsx - UPDATED
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { Suspense } from 'react';
@@ -23,6 +22,9 @@ export const metadata: Metadata = {
   },
 };
 
+// ADD THIS - Makes the entire app dynamic
+export const dynamic = 'force-dynamic';
+
 export default function RootLayout({
   children,
 }: {
@@ -32,12 +34,14 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.className} antialiased`}>
         <AuthSessionProvider>
-          {/* Remove Suspense from here since we're handling it in ClientLayout */}
-          <ClientLayout>
-            <Header />
-            <main className="flex-1">{children}</main>
-            <Footer />
-          </ClientLayout>
+          {/* ADD SUSPENSE HERE - This is critical! */}
+          <Suspense fallback={<Loading />}>
+            <ClientLayout>
+              <Header />
+              <main className="flex-1">{children}</main>
+              <Footer />
+            </ClientLayout>
+          </Suspense>
         </AuthSessionProvider>
       </body>
     </html>
