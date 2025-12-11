@@ -1,3 +1,4 @@
+﻿export const dynamic = 'force-dynamic';
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -74,23 +75,23 @@ export default function FavoritesPage() {
     try {
       setLoading(true);
       const sessionId = getSessionId();
-      console.log('🔍 Fetching favorites for session:', sessionId);
+      console.log('ðŸ” Fetching favorites for session:', sessionId);
       
       const response = await fetch(`/api/favorites/all?sessionId=${sessionId}`);
       
       if (response.ok) {
         const data = await response.json();
-        console.log('✅ Favorites API response:', data);
+        console.log('âœ… Favorites API response:', data);
         
         // Use data.favorites (from updated API) or data (from old API)
         const favoriteCars = data.favorites || data || [];
         setFavorites(favoriteCars);
       } else {
-        console.error('❌ API Error:', response.status);
+        console.error('âŒ API Error:', response.status);
         toast.error('Failed to load favorites');
       }
     } catch (error) {
-      console.error('💥 Error fetching favorites:', error);
+      console.error('ðŸ’¥ Error fetching favorites:', error);
       toast.error('Network error');
     } finally {
       setLoading(false);
@@ -101,7 +102,7 @@ export default function FavoritesPage() {
     setRemovingId(carId);
     try {
       const sessionId = getSessionId();
-      console.log('🗑️ Removing favorite:', { carId, sessionId });
+      console.log('ðŸ—‘ï¸ Removing favorite:', { carId, sessionId });
       
       const response = await fetch(`/api/favorites/${carId}?sessionId=${sessionId}`, {
         method: 'DELETE',
@@ -115,7 +116,7 @@ export default function FavoritesPage() {
         toast.error('Failed to remove from favorites');
       }
     } catch (error) {
-      console.error('💥 Error removing favorite:', error);
+      console.error('ðŸ’¥ Error removing favorite:', error);
       toast.error('Network error');
     } finally {
       setRemovingId(null);

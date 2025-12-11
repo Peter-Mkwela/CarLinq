@@ -1,3 +1,4 @@
+﻿export const dynamic = 'force-dynamic';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @next/next/no-img-element */
@@ -856,7 +857,7 @@ const trackInquiry = async (carId: string) => {
       <div 
         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 cursor-pointer"
         onClick={() => {
-          trackView(car.id); // ✅ Track view when image is clicked
+          trackView(car.id); // âœ… Track view when image is clicked
           openImageGallery(car.images, 0);
         }}
       >
@@ -870,7 +871,7 @@ const trackInquiry = async (carId: string) => {
         <div 
           className="absolute bottom-2 right-2 flex items-center gap-1 cursor-pointer"
           onClick={() => {
-            trackView(car.id); // ✅ Track view when gallery button is clicked
+            trackView(car.id); // âœ… Track view when gallery button is clicked
             openImageGallery(car.images, 0);
           }}
         >
@@ -894,7 +895,7 @@ const trackInquiry = async (carId: string) => {
     <div 
       className="w-full h-full bg-gradient-to-br from-orange-100 to-amber-100 flex items-center justify-center cursor-pointer"
       onClick={() => {
-        trackView(car.id); // ✅ Track view even for placeholder image
+        trackView(car.id); // âœ… Track view even for placeholder image
         openImageGallery(car.images, 0);
       }}
     >
@@ -935,7 +936,7 @@ const trackInquiry = async (carId: string) => {
     <button 
       onClick={(e) => {
         e.stopPropagation();
-        trackView(car.id); // ✅ Track view when sharing
+        trackView(car.id); // âœ… Track view when sharing
         shareCar(car);
       }}
       className="p-1.5 sm:p-2 rounded-full bg-white/90 backdrop-blur-sm text-gray-600 hover:text-green-500 transition-colors duration-200"
@@ -1023,7 +1024,7 @@ const trackInquiry = async (carId: string) => {
     className="flex-1 bg-green-600 hover:bg-green-700 text-white py-1.5 sm:py-2 px-3 rounded-lg transition-colors duration-200 text-xs sm:text-sm font-medium flex items-center justify-center gap-2"
     onClick={(e) => {
       e.stopPropagation();
-      trackInquiry(car.id); // ✅ Track inquiry when contacting dealer
+      trackInquiry(car.id); // âœ… Track inquiry when contacting dealer
     }}
   >
     <MessageCircle className="w-3 h-3 sm:w-4 sm:h-4" />
