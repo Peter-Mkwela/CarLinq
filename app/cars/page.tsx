@@ -1,9 +1,9 @@
-﻿export const dynamic = 'force-dynamic';
+﻿
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @next/next/no-img-element */
 'use client';
-
+export const dynamic = 'force-dynamic';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
