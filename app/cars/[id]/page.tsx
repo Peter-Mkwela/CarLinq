@@ -212,26 +212,33 @@ function createWhatsAppShareMessage(car: any, currentUrl: string): string {
     ? car.images[0] 
     : 'https://via.placeholder.com/600x400/1e3a8a/ffffff?text=Car+Image';
   
-  const message = `🚗 *${car.make} ${car.model} (${car.year})*\n\n` +
-    `💰 *Price:* $${car.price.toLocaleString()}\n` +
-    `📏 *Mileage:* ${car.mileage.toLocaleString()} km\n` +
-    `⚙️ *Transmission:* ${car.transmission}\n` +
-    `⛽ *Fuel Type:* ${car.fuelType}\n` +
-    `📍 *Location:* ${car.location}\n\n` +
-    `🏢 *Dealer:* ${car.dealer.companyName}\n\n` +
-    `📸 *Car Image:* ${carImageUrl}\n` +
-    `🔗 *View Full Details:* ${currentUrl}\n\n` +
+  // Use main cars page URL
+  const mainCarsUrl = `${getCurrentUrl()}/cars`;
+  
+  const message = `*${car.make} ${car.model} (${car.year})*\n\n` +
+    `*Price:* $${car.price.toLocaleString()}\n` +
+    `*Mileage:* ${car.mileage.toLocaleString()} km\n` +
+    `*Transmission:* ${car.transmission}\n` +
+    `*Fuel Type:* ${car.fuelType}\n` +
+    `*Location:* ${car.location}\n\n` +
+    `*Dealer:* ${car.dealer.companyName}\n\n` +
+    `*Car Image:* ${carImageUrl}\n` +
+    `*View All Listings:* ${mainCarsUrl}\n\n` +
     `_Check out this amazing vehicle!_\n` +
-    `_Shared via Premium CarDealer App_`;
+    `_Shared via Carlinq.com`;
   
   return message;
 }
 
 // Helper function to create WhatsApp message for contacting dealer
+// Helper function to create WhatsApp message for contacting dealer
 function createWhatsAppDealerMessage(car: any, currentUrl: string): string {
   const carImageUrl = car.images && car.images.length > 0 
     ? car.images[0] 
     : 'https://via.placeholder.com/600x400/1e3a8a/ffffff?text=Car+Image';
+  
+  // Use main cars page URL instead of specific car page
+  const mainCarsUrl = `${getCurrentUrl()}/cars`;
   
   const message = `Hello ${car.dealer.name || car.dealer.companyName},\n\n` +
     `I am interested in your *${car.make} ${car.model} (${car.year})* listed for *$${car.price.toLocaleString()}*.\n\n` +
@@ -244,20 +251,10 @@ function createWhatsAppDealerMessage(car: any, currentUrl: string): string {
     `• Fuel Type: ${car.fuelType}\n` +
     `• Location: ${car.location}\n\n` +
     `*Car Image:* ${carImageUrl}\n` +
-    `*View Full Listing:* ${currentUrl}\n\n` +
-    `Could you please provide me with:\n` +
-    `1. Vehicle history report/service records\n` +
-    `2. Additional high-quality photos\n` +
-    `3. Available test drive dates & location\n` +
-    `4. Any financing or payment options\n` +
-    `5. Current condition and any issues\n\n` +
-    `Thank you!\n\n` +
-    `Best regards,\n` +
-    `[Your Name/Contact Info]`;
+    `*View All Listings:* ${mainCarsUrl}\n\n`;
   
   return message;
 }
-
 // Function to get current URL for sharing
 function getCurrentUrl(): string {
   const headersList = headers();

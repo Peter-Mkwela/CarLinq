@@ -1,4 +1,4 @@
-// app/cars/[id]/ContactButtons.tsx
+// app/cars/[id]/ContactButtons.tsx - Updated WhatsApp message
 'use client';
 
 import { Phone, MessageCircle, Mail, Share2 } from 'lucide-react';
@@ -35,7 +35,8 @@ export default function ContactButtons({ car, formattedPhone }: ContactButtonsPr
       ? car.images[0] 
       : 'https://via.placeholder.com/600x400/1e3a8a/ffffff?text=Car+Image';
     
-    const currentUrl = window.location.href;
+    // Use main cars page URL
+    const mainCarsUrl = `${window.location.origin}/cars`;
     
     return `Hello ${car.dealer.name || car.dealer.companyName},\n\n` +
       `I am interested in your *${car.make} ${car.model} (${car.year})* listed for *$${car.price.toLocaleString()}*.\n\n` +
@@ -48,16 +49,28 @@ export default function ContactButtons({ car, formattedPhone }: ContactButtonsPr
       `• Fuel Type: ${car.fuelType}\n` +
       `• Location: ${car.location}\n\n` +
       `*Car Image:* ${carImageUrl}\n` +
-      `*View Full Listing:* ${currentUrl}\n\n` +
-      `Could you please provide me with:\n` +
-      `1. Vehicle history report/service records\n` +
-      `2. Additional high-quality photos\n` +
-      `3. Available test drive dates & location\n` +
-      `4. Any financing or payment options\n` +
-      `5. Current condition and any issues\n\n` +
-      `Thank you!\n\n` +
-      `Best regards,\n` +
-      `[Your Name/Contact Info]`;
+      `*View All Listings:* ${mainCarsUrl}\n\n`;
+  };
+
+  const createWhatsAppShareMessage = () => {
+    const carImageUrl = car.images && car.images.length > 0 
+      ? car.images[0] 
+      : 'https://via.placeholder.com/600x400/1e3a8a/ffffff?text=Car+Image';
+    
+    // Use main cars page URL
+    const mainCarsUrl = `${window.location.origin}/cars`;
+    
+    return `*${car.make} ${car.model} (${car.year})*\n\n` +
+      `*Price:* $${car.price.toLocaleString()}\n` +
+      `*Mileage:* ${car.mileage.toLocaleString()} km\n` +
+      `*Transmission:* ${car.transmission}\n` +
+      `*Fuel Type:* ${car.fuelType}\n` +
+      `*Location:* ${car.location}\n\n` +
+      `*Dealer:* ${car.dealer.companyName}\n\n` +
+      `*Car Image:* ${carImageUrl}\n` +
+      `*View All Listings:* ${mainCarsUrl}\n\n` +
+      `_Check out this amazing vehicle!_\n` +
+      `_Shared via Carlinq.com`;
   };
 
   const handleWhatsApp = () => {
@@ -67,24 +80,7 @@ export default function ContactButtons({ car, formattedPhone }: ContactButtonsPr
   };
 
   const handleShare = () => {
-    const carImageUrl = car.images && car.images.length > 0 
-      ? car.images[0] 
-      : 'https://via.placeholder.com/600x400/1e3a8a/ffffff?text=Car+Image';
-    
-    const currentUrl = window.location.href;
-    
-    const message = `🚗 *${car.make} ${car.model} (${car.year})*\n\n` +
-      `💰 *Price:* $${car.price.toLocaleString()}\n` +
-      `📏 *Mileage:* ${car.mileage.toLocaleString()} km\n` +
-      `⚙️ *Transmission:* ${car.transmission}\n` +
-      `⛽ *Fuel Type:* ${car.fuelType}\n` +
-      `📍 *Location:* ${car.location}\n\n` +
-      `🏢 *Dealer:* ${car.dealer.companyName}\n\n` +
-      `📸 *Car Image:* ${carImageUrl}\n` +
-      `🔗 *View Full Details:* ${currentUrl}\n\n` +
-      `_Check out this amazing vehicle!_\n` +
-      `_Shared via Premium CarDealer App_`;
-    
+    const message = createWhatsAppShareMessage();
     const shareUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
     window.open(shareUrl, '_blank');
   };

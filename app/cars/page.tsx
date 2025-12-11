@@ -477,83 +477,78 @@ export default function BrowseCars() {
   };
 
   // Enhanced WhatsApp sharing with image and browser link
-  const shareCarToWhatsApp = (car: CarListing) => {
-    // Get the car image URL (use first image or placeholder)
-    const carImageUrl = car.images && car.images.length > 0 
-      ? car.images[0] 
-      : 'https://via.placeholder.com/600x400/1e3a8a/ffffff?text=Car+Image'; // Placeholder URL
-    
-    // Get the browser link to the car
-    // IMPORTANT: You need to create a car details page at /cars/[id]
-    const carBrowserLink = `${window.location.origin}/cars/${car.id}`;
-    
-    // For now, use a fallback link if car details page doesn't exist
-    const browserLink = `${window.location.origin}/browse-cars?highlight=${car.id}`;
-    
-    // Create a rich message with image and link (like premium sites)
-    const message = `*${car.make} ${car.model} (${car.year})*\n\n` +
-      `*Price:* $${car.price.toLocaleString()}\n` +
-      `*Mileage:* ${car.mileage.toLocaleString()} km\n` +
-      `*Transmission:* ${car.transmission}\n` +
-      `*Fuel Type:* ${car.fuelType}\n` +
-      `*Location:* ${car.location}\n\n` +
-      `*Dealer:* ${car.dealer.companyName}\n\n` +
-      `*Car Image:* ${carImageUrl}\n` +
-      `*View Full Details:* ${browserLink}\n\n` +
-      `_Check out this amazing vehicle!_\n` +
-      `_Shared via carlinq.com`;
-    
-    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
-    window.open(whatsappUrl, '_blank');
-  };
+  // Enhanced WhatsApp sharing with image and browser link
+const shareCarToWhatsApp = (car: CarListing) => {
+  // Get the car image URL (use first image or placeholder)
+  const carImageUrl = car.images && car.images.length > 0 
+    ? car.images[0] 
+    : 'https://via.placeholder.com/600x400/1e3a8a/ffffff?text=Car+Image'; // Placeholder URL
+  
+  // Use main cars page URL
+  const mainCarsUrl = `${window.location.origin}/cars`;
+  
+  // Create a rich message with image and link (like premium sites)
+  const message = `*${car.make} ${car.model} (${car.year})*\n\n` +
+    `*Price:* $${car.price.toLocaleString()}\n` +
+    `*Mileage:* ${car.mileage.toLocaleString()} km\n` +
+    `*Transmission:* ${car.transmission}\n` +
+    `*Fuel Type:* ${car.fuelType}\n` +
+    `*Location:* ${car.location}\n\n` +
+    `*Dealer:* ${car.dealer.companyName}\n\n` +
+    `*Car Image:* ${carImageUrl}\n` +
+    `*View All Listings:* ${mainCarsUrl}\n\n` +
+    `_Check out this amazing vehicle!_\n` +
+    `_Shared via Carlinq.com`;
+  
+  const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
+  window.open(whatsappUrl, '_blank');
+};
 
   // Enhanced contact dealer with car details, image, and link
   const contactDealerWhatsApp = (car: CarListing) => {
-    if (!car.dealer.phone || car.dealer.phone === 'Not provided') {
-      toast.error('Dealer phone number not available');
-      return;
-    }
-    
-    const cleanedPhone = car.dealer.phone.replace(/\D/g, '');
-    let whatsappNumber = cleanedPhone;
-    
-    if (cleanedPhone.startsWith('0') && cleanedPhone.length === 10) {
-      whatsappNumber = '263' + cleanedPhone.slice(1);
-    } else if (cleanedPhone.length === 9) {
-      whatsappNumber = '263' + cleanedPhone;
-    } else if (cleanedPhone.startsWith('263') && cleanedPhone.length === 12) {
-      whatsappNumber = cleanedPhone;
-    } else if (cleanedPhone.startsWith('+263') && cleanedPhone.length === 13) {
-      whatsappNumber = cleanedPhone.slice(1);
-    }
-    
-    // Get car image URL
-    const carImageUrl = car.images && car.images.length > 0 
-      ? car.images[0] 
-      : 'https://via.placeholder.com/600x400/1e3a8a/ffffff?text=Car+Image';
-    
-    // Get browser link
-    const browserLink = `${window.location.origin}/cars/${car.id}`;
-    const fallbackLink = `${window.location.origin}/browse-cars?highlight=${car.id}`;
-    
-    // Create a professional inquiry message with all details
-    const message = `Hello ${car.dealer.name || car.dealer.companyName},\n\n` +
-      `I am interested in your *${car.make} ${car.model} (${car.year})* listed for *$${car.price.toLocaleString()}*.\n\n` +
-      `*Vehicle Details:*\n` +
-      `• Make & Model: ${car.make} ${car.model}\n` +
-      `• Year: ${car.year}\n` +
-      `• Price: $${car.price.toLocaleString()}\n` +
-      `• Mileage: ${car.mileage.toLocaleString()} km\n` +
-      `• Transmission: ${car.transmission}\n` +
-      `• Fuel Type: ${car.fuelType}\n` +
-      `• Location: ${car.location}\n\n` +
-      `*Car Image:* ${carImageUrl}\n` +
-      `*View Full Listing:* ${browserLink || fallbackLink}\n\n` 
-    ;
-    
-    const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
-    window.open(whatsappUrl, '_blank');
-  };
+  if (!car.dealer.phone || car.dealer.phone === 'Not provided') {
+    toast.error('Dealer phone number not available');
+    return;
+  }
+  
+  const cleanedPhone = car.dealer.phone.replace(/\D/g, '');
+  let whatsappNumber = cleanedPhone;
+  
+  if (cleanedPhone.startsWith('0') && cleanedPhone.length === 10) {
+    whatsappNumber = '263' + cleanedPhone.slice(1);
+  } else if (cleanedPhone.length === 9) {
+    whatsappNumber = '263' + cleanedPhone;
+  } else if (cleanedPhone.startsWith('263') && cleanedPhone.length === 12) {
+    whatsappNumber = cleanedPhone;
+  } else if (cleanedPhone.startsWith('+263') && cleanedPhone.length === 13) {
+    whatsappNumber = cleanedPhone.slice(1);
+  }
+  
+  // Get car image URL
+  const carImageUrl = car.images && car.images.length > 0 
+    ? car.images[0] 
+    : 'https://via.placeholder.com/600x400/1e3a8a/ffffff?text=Car+Image';
+  
+  // Get browser link - Use main cars page instead of specific car page
+  const browserLink = `${window.location.origin}/cars`;
+  
+  // Create a professional inquiry message with all details
+  const message = `Hello ${car.dealer.name || car.dealer.companyName},\n\n` +
+    `I am interested in your *${car.make} ${car.model} (${car.year})* listed for *$${car.price.toLocaleString()}*.\n\n` +
+    `*Vehicle Details:*\n` +
+    `• Make & Model: ${car.make} ${car.model}\n` +
+    `• Year: ${car.year}\n` +
+    `• Price: $${car.price.toLocaleString()}\n` +
+    `• Mileage: ${car.mileage.toLocaleString()} km\n` +
+    `• Transmission: ${car.transmission}\n` +
+    `• Fuel Type: ${car.fuelType}\n` +
+    `• Location: ${car.location}\n\n` +
+    `*Car Image:* ${carImageUrl}\n` +
+    `*View All Listings:* ${browserLink}\n\n`;
+  
+  const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+  window.open(whatsappUrl, '_blank');
+};
 
   const formatPhoneNumber = (phone: string) => {
     if (!phone || phone === 'Not provided') return 'Not provided';
