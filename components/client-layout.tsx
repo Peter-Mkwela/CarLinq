@@ -1,6 +1,6 @@
 // app/components/client-layout.tsx
 'use client';
-
+export const dynamic = 'force-dynamic';
 import { useState, useEffect, Suspense, useCallback } from 'react';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { ThemeProvider } from '@/app/providers/theme-provider';

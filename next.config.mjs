@@ -1,14 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'standalone',
-  // Disable ESLint during build
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
-  // Skip TypeScript errors during build
-  typescript: {
-    ignoreBuildErrors: true,
-  },
+  // Completely disable static generation
+  output: 'export',
+  // Skip all checks
+  eslint: { ignoreDuringBuilds: true },
+  typescript: { ignoreBuildErrors: true },
+  // Disable image optimization if causing issues
+  images: { unoptimized: true },
 };
 
 export default nextConfig;
