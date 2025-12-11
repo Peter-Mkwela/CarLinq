@@ -81,9 +81,9 @@ export async function GET(request: NextRequest) {
         status: true,
         images: true,
         description: true,
-        viewCount: true,      // ✅ Add this
-        inquiryCount: true,   // ✅ Add this
-        likeCount: true,      // ✅ Add this if you want to show likes too
+        viewCount: true,      
+        inquiryCount: true,   
+        likeCount: true,      
         createdAt: true,
         updatedAt: true,
         dealerId: true,
