@@ -1,6 +1,7 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+﻿/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react/no-unescaped-entities */
-'use client';
+'use client'
+export const dynamic = 'force-dynamic';;
 
 import { motion } from 'framer-motion';
 import Footer from '@/components/Footer';
@@ -156,7 +157,7 @@ export default function AboutUs() {
           fontWeight: 800,
         }}
       >
-        Cɑr
+        CÉ‘r
       </span>
 
       {/* Linq - skewed forward */}
@@ -249,7 +250,7 @@ export default function AboutUs() {
                           <span className="text-primary-400 font-semibold">CarLinq</span> is a SaaS-based car trading web platform designed to bridge the gap between car dealers and buyers. Unlike Facebook Marketplace or WhatsApp groups where transactions are informal and often lack credibility, CarLinq offers a professional, secure, and data-driven marketplace dedicated solely to vehicle sales.
                         </p>
                         <p className="text-base sm:text-lg leading-relaxed">
-                          We focus on giving car dealers visibility, credibility, and access to verified buyers—while buyers enjoy trust, convenience, and incentives through our smart verification system.
+                          We focus on giving car dealers visibility, credibility, and access to verified buyersâ€”while buyers enjoy trust, convenience, and incentives through our smart verification system.
                         </p>
                       </div>
                     </motion.div>

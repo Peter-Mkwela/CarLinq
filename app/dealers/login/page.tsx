@@ -1,5 +1,6 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-'use client';
+﻿/* eslint-disable @typescript-eslint/no-unused-vars */
+'use client'
+export const dynamic = 'force-dynamic';;
 
 import { useState, useEffect } from 'react';
 import { signIn, useSession, signOut } from 'next-auth/react';
@@ -76,7 +77,7 @@ function DealerLoginContent() {
     }));
   };
 
-  // ✅ FIXED: Redirect only if session is valid (user exists in DB)
+  // âœ… FIXED: Redirect only if session is valid (user exists in DB)
   useEffect(() => {
     if (status === 'authenticated' && session) {
       // Check if session has valid user data (not empty IDs from deleted users)
@@ -85,7 +86,7 @@ function DealerLoginContent() {
         setTimeout(() => router.push('/dealers/dealer-dashboard'), 1000);
       } else {
         // Session exists but user is invalid/deleted - clear it
-        console.log('🔄 Clearing invalid session...');
+        console.log('ðŸ”„ Clearing invalid session...');
         signOut({ redirect: false });
         toast.error('Your account was not found. Please login again.');
       }
@@ -139,7 +140,7 @@ function DealerLoginContent() {
                     fontWeight: 800,
                   }}
                 >
-                  Cɑr
+                  CÉ‘r
                 </span>
                 <span
                   className="inline-block italic transform skew-x-[10deg]"

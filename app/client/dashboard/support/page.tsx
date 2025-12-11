@@ -1,5 +1,6 @@
-// app/dashboard/support/page.tsx
-'use client';
+﻿// app/dashboard/support/page.tsx
+'use client'
+export const dynamic = 'force-dynamic';;
 
 import { motion } from 'framer-motion';
 import { MessageSquare, Plus, Clock, CheckCircle, AlertCircle } from 'lucide-react';

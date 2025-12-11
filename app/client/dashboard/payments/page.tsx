@@ -1,5 +1,6 @@
-// app/dashboard/payments/page.tsx
-'use client';
+﻿// app/dashboard/payments/page.tsx
+'use client'
+export const dynamic = 'force-dynamic';;
 
 import { motion } from 'framer-motion';
 import { CheckCircle, Clock, AlertCircle, Upload } from 'lucide-react';

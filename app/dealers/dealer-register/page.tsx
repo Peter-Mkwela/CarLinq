@@ -1,4 +1,5 @@
-'use client';
+﻿'use client'
+export const dynamic = 'force-dynamic';;
 
 import { useState } from 'react';
 import Link from 'next/link';
@@ -109,7 +110,7 @@ export default function DealerRegister() {
                     fontWeight: 800,
                   }}
                 >
-                  Cɑr
+                  CÉ‘r
                 </span>
                 <span
                   className="inline-block italic transform skew-x-[10deg]"

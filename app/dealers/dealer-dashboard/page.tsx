@@ -1,10 +1,11 @@
-/* eslint-disable react/jsx-no-undef */
+﻿/* eslint-disable react/jsx-no-undef */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-'use client';
+'use client'
+export const dynamic = 'force-dynamic';;
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -49,9 +50,9 @@ interface NewListingForm {
   mileage: string;
   location: string;
   status: string;
-   viewCount: number;      // ✅ Add this
-  inquiryCount: number;   // ✅ Add this
-  likeCount?: number;     // ✅ Optional: Add if you want to show likes too
+   viewCount: number;      // âœ… Add this
+  inquiryCount: number;   // âœ… Add this
+  likeCount?: number;     // âœ… Optional: Add if you want to show likes too
 }
 
 // Image Gallery Modal Component (for dealer dashboard)
@@ -222,7 +223,7 @@ export default function DealerDashboard() {
 
   // Debug mobile menu state
   useEffect(() => {
-    console.log('🔄 mobileMenuOpen state:', mobileMenuOpen);
+    console.log('ðŸ”„ mobileMenuOpen state:', mobileMenuOpen);
   }, [mobileMenuOpen]);
 
   // Fetch listings
@@ -466,8 +467,8 @@ export default function DealerDashboard() {
   totalListings: listings.length,
   availableListings: listings.filter(l => l.status.toLowerCase() === 'available').length,
   soldListings: listings.filter(l => l.status.toLowerCase() === 'sold').length,
-  totalViews: listings.reduce((sum, l) => sum + (l.viewCount || 0), 0), // ✅ Use viewCount
-  totalInquiries: listings.reduce((sum, l) => sum + (l.inquiryCount || 0), 0), // ✅ Use inquiryCount
+  totalViews: listings.reduce((sum, l) => sum + (l.viewCount || 0), 0), // âœ… Use viewCount
+  totalInquiries: listings.reduce((sum, l) => sum + (l.inquiryCount || 0), 0), // âœ… Use inquiryCount
   conversionRate: Math.round((listings.filter(l => l.status.toLowerCase() === 'sold').length / (listings.length || 1)) * 100) || 0
 };
 
@@ -510,7 +511,7 @@ export default function DealerDashboard() {
           <div className="px-4 py-3 flex justify-between items-center">
             <button 
               onClick={() => {
-                console.log('🎯 Hamburger button clicked - setting mobileMenuOpen to TRUE');
+                console.log('ðŸŽ¯ Hamburger button clicked - setting mobileMenuOpen to TRUE');
                 setMobileMenuOpen(true);
               }} 
               className="text-white/80 hover:text-white p-2 transition-colors z-60"
@@ -539,7 +540,7 @@ export default function DealerDashboard() {
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-white/90 font-medium">{userName}</span>
-                  <span className="text-white/40">•</span>
+                  <span className="text-white/40">â€¢</span>
                   <span className="text-white/60 text-sm">{userEmail}</span>
                 </div>
               </div>
@@ -701,7 +702,7 @@ export default function DealerDashboard() {
                     <div className="bg-gradient-to-br from-orange-800/40 to-orange-900/30 backdrop-blur-xl rounded-2xl border border-orange-700/50 p-6 shadow-xl">
                       <div className="flex flex-col md:flex-row md:items-center justify-between gap-5">
                         <div>
-                          <h2 className="text-2xl font-bold text-white">Welcome back, <span className="text-orange-300">{userName}</span>! 🎉</h2>
+                          <h2 className="text-2xl font-bold text-white">Welcome back, <span className="text-orange-300">{userName}</span>! ðŸŽ‰</h2>
                           <p className="text-orange-100 mt-1">
                             {listings.length === 0 
                               ? 'Start by adding your first vehicle listing to get started.' 
@@ -965,11 +966,11 @@ export default function DealerDashboard() {
   <div className="flex gap-2 text-xs text-white backdrop-blur-sm bg-black/30 rounded-full px-2 py-1">
     <span className="flex items-center gap-1">
       <Eye className="w-3 h-3" />
-      {listing.viewCount || 0} {/* ✅ Use viewCount */}
+      {listing.viewCount || 0} {/* âœ… Use viewCount */}
     </span>
     <span className="flex items-center gap-1">
       <MessageCircle className="w-3 h-3" />
-      {listing.inquiryCount || 0} {/* ✅ Use inquiryCount */}
+      {listing.inquiryCount || 0} {/* âœ… Use inquiryCount */}
     </span>
   </div>
 </div>
@@ -983,7 +984,7 @@ export default function DealerDashboard() {
                                           {listing.make} {listing.model}
                                         </h3>
                                         <p className="text-gray-600 text-xs sm:text-sm">
-                                          {listing.year} • {listing.location}
+                                          {listing.year} â€¢ {listing.location}
                                         </p>
                                       </div>
                                       <div className="text-right ml-2">
@@ -996,7 +997,7 @@ export default function DealerDashboard() {
                                     <div className="grid grid-cols-2 gap-2 sm:gap-3 mb-3 sm:mb-4 text-xs sm:text-sm text-gray-600">
                                       <div className="flex items-center gap-1">
                                         <Gauge className="w-3 h-3 sm:w-4 sm:h-4" />
-                                        <span className="truncate">{listing.mileage?.toLocaleString() || '—'} km</span>
+                                        <span className="truncate">{listing.mileage?.toLocaleString() || 'â€”'} km</span>
                                       </div>
                                       <div className="flex items-center gap-1">
                                         <Fuel className="w-3 h-3 sm:w-4 sm:h-4" />

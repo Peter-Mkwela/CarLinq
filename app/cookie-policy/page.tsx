@@ -1,5 +1,6 @@
-/* eslint-disable react/no-unescaped-entities */
-'use client';
+﻿/* eslint-disable react/no-unescaped-entities */
+'use client'
+export const dynamic = 'force-dynamic';;
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
@@ -163,3 +164,4 @@ export default function CookiePolicy() {
     </div>
   );
 }
+

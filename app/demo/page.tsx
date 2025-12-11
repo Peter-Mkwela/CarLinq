@@ -1,5 +1,6 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-'use client';
+﻿/* eslint-disable @typescript-eslint/no-unused-vars */
+'use client'
+export const dynamic = 'force-dynamic';;
 
 import { useState, useRef } from 'react';
 import { motion } from 'framer-motion';

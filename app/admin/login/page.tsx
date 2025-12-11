@@ -1,4 +1,5 @@
-'use client';
+﻿'use client'
+export const dynamic = 'force-dynamic';;
 
 import { useState } from 'react';
 import Link from 'next/link';
@@ -99,7 +100,7 @@ const handleSubmit = async (e: React.FormEvent) => {
                     fontWeight: 800,
                   }}
                 >
-                  Cɑr
+                  CÉ‘r
                 </span>
                 <span
                   className="inline-block italic transform skew-x-[10deg]"
@@ -227,7 +228,7 @@ const handleSubmit = async (e: React.FormEvent) => {
                   href="/"
                   className="text-orange-400 hover:text-orange-300 font-medium transition-colors"
                 >
-                  ← Back to Home
+                  â† Back to Home
                 </Link>
               </p>
             </div>

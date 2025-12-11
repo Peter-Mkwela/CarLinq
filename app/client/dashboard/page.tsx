@@ -1,4 +1,5 @@
-'use client';
+﻿'use client'
+export const dynamic = 'force-dynamic';;
 
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
@@ -18,7 +19,7 @@ export default function ClientDashboard() {
     }
   }, [router]);
 
-  // Show zero when there’s no data
+  // Show zero when thereâ€™s no data
   const stats = [
     { label: 'Active Requests', value: 0 },
     { label: 'Completed Services', value: 0 },
@@ -45,7 +46,7 @@ export default function ClientDashboard() {
       >
         <h1 className="text-xl sm:text-2xl font-bold text-white mb-1">Dashboard Overview</h1>
         <p className="text-gray-400 text-sm sm:text-base">
-          Welcome back! Here’s your activity summary and available services.
+          Welcome back! Hereâ€™s your activity summary and available services.
         </p>
       </motion.div>
 
@@ -98,3 +99,4 @@ export default function ClientDashboard() {
     </div>
   );
 }
+
