@@ -33,32 +33,43 @@ const handler = NextAuth({
     }),
 
     CredentialsProvider({
-      name: "Credentials",
-      credentials: {
-        email: { label: "Email", type: "text" },
-        password: { label: "Password", type: "password" },
-      },
-      async authorize(credentials) {
-        if (!credentials?.email || !credentials.password) return null;
+  name: "Credentials",
+  credentials: {
+    email: { label: "Email", type: "text" },
+    password: { label: "Password", type: "password" },
+    role: { label: "Role", type: "text" }, // This tells NextAuth which portal they're logging into
+  },
+  async authorize(credentials) {
+    if (!credentials?.email || !credentials.password) return null;
 
-        const user = await prisma.user.findUnique({
-          where: { email: credentials.email },
-        });
+    const user = await prisma.user.findUnique({
+      where: { email: credentials.email },
+    });
 
-        if (!user || !user.password) return null;
+    if (!user || !user.password) return null;
 
-        const isValid = await compare(credentials.password, user.password);
-        if (!isValid) return null;
+    const isValid = await compare(credentials.password, user.password);
+    if (!isValid) return null;
 
-        return {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-          role: user.role,
-          image: user.avatar,
-        };
-      },
-    }),
+    // Check if trying to access admin portal
+    if (credentials.role === 'ADMIN' && user.role !== 'ADMIN') {
+      throw new Error('Insufficient permissions');
+    }
+
+    // Check if trying to access dealer portal
+    if (credentials.role === 'DEALER' && user.role !== 'DEALER') {
+      throw new Error('Insufficient permissions');
+    }
+
+    return {
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      role: user.role,
+      image: user.avatar,
+    };
+  },
+}),
   ],
 
   callbacks: {

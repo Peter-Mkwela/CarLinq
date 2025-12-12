@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
     );
   } catch (error) {
     console.error('Admin login error:', error);
-    return NextResponse.json(
+    return NextResponse.json(                                
       { error: 'Internal server error' },
       { status: 500 }
     );
