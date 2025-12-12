@@ -36,10 +36,14 @@ import {
   ChevronDown,
   ChevronLeft,
   ChevronRight,
-  X
+  X,
+  UserCircle,
+  Edit,
+  Shield
 } from 'lucide-react';
 import AddListingModal, { Listing } from '@/components/AddListingModal';
 import CompleteProfileModal from '@/components/CompleteProfileModal';
+import ProfileForm from '@/components/ProfileForm'; // Add this import
 
 // Interfaces
 interface NewListingForm {
@@ -53,6 +57,19 @@ interface NewListingForm {
    viewCount: number;      // âœ… Add this
   inquiryCount: number;   // âœ… Add this
   likeCount?: number;     // âœ… Optional: Add if you want to show likes too
+}
+
+// Add ProfileData interface
+interface ProfileData {
+  id: string;
+  name: string;
+  email: string;
+  phone?: string;
+  companyName?: string;
+  address?: string;
+  isVerified: boolean;
+  createdAt?: string;
+  hasPassword?: boolean;
 }
 
 // Image Gallery Modal Component (for dealer dashboard)
@@ -216,6 +233,8 @@ export default function DealerDashboard() {
   const [showAddForm, setShowAddForm] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
+  const [showEditProfile, setShowEditProfile] = useState(false); // Add this state
+  const [profileData, setProfileData] = useState<ProfileData | null>(null); // Add this state
   const router = useRouter();
   
   // NextAuth session
@@ -223,8 +242,21 @@ export default function DealerDashboard() {
 
   // Debug mobile menu state
   useEffect(() => {
-    console.log('ðŸ”„ mobileMenuOpen state:', mobileMenuOpen);
+    console.log('mobileMenuOpen state:', mobileMenuOpen);
   }, [mobileMenuOpen]);
+
+  // Fetch profile data
+  const fetchProfileData = async () => {
+    try {
+      const response = await fetch('/api/dealers/profile');
+      if (response.ok) {
+        const data = await response.json();
+        setProfileData(data);
+      }
+    } catch (error) {
+      console.error('Error fetching profile:', error);
+    }
+  };
 
   // Fetch listings
   useEffect(() => {
@@ -245,6 +277,7 @@ export default function DealerDashboard() {
 
     if (session) {
       fetchListings();
+      fetchProfileData(); // Fetch profile data when session is available
     }
   }, [session]);
 
@@ -398,6 +431,17 @@ export default function DealerDashboard() {
     }
   };
 
+  // Handle profile save
+  const handleProfileSave = async (updatedProfile: ProfileData) => {
+    try {
+      await fetchProfileData(); // Refresh profile data
+      toast.success('Profile updated successfully!');
+      // You might want to update the session here if needed
+    } catch (error) {
+      console.error('Error updating profile:', error);
+    }
+  };
+
   const confirmDelete = (message: string) => {
     return new Promise<boolean>((resolve) => {
       const id = toast.custom((t) => (
@@ -443,7 +487,7 @@ export default function DealerDashboard() {
             <button
               onClick={() => {
                 toast.dismiss(t.id);
-                signOut({ callbackUrl: '/dealers/login' });
+                signOut({ callbackUrl: '/' });
                 toast.success('Logged out successfully.', { position: 'top-right' });
               }}
               className="px-3 py-1.5 text-sm sm:text-base bg-red-500 text-white rounded hover:bg-red-600 transition"
@@ -538,9 +582,8 @@ export default function DealerDashboard() {
                 <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center">
                   <User className="w-5 h-5 text-white" />
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex flex-col">
                   <span className="text-white/90 font-medium">{userName}</span>
-                  <span className="text-white/40"></span>
                   <span className="text-white/60 text-sm">{userEmail}</span>
                 </div>
               </div>
@@ -582,13 +625,73 @@ export default function DealerDashboard() {
                 </button>
 
                 {/* User Info - Full Name & Email */}
-                <div className="flex items-center gap-4 mb-8 p-4 bg-white/5 rounded-xl border border-white/10 backdrop-blur-lg">
+                <div className="flex items-center gap-4 mb-6 p-4 bg-white/5 rounded-xl border border-white/10 backdrop-blur-lg">
                   <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center flex-shrink-0 shadow-lg">
                     <User className="w-6 h-6 text-white" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-white font-semibold text-sm truncate">{session?.user?.name || 'Dealer User'}</p>
                     <p className="text-white/60 text-xs truncate">{session?.user?.email || 'user@example.com'}</p>
+                  </div>
+                </div>
+
+                {/* Navigation Menu */}
+                <div className="mb-6 space-y-2">
+                  {[
+                    { id: 'overview', label: 'Overview', icon: BarChart3 },
+                    { id: 'listings', label: 'My Listings', icon: Car },
+                  ].map((item) => {
+                    const Icon = item.icon;
+                    return (
+                      <button
+                        key={item.id}
+                        onClick={() => {
+                          setActiveTab(item.id);
+                          setMobileMenuOpen(false);
+                        }}
+                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-white/80 font-medium transition ${
+                          activeTab === item.id
+                            ? 'bg-gradient-to-r from-orange-800/60 to-orange-800/40 text-orange-200 border border-orange-700 shadow-inner'
+                            : 'hover:bg-white/5'
+                        }`}
+                      >
+                        <Icon className="w-5 h-5" />
+                        {item.label}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Profile Button */}
+                <div className="mb-6">
+                  <button
+                    onClick={() => {
+                      setShowEditProfile(true);
+                      setMobileMenuOpen(false);
+                    }}
+                    className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-white/80 font-medium transition hover:bg-white/5 hover:text-white border border-white/10"
+                  >
+                    <UserCircle className="w-5 h-5" />
+                    <span>Edit Profile</span>
+                  </button>
+                </div>
+
+                {/* Performance Stats */}
+                <div className="mb-6 pt-4 border-t border-orange-800/30">
+                  <h4 className="text-white/60 text-sm font-medium mb-3">Performance</h4>
+                  <div className="space-y-3 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-white/60">Active Listings</span>
+                      <span className="text-white font-medium">{stats.availableListings}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-white/60">Total Views</span>
+                      <span className="text-white font-medium">{stats.totalViews}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-white/60">Conversion</span>
+                      <span className="text-green-400 font-medium">{stats.conversionRate}%</span>
+                    </div>
                   </div>
                 </div>
 
@@ -642,6 +745,16 @@ export default function DealerDashboard() {
                       </motion.button>
                     );
                   })}
+                  
+                  {/* Edit Profile Button in Desktop Sidebar */}
+                  <motion.button
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => setShowEditProfile(true)}
+                    className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-white/80 font-medium transition hover:bg-white/5 hover:text-white border border-white/10 mt-4"
+                  >
+                    <UserCircle className="w-5 h-5" />
+                    Edit Profile
+                  </motion.button>
                 </nav>
                 <div className="mt-8 pt-6 border-t border-orange-800/30">
                   <h4 className="text-white/60 text-sm font-medium mb-3">Performance</h4>
@@ -1040,6 +1153,7 @@ export default function DealerDashboard() {
           </div>
         </main>
 
+        {/* Add Listing Modal */}
         <AnimatePresence>
           {showAddForm && (
             <AddListingModal 
@@ -1049,12 +1163,26 @@ export default function DealerDashboard() {
             />
           )}
         </AnimatePresence>
+
+        {/* Complete Profile Modal */}
         <AnimatePresence>
           {showProfileModal && (
             <CompleteProfileModal 
               isOpen={showProfileModal}
               userEmail={session?.user?.email || ''}
               onComplete={handleProfileComplete}
+            />
+          )}
+        </AnimatePresence>
+
+        {/* Profile Form Modal */}
+        <AnimatePresence>
+          {showEditProfile && profileData && (
+            <ProfileForm
+              isOpen={showEditProfile}
+              onClose={() => setShowEditProfile(false)}
+              onSave={handleProfileSave}
+              initialData={profileData}
             />
           )}
         </AnimatePresence>
