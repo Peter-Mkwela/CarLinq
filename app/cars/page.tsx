@@ -477,78 +477,77 @@ export default function BrowseCars() {
   };
 
   // Enhanced WhatsApp sharing with image and browser link
-  // Enhanced WhatsApp sharing with image and browser link
-const shareCarToWhatsApp = (car: CarListing) => {
-  // Get the car image URL (use first image or placeholder)
-  const carImageUrl = car.images && car.images.length > 0 
-    ? car.images[0] 
-    : 'https://via.placeholder.com/600x400/1e3a8a/ffffff?text=Car+Image'; // Placeholder URL
-  
-  // Use main cars page URL
-  const mainCarsUrl = `${window.location.origin}/cars`;
-  
-  // Create a rich message with image and link (like premium sites)
-  const message = `*${car.make} ${car.model} (${car.year})*\n\n` +
-    `*Price:* $${car.price.toLocaleString()}\n` +
-    `*Mileage:* ${car.mileage.toLocaleString()} km\n` +
-    `*Transmission:* ${car.transmission}\n` +
-    `*Fuel Type:* ${car.fuelType}\n` +
-    `*Location:* ${car.location}\n\n` +
-    `*Dealer:* ${car.dealer.companyName}\n\n` +
-    `*Car Image:* ${carImageUrl}\n` +
-    `*View All Listings:* ${mainCarsUrl}\n\n` +
-    `_Check out this amazing vehicle!_\n` +
-    `_Shared via Carlinq.com`;
-  
-  const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
-  window.open(whatsappUrl, '_blank');
-};
+  const shareCarToWhatsApp = (car: CarListing) => {
+    // Get the car image URL (use first image or placeholder)
+    const carImageUrl = car.images && car.images.length > 0 
+      ? car.images[0] 
+      : 'https://via.placeholder.com/600x400/1e3a8a/ffffff?text=Car+Image'; // Placeholder URL
+    
+    // Use main cars page URL
+    const mainCarsUrl = `${window.location.origin}/cars`;
+    
+    // Create a rich message with image and link (like premium sites)
+    const message = `*${car.make} ${car.model} (${car.year})*\n\n` +
+      `*Price:* $${car.price.toLocaleString()}\n` +
+      `*Mileage:* ${car.mileage.toLocaleString()} km\n` +
+      `*Transmission:* ${car.transmission}\n` +
+      `*Fuel Type:* ${car.fuelType}\n` +
+      `*Location:* ${car.location}\n\n` +
+      `*Dealer:* ${car.dealer.companyName}\n\n` +
+      `*Car Image:* ${carImageUrl}\n` +
+      `*View All Listings:* ${mainCarsUrl}\n\n` +
+      `_Check out this amazing vehicle!_\n` +
+      `_Shared via Carlinq.com`;
+    
+    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
+  };
 
   // Enhanced contact dealer with car details, image, and link
   const contactDealerWhatsApp = (car: CarListing) => {
-  if (!car.dealer.phone || car.dealer.phone === 'Not provided') {
-    toast.error('Dealer phone number not available');
-    return;
-  }
-  
-  const cleanedPhone = car.dealer.phone.replace(/\D/g, '');
-  let whatsappNumber = cleanedPhone;
-  
-  if (cleanedPhone.startsWith('0') && cleanedPhone.length === 10) {
-    whatsappNumber = '263' + cleanedPhone.slice(1);
-  } else if (cleanedPhone.length === 9) {
-    whatsappNumber = '263' + cleanedPhone;
-  } else if (cleanedPhone.startsWith('263') && cleanedPhone.length === 12) {
-    whatsappNumber = cleanedPhone;
-  } else if (cleanedPhone.startsWith('+263') && cleanedPhone.length === 13) {
-    whatsappNumber = cleanedPhone.slice(1);
-  }
-  
-  // Get car image URL
-  const carImageUrl = car.images && car.images.length > 0 
-    ? car.images[0] 
-    : 'https://via.placeholder.com/600x400/1e3a8a/ffffff?text=Car+Image';
-  
-  // Get browser link - Use main cars page instead of specific car page
-  const browserLink = `${window.location.origin}/cars`;
-  
-  // Create a professional inquiry message with all details
-  const message = `Hello ${car.dealer.name || car.dealer.companyName},\n\n` +
-    `I am interested in your *${car.make} ${car.model} (${car.year})* listed for *$${car.price.toLocaleString()}*.\n\n` +
-    `*Vehicle Details:*\n` +
-    `• Make & Model: ${car.make} ${car.model}\n` +
-    `• Year: ${car.year}\n` +
-    `• Price: $${car.price.toLocaleString()}\n` +
-    `• Mileage: ${car.mileage.toLocaleString()} km\n` +
-    `• Transmission: ${car.transmission}\n` +
-    `• Fuel Type: ${car.fuelType}\n` +
-    `• Location: ${car.location}\n\n` +
-    `*Car Image:* ${carImageUrl}\n` +
-    `*View All Listings:* ${browserLink}\n\n`;
-  
-  const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
-  window.open(whatsappUrl, '_blank');
-};
+    if (!car.dealer.phone || car.dealer.phone === 'Not provided') {
+      toast.error('Dealer phone number not available');
+      return;
+    }
+    
+    const cleanedPhone = car.dealer.phone.replace(/\D/g, '');
+    let whatsappNumber = cleanedPhone;
+    
+    if (cleanedPhone.startsWith('0') && cleanedPhone.length === 10) {
+      whatsappNumber = '263' + cleanedPhone.slice(1);
+    } else if (cleanedPhone.length === 9) {
+      whatsappNumber = '263' + cleanedPhone;
+    } else if (cleanedPhone.startsWith('263') && cleanedPhone.length === 12) {
+      whatsappNumber = cleanedPhone;
+    } else if (cleanedPhone.startsWith('+263') && cleanedPhone.length === 13) {
+      whatsappNumber = cleanedPhone.slice(1);
+    }
+    
+    // Get car image URL
+    const carImageUrl = car.images && car.images.length > 0 
+      ? car.images[0] 
+      : 'https://via.placeholder.com/600x400/1e3a8a/ffffff?text=Car+Image';
+    
+    // Get browser link - Use main cars page instead of specific car page
+    const browserLink = `${window.location.origin}/cars`;
+    
+    // Create a professional inquiry message with all details
+    const message = `Hello ${car.dealer.name || car.dealer.companyName},\n\n` +
+      `I am interested in your *${car.make} ${car.model} (${car.year})* listed for *$${car.price.toLocaleString()}*.\n\n` +
+      `*Vehicle Details:*\n` +
+      `• Make & Model: ${car.make} ${car.model}\n` +
+      `• Year: ${car.year}\n` +
+      `• Price: $${car.price.toLocaleString()}\n` +
+      `• Mileage: ${car.mileage.toLocaleString()} km\n` +
+      `• Transmission: ${car.transmission}\n` +
+      `• Fuel Type: ${car.fuelType}\n` +
+      `• Location: ${car.location}\n\n` +
+      `*Car Image:* ${carImageUrl}\n` +
+      `*View All Listings:* ${browserLink}\n\n`;
+    
+    const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
+  };
 
   const formatPhoneNumber = (phone: string) => {
     if (!phone || phone === 'Not provided') return 'Not provided';
@@ -611,82 +610,84 @@ const shareCarToWhatsApp = (car: CarListing) => {
         <div className="relative z-10 flex-1 flex flex-col">
           {/* Header Section */}
           <section className="relative">
-            <div className="container mx-auto px-3 sm:px-4 py-8 sm:py-12">
+            <div className="container mx-auto px-3 sm:px-4 py-6 sm:py-12">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 className="text-center"
               >
-                <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold text-white mb-3 sm:mb-4 drop-shadow-lg px-2">
+                <h1 className="text-xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold text-white mb-2 sm:mb-4 drop-shadow-lg px-2">
                   Find Your Perfect Car
                 </h1>
-                <p className="text-base sm:text-lg lg:text-xl text-white/90 max-w-2xl mx-auto drop-shadow px-3">
-                  Browse through thousands of verified vehicles from trusted dealers across Africa
+                <p className="text-sm sm:text-lg lg:text-xl text-white/90 max-w-2xl mx-auto drop-shadow px-3">
+                  Browse through thousands of verified vehicles from trusted dealers
                 </p>
               </motion.div>
             </div>
           </section>
 
-          {/* Favorites Navigation Button */}
-          <div className="container mx-auto px-4 mb-4">
+          {/* Favorites Navigation Button - Made smaller for mobile */}
+          <div className="container mx-auto px-3 mb-3">
             <div className="flex justify-end">
               <button
                 onClick={() => router.push('/favorites')}
-                className="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg transition-colors duration-200"
+                className="flex items-center gap-1 px-3 py-1.5 bg-orange-500 hover:bg-orange-600 text-white rounded-lg transition-colors duration-200 text-xs sm:text-sm"
               >
-                <Heart className="w-4 h-4 fill-current" />
-                My Favorites ({favorites.length})
+                <Heart className="w-3 h-3 sm:w-4 sm:h-4 fill-current" />
+                <span className="hidden xs:inline">Favorites</span>
+                <span className="xs:hidden">({favorites.length})</span>
+                <span className="hidden xs:inline">({favorites.length})</span>
               </button>
             </div>
           </div>
 
           {/* Search and Filter Section */}
           <section className="sticky top-0 z-40">
-            <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 bg-black/30 backdrop-blur-md">
-              <div className="flex flex-col lg:flex-row gap-3 sm:gap-4 items-center justify-between">
+            <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-6 bg-black/30 backdrop-blur-md">
+              <div className="flex flex-col lg:flex-row gap-2 sm:gap-4 items-center justify-between">
                 {/* Search Bar */}
                 <div className="flex-1 w-full lg:max-w-2xl">
                   <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/60 w-4 h-4 sm:w-5 sm:h-5" />
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/60 w-3 h-3 sm:w-5 sm:h-5" />
                     <input
                       type="text"
                       placeholder="Search by make, model, or dealer..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
-                      className="w-full pl-9 sm:pl-10 pr-4 py-2 sm:py-3 text-sm sm:text-base border border-white/20 bg-white/10 backdrop-blur-sm rounded-lg sm:rounded-xl text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-all duration-200"
+                      className="w-full pl-8 sm:pl-10 pr-4 py-1.5 sm:py-3 text-xs sm:text-base border border-white/20 bg-white/10 backdrop-blur-sm rounded-lg sm:rounded-xl text-white placeholder-white/60 focus:outline-none focus:ring-1 sm:focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-all duration-200"
                     />
                   </div>
                 </div>
 
                 {/* Filter and Sort Controls */}
-                <div className="flex items-center gap-3 sm:gap-4 w-full lg:w-auto">
-                  {/* Sort Dropdown */}
-                  <div className="relative flex-1 sm:flex-none">
+                <div className="flex items-center gap-2 sm:gap-4 w-full lg:w-auto mt-2 sm:mt-0">
+                  {/* Sort Dropdown - Smaller on mobile */}
+                  <div className="relative flex-1 sm:flex-none min-w-[120px]">
                     <select
                       value={sortBy}
                       onChange={(e) => setSortBy(e.target.value)}
-                      className="w-full sm:w-auto px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border border-white/20 bg-white/10 backdrop-blur-sm rounded-lg sm:rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-all duration-200 appearance-none cursor-pointer pr-8 sm:pr-10"
+                      className="w-full px-2 sm:px-4 py-1.5 sm:py-3 text-xs sm:text-base border border-white/20 bg-white/10 backdrop-blur-sm rounded-lg sm:rounded-xl text-white focus:outline-none focus:ring-1 sm:focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-all duration-200 appearance-none cursor-pointer pr-6 sm:pr-10"
                     >
-                      <option value="featured" className="text-gray-900">Featured</option>
-                      <option value="price-low" className="text-gray-900">Price: Low to High</option>
-                      <option value="price-high" className="text-gray-900">Price: High to Low</option>
-                      <option value="year-new" className="text-gray-900">Year: Newest First</option>
-                      <option value="mileage-low" className="text-gray-900">Mileage: Low to High</option>
+                      <option value="featured" className="text-gray-900 bg-gray-100">Featured</option>
+                      <option value="price-low" className="text-gray-900 bg-gray-100">Price: Low to High</option>
+                      <option value="price-high" className="text-gray-900 bg-gray-100">Price: High to Low</option>
+                      <option value="year-new" className="text-gray-900 bg-gray-100">Year: Newest</option>
+                      <option value="mileage-low" className="text-gray-900 bg-gray-100">Mileage: Low</option>
                     </select>
-                    <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:pr-3 pointer-events-none">
-                      <ChevronDown className="w-3 h-3 sm:w-4 sm:h-4 text-white/60" />
+                    <div className="absolute inset-y-0 right-0 flex items-center pr-1.5 sm:pr-3 pointer-events-none">
+                      <ChevronDown className="w-2.5 h-2.5 sm:w-4 sm:h-4 text-white/60" />
                     </div>
                   </div>
 
                   {/* Filter Toggle Button */}
                   <button
                     onClick={() => setShowFilters(!showFilters)}
-                    className="flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-3 bg-orange-500 hover:bg-orange-600 text-white rounded-lg sm:rounded-xl transition-all duration-200 backdrop-blur-sm shadow-lg shadow-orange-500/25 text-sm sm:text-base"
+                    className="flex items-center gap-1 px-2.5 sm:px-4 py-1.5 sm:py-3 bg-orange-500 hover:bg-orange-600 text-white rounded-lg sm:rounded-xl transition-all duration-200 backdrop-blur-sm shadow-lg shadow-orange-500/25 text-xs sm:text-base"
                   >
-                    <Filter className="w-4 h-4 sm:w-5 sm:h-5" />
+                    <Filter className="w-3 h-3 sm:w-5 sm:h-5" />
                     <span className="hidden xs:inline">Filters</span>
                     {activeFilterCount > 0 && (
-                      <span className="bg-white text-orange-600 text-xs font-bold px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full">
+                      <span className="bg-white text-orange-600 text-xs font-bold px-1 sm:px-2 py-0.5 rounded-full">
                         {activeFilterCount}
                       </span>
                     )}
@@ -702,9 +703,9 @@ const shareCarToWhatsApp = (car: CarListing) => {
                     animate={{ opacity: 1, height: "auto" }}
                     exit={{ opacity: 0, height: 0 }}
                     transition={{ duration: 0.3 }}
-                    className="mt-4 sm:mt-6 p-5 sm:p-7 rounded-2xl bg-white/10 backdrop-blur-lg border border-white/20 shadow-xl"
+                    className="mt-3 sm:mt-6 p-3 sm:p-7 rounded-lg sm:rounded-2xl bg-white/10 backdrop-blur-lg border border-white/20 shadow-xl"
                   >
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 sm:gap-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6">
                       {/* Filter Options from API */}
                       {[
                         { label: "Make", value: filters.make, options: filterOptions.makes, key: "make" },
@@ -714,24 +715,24 @@ const shareCarToWhatsApp = (car: CarListing) => {
                         { label: "Location", value: filters.location, options: filterOptions.locations, key: "location" },
                       ].map(({ label, value, options, key }) => (
                         <div key={key} className="flex flex-col">
-                          <label className="text-sm font-medium text-white/90 mb-2 drop-shadow-sm">
+                          <label className="text-xs sm:text-sm font-medium text-white/90 mb-1 sm:mb-2 drop-shadow-sm">
                             {label}
                           </label>
                           <div className="relative">
                             <select
                               value={value}
                               onChange={(e) => handleFilterChange(key, e.target.value)}
-                              className="w-full px-3 py-2.5 bg-white/10 border border-white/20 text-white text-sm rounded-lg focus:ring-2 focus:ring-orange-400 focus:border-transparent backdrop-blur-md appearance-none cursor-pointer transition-all duration-200 hover:bg-white/20 pr-8"
+                              className="w-full px-2 sm:px-3 py-1.5 sm:py-2.5 bg-white/10 border border-white/20 text-white text-xs sm:text-sm rounded-lg focus:ring-1 sm:focus:ring-2 focus:ring-orange-400 focus:border-transparent backdrop-blur-md appearance-none cursor-pointer transition-all duration-200 hover:bg-white/20 pr-6 sm:pr-8"
                             >
-                              <option value="" className="text-gray-900">All</option>
+                              <option value="" className="text-gray-900 bg-gray-100">All</option>
                               {options.map((opt) => (
-                                <option key={opt} value={opt} className="text-gray-900">
+                                <option key={opt} value={opt} className="text-gray-900 bg-gray-100">
                                   {opt}
                                 </option>
                               ))}
                             </select>
-                            <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                              <ChevronDown className="w-4 h-4 text-white/60" />
+                            <div className="absolute inset-y-0 right-0 flex items-center pr-1.5 sm:pr-2 pointer-events-none">
+                              <ChevronDown className="w-2.5 h-2.5 sm:w-4 sm:h-4 text-white/60" />
                             </div>
                           </div>
                         </div>
@@ -739,18 +740,18 @@ const shareCarToWhatsApp = (car: CarListing) => {
 
                       {/* Year Range */}
                       <div>
-                        <label className="text-sm font-medium text-white/90 mb-2 drop-shadow-sm">
+                        <label className="text-xs sm:text-sm font-medium text-white/90 mb-1 sm:mb-2 drop-shadow-sm">
                           Year Range
                         </label>
-                        <div className="flex gap-2">
+                        <div className="flex gap-1 sm:gap-2">
                           <select
                             value={filters.minYear}
                             onChange={(e) => handleFilterChange("minYear", e.target.value)}
-                            className="flex-1 px-2 py-2 bg-white/10 border border-white/20 text-white text-sm rounded-lg focus:ring-2 focus:ring-orange-400 hover:bg-white/20 transition-all duration-200 backdrop-blur-md appearance-none pr-6"
+                            className="flex-1 px-1.5 sm:px-2 py-1.5 sm:py-2 bg-white/10 border border-white/20 text-white text-xs sm:text-sm rounded-lg focus:ring-1 sm:focus:ring-2 focus:ring-orange-400 hover:bg-white/20 transition-all duration-200 backdrop-blur-md appearance-none pr-5 sm:pr-6"
                           >
-                            <option value="" className="text-gray-900">Min</option>
+                            <option value="" className="text-gray-900 bg-gray-100">Min</option>
                             {filterOptions.years.map((year) => (
-                              <option key={year} value={year} className="text-gray-900">
+                              <option key={year} value={year} className="text-gray-900 bg-gray-100">
                                 {year}
                               </option>
                             ))}
@@ -758,11 +759,11 @@ const shareCarToWhatsApp = (car: CarListing) => {
                           <select
                             value={filters.maxYear}
                             onChange={(e) => handleFilterChange("maxYear", e.target.value)}
-                            className="flex-1 px-2 py-2 bg-white/10 border border-white/20 text-white text-sm rounded-lg focus:ring-2 focus:ring-orange-400 hover:bg-white/20 transition-all duration-200 backdrop-blur-md appearance-none pr-6"
+                            className="flex-1 px-1.5 sm:px-2 py-1.5 sm:py-2 bg-white/10 border border-white/20 text-white text-xs sm:text-sm rounded-lg focus:ring-1 sm:focus:ring-2 focus:ring-orange-400 hover:bg-white/20 transition-all duration-200 backdrop-blur-md appearance-none pr-5 sm:pr-6"
                           >
-                            <option value="" className="text-gray-900">Max</option>
+                            <option value="" className="text-gray-900 bg-gray-100">Max</option>
                             {filterOptions.years.map((year) => (
-                              <option key={year} value={year} className="text-gray-900">
+                              <option key={year} value={year} className="text-gray-900 bg-gray-100">
                                 {year}
                               </option>
                             ))}
@@ -772,17 +773,17 @@ const shareCarToWhatsApp = (car: CarListing) => {
 
                       {/* Price Range */}
                       <div className="col-span-1 xs:col-span-2 lg:col-span-1">
-                        <label className="block text-sm font-medium text-white/90 mb-2 drop-shadow">
+                        <label className="block text-xs sm:text-sm font-medium text-white/90 mb-1 sm:mb-2 drop-shadow">
                           Price Range ($)
                         </label>
-                        <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                        <div className="flex flex-col sm:flex-row gap-1 sm:gap-3">
                           <div className="flex-1">
                             <input
                               type="number"
                               placeholder="Min"
                               value={filters.minPrice}
                               onChange={(e) => handleFilterChange('minPrice', e.target.value)}
-                              className="w-full px-3 py-2 text-sm border border-white/20 bg-white/10 backdrop-blur-sm rounded-lg text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent"
+                              className="w-full px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm border border-white/20 bg-white/10 backdrop-blur-sm rounded-lg text-white placeholder-white/60 focus:outline-none focus:ring-1 sm:focus:ring-2 focus:ring-orange-400 focus:border-transparent"
                             />
                           </div>
                           <div className="flex-1">
@@ -791,7 +792,7 @@ const shareCarToWhatsApp = (car: CarListing) => {
                               placeholder="Max"
                               value={filters.maxPrice}
                               onChange={(e) => handleFilterChange('maxPrice', e.target.value)}
-                              className="w-full px-3 py-2 text-sm border border-white/20 bg-white/10 backdrop-blur-sm rounded-lg text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent"
+                              className="w-full px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm border border-white/20 bg-white/10 backdrop-blur-sm rounded-lg text-white placeholder-white/60 focus:outline-none focus:ring-1 sm:focus:ring-2 focus:ring-orange-400 focus:border-transparent"
                             />
                           </div>
                         </div>
@@ -799,17 +800,17 @@ const shareCarToWhatsApp = (car: CarListing) => {
 
                       {/* Mileage Range */}
                       <div className="col-span-1 xs:col-span-2 lg:col-span-1">
-                        <label className="block text-sm font-medium text-white/90 mb-2 drop-shadow">
+                        <label className="block text-xs sm:text-sm font-medium text-white/90 mb-1 sm:mb-2 drop-shadow">
                           Mileage Range (km)
                         </label>
-                        <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                        <div className="flex flex-col sm:flex-row gap-1 sm:gap-3">
                           <div className="flex-1">
                             <input
                               type="number"
                               placeholder="Min"
                               value={filters.minMileage}
                               onChange={(e) => handleFilterChange('minMileage', e.target.value)}
-                              className="w-full px-3 py-2 text-sm border border-white/20 bg-white/10 backdrop-blur-sm rounded-lg text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent"
+                              className="w-full px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm border border-white/20 bg-white/10 backdrop-blur-sm rounded-lg text-white placeholder-white/60 focus:outline-none focus:ring-1 sm:focus:ring-2 focus:ring-orange-400 focus:border-transparent"
                             />
                           </div>
                           <div className="flex-1">
@@ -818,7 +819,7 @@ const shareCarToWhatsApp = (car: CarListing) => {
                               placeholder="Max"
                               value={filters.maxMileage}
                               onChange={(e) => handleFilterChange('maxMileage', e.target.value)}
-                              className="w-full px-3 py-2 text-sm border border-white/20 bg-white/10 backdrop-blur-sm rounded-lg text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent"
+                              className="w-full px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm border border-white/20 bg-white/10 backdrop-blur-sm rounded-lg text-white placeholder-white/60 focus:outline-none focus:ring-1 sm:focus:ring-2 focus:ring-orange-400 focus:border-transparent"
                             />
                           </div>
                         </div>
@@ -826,25 +827,25 @@ const shareCarToWhatsApp = (car: CarListing) => {
                     </div>
 
                     {/* Actions */}
-                    <div className="flex flex-col sm:flex-row justify-end gap-3 mt-8 pt-6 border-t border-white/10">
+                    <div className="flex flex-col sm:flex-row justify-end gap-2 sm:gap-3 mt-4 sm:mt-8 pt-3 sm:pt-6 border-t border-white/10">
                       <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.97 }}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
                         onClick={clearFilters}
-                        className="flex items-center justify-center gap-2 px-5 py-2.5 bg-white/10 hover:bg-white/20 text-white rounded-lg border border-white/20 text-sm font-medium transition-all duration-200 shadow-sm"
+                        className="flex items-center justify-center gap-1 sm:gap-2 px-3 sm:px-5 py-1.5 sm:py-2.5 bg-white/10 hover:bg-white/20 text-white rounded-lg border border-white/20 text-xs sm:text-sm font-medium transition-all duration-200 shadow-sm"
                       >
-                        <svg className="w-4 h-4 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-3 h-3 sm:w-4 sm:h-4 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                         </svg>
                         Clear Filters
                       </motion.button>
                       <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.97 }}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
                         onClick={() => setShowFilters(false)}
-                        className="flex items-center justify-center gap-2 px-6 py-2.5 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-semibold rounded-lg text-sm transition-all duration-200 shadow-md"
+                        className="flex items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-1.5 sm:py-2.5 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-semibold rounded-lg text-xs sm:text-sm transition-all duration-200 shadow-md"
                       >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                         </svg>
                         Apply Filters
@@ -858,51 +859,51 @@ const shareCarToWhatsApp = (car: CarListing) => {
 
           {/* Results Section */}
           <section className="flex-1">
-            <div className="container mx-auto px-3 sm:px-4 py-6 sm:py-8">
+            <div className="container mx-auto px-2 sm:px-4 py-3 sm:py-8">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-white/10 backdrop-blur-md rounded-xl sm:rounded-2xl border border-white/20 shadow-xl overflow-hidden"
+                className="bg-white/10 backdrop-blur-md rounded-lg sm:rounded-2xl border border-white/20 shadow-xl overflow-hidden"
               >
                 {/* Results Header */}
-                <div className="p-4 sm:p-6 border-b border-white/20">
+                <div className="p-3 sm:p-6 border-b border-white/20">
                   <div className="flex justify-between items-center">
-                    <p className="text-white/90 text-base sm:text-lg font-medium drop-shadow">
+                    <p className="text-white/90 text-sm sm:text-lg font-medium drop-shadow">
                       Showing {filteredCars.length} of {cars.length} vehicles
                     </p>
                   </div>
                 </div>
 
-                {/* Cars Grid */}
-                <div className="p-4 sm:p-6">
+                {/* Cars Grid - UPDATED for 2 columns on mobile */}
+                <div className="p-2 sm:p-6">
                   {filteredCars.length === 0 ? (
-                    <div className="text-center py-8 sm:py-12">
-                      <Car className="w-12 h-12 sm:w-16 sm:h-16 text-white/60 mx-auto mb-3 sm:mb-4" />
-                      <h3 className="text-lg sm:text-xl font-semibold text-white mb-2 drop-shadow">
+                    <div className="text-center py-6 sm:py-12">
+                      <Car className="w-10 h-10 sm:w-16 sm:h-16 text-white/60 mx-auto mb-2 sm:mb-4" />
+                      <h3 className="text-base sm:text-xl font-semibold text-white mb-1 sm:mb-2 drop-shadow">
                         No cars found
                       </h3>
-                      <p className="text-white/80 mb-4 drop-shadow text-sm sm:text-base">
+                      <p className="text-white/80 mb-3 sm:mb-4 drop-shadow text-xs sm:text-base">
                         Try adjusting your filters or search terms
                       </p>
                       <button
                         onClick={clearFilters}
-                        className="px-4 sm:px-6 py-2 sm:py-3 bg-orange-500 hover:bg-orange-600 text-white rounded-lg transition-colors duration-200 backdrop-blur-sm text-sm sm:text-base"
+                        className="px-3 sm:px-6 py-1.5 sm:py-3 bg-orange-500 hover:bg-orange-600 text-white rounded-lg transition-colors duration-200 backdrop-blur-sm text-xs sm:text-base"
                       >
                         Clear All Filters
                       </button>
                     </div>
                   ) : (
-                    <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+                    <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-2 sm:gap-4 md:gap-6">
                       {filteredCars.map((car, index) => (
                         <motion.div
                           key={car.id}
                           initial={{ opacity: 0, y: 20 }}
                           animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: index * 0.1 }}
-                          className="bg-white/90 backdrop-blur-md rounded-lg sm:rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-white/20 overflow-hidden group"
+                          transition={{ delay: index * 0.05 }}
+                          className="bg-white/95 backdrop-blur-md rounded-lg sm:rounded-xl shadow-md hover:shadow-lg transition-all duration-300 border border-white/20 overflow-hidden group flex flex-col"
                         >
-                          {/* Car Image */}
-                          <div className="relative h-36 sm:h-48 bg-gray-200 overflow-hidden cursor-pointer">
+                          {/* Car Image - Smaller on mobile */}
+                          <div className="relative h-32 sm:h-40 md:h-48 bg-gray-200 overflow-hidden cursor-pointer flex-shrink-0">
                             {car.images && car.images.length > 0 ? (
                               <>
                                 <div 
@@ -920,23 +921,23 @@ const shareCarToWhatsApp = (car: CarListing) => {
                                 </div>
                                 {car.images.length > 1 && (
                                   <div 
-                                    className="absolute bottom-2 right-2 flex items-center gap-1 cursor-pointer"
+                                    className="absolute bottom-1.5 right-1.5 flex items-center gap-0.5 cursor-pointer"
                                     onClick={() => {
                                       trackView(car.id);
                                       openImageGallery(car.images, 0);
                                     }}
                                   >
                                     <div className="flex">
-                                      {car.images.slice(0, 3).map((_, idx) => (
+                                      {car.images.slice(0, 2).map((_, idx) => (
                                         <div 
                                           key={idx}
-                                          className={`w-1.5 h-1.5 rounded-full mx-0.5 ${
+                                          className={`w-1 h-1 rounded-full mx-0.5 ${
                                             idx === 0 ? 'bg-white' : 'bg-white/60'
                                           }`}
                                         />
                                       ))}
                                     </div>
-                                    <span className="text-xs text-white bg-black/50 px-2 py-1 rounded">
+                                    <span className="text-[10px] text-white bg-black/50 px-1 py-0.5 rounded">
                                       +{car.images.length - 1}
                                     </span>
                                   </div>
@@ -950,139 +951,136 @@ const shareCarToWhatsApp = (car: CarListing) => {
                                   openImageGallery(car.images, 0);
                                 }}
                               >
-                                <Car className="w-10 h-10 sm:w-12 sm:h-12 text-orange-500" />
+                                <Car className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 text-orange-500" />
                               </div>
                             )}
                             
-                            {/* Badges */}
-                            <div className="absolute top-2 left-2 sm:top-3 sm:left-3">
+                            {/* Badges - Smaller on mobile */}
+                            <div className="absolute top-1.5 left-1.5 sm:top-2 sm:left-2">
                               {car.status === 'available' && (
-                                <span className="bg-green-500 text-white text-xs font-bold px-1.5 sm:px-2 py-0.5 sm:py-1 rounded backdrop-blur-sm">
+                                <span className="bg-green-500 text-white text-[10px] sm:text-xs font-bold px-1 sm:px-2 py-0.5 rounded backdrop-blur-sm">
                                   Available
                                 </span>
                               )}
                             </div>
 
-                            {/* Action Buttons */}
-                            <div className="absolute top-2 right-2 sm:top-3 sm:right-3 flex gap-1 sm:gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                            {/* Action Buttons - Always visible on mobile, larger on hover */}
+                            <div className="absolute top-1.5 right-1.5 sm:top-2 sm:right-2 flex gap-1 sm:opacity-0 sm:group-hover:opacity-100 transition-all duration-200">
                               {/* Favorite Button */}
                               <button
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   toggleFavorite(car.id);
                                 }}
-                                className={`p-1.5 sm:p-2 rounded-full bg-white/90 backdrop-blur-sm ${
+                                className={`p-1 sm:p-1.5 rounded-full bg-white/90 backdrop-blur-sm ${
                                   favorites.includes(car.id) 
                                     ? 'text-red-500' 
                                     : 'text-gray-600 hover:text-red-500'
                                 } transition-colors duration-200`}
                               >
                                 <Heart 
-                                  className="w-3 h-3 sm:w-4 sm:h-4" 
+                                  className="w-2.5 h-2.5 sm:w-3 sm:h-3 md:w-4 md:h-4" 
                                   fill={favorites.includes(car.id) ? 'currentColor' : 'none'}
                                 />
                               </button>
                               
-                              {/* Share Button - Now with enhanced WhatsApp sharing */}
+                              {/* Share Button */}
                               <button 
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   trackView(car.id);
                                   shareCarToWhatsApp(car);
                                 }}
-                                className="p-1.5 sm:p-2 rounded-full bg-white/90 backdrop-blur-sm text-gray-600 hover:text-green-500 transition-colors duration-200"
+                                className="p-1 sm:p-1.5 rounded-full bg-white/90 backdrop-blur-sm text-gray-600 hover:text-green-500 transition-colors duration-200"
                                 title="Share car with image and link"
                               >
-                                <Share2 className="w-3 h-3 sm:w-4 sm:h-4" />
+                                <Share2 className="w-2.5 h-2.5 sm:w-3 sm:h-3 md:w-4 md:h-4" />
                               </button>
                             </div>
                           </div>
 
-                          {/* Car Details */}
-                          <div className="p-3 sm:p-4">
-                            {/* Title and Price */}
-                            <div className="flex justify-between items-start mb-2 sm:mb-3">
-                              <div className="flex-1 min-w-0">
-                                <h3 className="font-semibold text-gray-900 text-sm sm:text-base truncate">
+                          {/* Car Details - Compact layout for mobile */}
+                          <div className="p-2 sm:p-3 md:p-4 flex-1 flex flex-col">
+                            {/* Title and Price - More compact */}
+                            <div className="flex justify-between items-start mb-1 sm:mb-2">
+                              <div className="flex-1 min-w-0 pr-1">
+                                <h3 className="font-semibold text-gray-900 text-xs sm:text-sm md:text-base truncate leading-tight">
                                   {car.make} {car.model}
                                 </h3>
-                                <p className="text-gray-600 text-xs sm:text-sm">
+                                <p className="text-gray-600 text-[10px] sm:text-xs md:text-sm truncate">
                                   {car.year}
                                 </p>
                               </div>
-                              <div className="text-right ml-2">
-                                <p className="font-bold text-orange-600 text-sm sm:text-base whitespace-nowrap">
+                              <div className="text-right ml-1">
+                                <p className="font-bold text-orange-600 text-xs sm:text-sm md:text-base whitespace-nowrap">
                                   ${car.price.toLocaleString()}
                                 </p>
                               </div>
                             </div>
 
-                            {/* Specifications */}
-                            <div className="grid grid-cols-2 gap-2 sm:gap-3 mb-3 sm:mb-4 text-xs sm:text-sm text-gray-600">
-                              <div className="flex items-center gap-1">
-                                <Gauge className="w-3 h-3 sm:w-4 sm:h-4" />
-                                <span className="truncate">{car.mileage.toLocaleString()} km</span>
+                            {/* Specifications - 2x2 grid, smaller icons */}
+                            <div className="grid grid-cols-2 gap-1 sm:gap-2 mb-2 sm:mb-3 text-[10px] sm:text-xs md:text-sm text-gray-600">
+                              <div className="flex items-center gap-0.5 sm:gap-1 truncate">
+                                <Gauge className="w-2.5 h-2.5 sm:w-3 sm:h-3 md:w-4 md:h-4 flex-shrink-0" />
+                                <span className="truncate">{(car.mileage/1000).toFixed(0)}k km</span>
                               </div>
-                              <div className="flex items-center gap-1">
-                                <Settings className="w-3 h-3 sm:w-4 sm:h-4" />
+                              <div className="flex items-center gap-0.5 sm:gap-1 truncate">
+                                <Settings className="w-2.5 h-2.5 sm:w-3 sm:h-3 md:w-4 md:h-4 flex-shrink-0" />
                                 <span className="truncate">{car.transmission}</span>
                               </div>
-                              <div className="flex items-center gap-1">
-                                <Fuel className="w-3 h-3 sm:w-4 sm:h-4" />
+                              <div className="flex items-center gap-0.5 sm:gap-1 truncate">
+                                <Fuel className="w-2.5 h-2.5 sm:w-3 sm:h-3 md:w-4 md:h-4 flex-shrink-0" />
                                 <span className="truncate">{car.fuelType}</span>
                               </div>
-                              <div className="flex items-center gap-1">
-                                <Calendar className="w-3 h-3 sm:w-4 sm:h-4" />
+                              <div className="flex items-center gap-0.5 sm:gap-1">
+                                <Calendar className="w-2.5 h-2.5 sm:w-3 sm:h-3 md:w-4 md:h-4 flex-shrink-0" />
                                 <span>{car.year}</span>
                               </div>
                             </div>
 
-                            {/* Location */}
-                            <div className="flex items-center text-xs sm:text-sm mb-2">
-                              <div className="flex items-center gap-1 text-gray-600 flex-1 min-w-0">
-                                <MapPin className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
+                            {/* Location - Smaller */}
+                            <div className="flex items-center text-[10px] sm:text-xs md:text-sm mb-1 sm:mb-2 mt-auto">
+                              <div className="flex items-center gap-0.5 sm:gap-1 text-gray-600 flex-1 min-w-0">
+                                <MapPin className="w-2.5 h-2.5 sm:w-3 sm:h-3 md:w-4 md:h-4 flex-shrink-0" />
                                 <span className="truncate">{car.location}</span>
                               </div>
                             </div>
 
-                            {/* Dealer Info */}
-                            <div className="mt-2 sm:mt-3 pt-2 sm:pt-3 border-t border-gray-200">
-                              <div className="flex items-center justify-between mb-2">
-                                <div className="flex items-center gap-2">
-                                  <Building className="w-3 h-3 sm:w-4 sm:h-4 text-orange-500" />
-                                  <span className="text-xs sm:text-sm font-semibold text-gray-900 truncate">
+                            {/* Dealer Info - More compact */}
+                            <div className="mt-1 sm:mt-2 pt-1 sm:pt-2 border-t border-gray-200">
+                              <div className="flex items-center justify-between mb-0.5 sm:mb-1">
+                                <div className="flex items-center gap-1 sm:gap-2 truncate">
+                                  <Building className="w-2.5 h-2.5 sm:w-3 sm:h-3 md:w-4 md:h-4 text-orange-500 flex-shrink-0" />
+                                  <span className="text-[10px] sm:text-xs md:text-sm font-semibold text-gray-900 truncate">
                                     {car.dealer.companyName}
                                   </span>
                                 </div>
                               </div>
                               
-                              {/* Contact Information */}
+                              {/* Contact Information - Smaller */}
                               <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-1">
-                                  <Phone className="w-3 h-3 text-green-600" />
-                                  <span className="text-xs text-gray-600 font-medium">
+                                <div className="flex items-center gap-0.5 sm:gap-1">
+                                  <Phone className="w-2.5 h-2.5 text-green-600" />
+                                  <span className="text-[10px] sm:text-xs text-gray-600 font-medium truncate">
                                     {formatPhoneNumber(car.dealer.phone)}
                                   </span>
                                 </div>
                               </div>
                             </div>
 
-                            {/* Action Buttons */}
-                            <div className="flex gap-2 mt-3 sm:mt-4">
-                              {/* WhatsApp Contact Button - Now with enhanced functionality */}
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  trackInquiry(car.id);
-                                  contactDealerWhatsApp(car);
-                                }}
-                                className="flex-1 bg-green-600 hover:bg-green-700 text-white py-1.5 sm:py-2 px-3 rounded-lg transition-colors duration-200 text-xs sm:text-sm font-medium flex items-center justify-center gap-2"
-                                title="Contact dealer with car details, image, and link"
-                              >
-                                <MessageCircle className="w-3 h-3 sm:w-4 sm:h-4" />
-                                WhatsApp Dealer
-                              </button>
-                            </div>
+                            {/* Action Button - Full width, smaller on mobile */}
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                trackInquiry(car.id);
+                                contactDealerWhatsApp(car);
+                              }}
+                              className="w-full bg-green-600 hover:bg-green-700 text-white py-1.5 sm:py-2 px-2 rounded-lg transition-colors duration-200 text-xs sm:text-sm font-medium flex items-center justify-center gap-1 sm:gap-2 mt-2 sm:mt-3"
+                              title="Contact dealer with car details, image, and link"
+                            >
+                              <MessageCircle className="w-2.5 h-2.5 sm:w-3 sm:h-3 md:w-4 md:h-4" />
+                              <span className="truncate">WhatsApp</span>
+                            </button>
                           </div>
                         </motion.div>
                       ))}
